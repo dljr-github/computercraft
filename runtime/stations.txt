@@ -1,0 +1,46 @@
+{
+  refuel = {
+    {
+      orientation = 2,
+      occupied = false,
+      pos = {
+        y = 70,
+        x = 283,
+        z = -174,
+      },
+    },
+  },
+  turtles = {
+    {
+      orientation = 2,
+      id = 1,
+      occupied = true,
+      pos = {
+        y = 70,
+        x = 283,
+        z = -164,
+      },
+    },
+    {
+      orientation = 2,
+      id = 14,
+      occupied = true,
+      pos = {
+        y = 70,
+        x = 281,
+        z = -164,
+      },
+    },
+    {
+      orientation = 2,
+      id = 17,
+      occupied = true,
+      pos = {
+        y = 70,
+        x = 279,
+        z = -164,
+      },
+    },
+  },
+  queue = {},
+}
