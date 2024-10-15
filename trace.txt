@@ -1,0 +1,15 @@
+ END"stack traceback:\
+	/runtime/classList.lua:65: in method 'remove'\
+	...e/classBluenetNode.lua:230: in method 'checkMessages'\
+	/runtime/main.lua:236: in main chunk" 
+END"stack traceback:\
+	/runtime/classList.lua:65: in method 'remove'\
+	...e/classBluenetNode.lua:230: in method 'checkMessages'\
+	/runtime/main.lua:236: in main chunk" 
+END"stack traceback:\
+	/runtime/classList.lua:65: in method 'remove'\
+	...e/classBluenetNode.lua:230: in method 'checkMessages'\
+	/runtime/main.lua:236: in main chunk" END"stack traceback:\
+	/runtime/classList.lua:65: in method 'remove'\
+	...e/classBluenetNode.lua:232: in method 'checkMessages'\
+	/runtime/main.lua:236: in main chunk"
