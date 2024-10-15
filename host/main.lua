@@ -1,16 +1,39 @@
 
-node = global.node
-nodeStatus = global.nodeStatus
-nodeUpdate = global.nodeUpdate
+local node = global.node
+local nodeStream = global.nodeStream
+local nodeUpdate = global.nodeUpdate
 
-nodeStatus.onReceive = function(msg)
+local map = global.map
+local turtles = global.turtles
+local updates = global.updates
+
+-- nodeStatus.onRequestAnswer = function(forMsg)
+	-- -- check if state is outdated before answering
+	-- no, best to go by newest only, not oldest first
+	-- if node:checkValid(forMsg) then
+	-- node:answer(forMsg,{"RECEIVED"})
+-- end
+
+nodeStream.onStreamMessage = function(msg,previous)
+	if previous.data[1] == "MAP_UPDATE" then	
+		if global.printSend then
+			print(os.epoch(),"MAP STREAM",msg.sender)
+		end
+		turtles[msg.sender].mapBuffer = {}
+	end
 	if msg.data[1] == "STATE" then
-		table.insert(global.updates, msg.data[2])
+		table.insert(updates, msg.data[2])
 	end
 end
 
+nodeStream.onStreamBroken = function(previous)
+	-- idk
+end
+
+
+
 function checkOnline(id)
-	local turt = global.turtles[id]
+	local turt = turtles[id]
 	local online = false
 	if turt then
 		local timeDiff = os.epoch("ingame") - turt.state.time
@@ -25,21 +48,33 @@ end
 
 function getStation(id)
 	local result
+	-- check already allocated stations
 	for _,station in ipairs(config.stations.turtles) do
 		if station.id == id then
 			result = station
 			station.occupied = true
 			break
-		else
-			-- reset offline station allocations
+		end
+	end
+	-- check free stations
+	if not result then
+		for _,station in ipairs(config.stations.turtles) do
+			if station.occupied == false then
+				result = station
+				station.occupied = true
+				station.id = id
+				break
+			end
+		end
+	end 
+	-- reset offline station allocations
+	if not result then
+		for _,station in ipairs(config.stations.turtles) do
 			if station.id and not checkOnline(station.id) then
 				station.occupied = false
 				station.id = nil
 			end
-		end
-	end
-	if not result then
-		for _,station in ipairs(config.stations.turtles) do
+			
 			if station.occupied == false then
 				result = station
 				station.occupied = true
@@ -56,17 +91,41 @@ node.onRequestAnswer = function(forMsg)
 		print("station request")
 		local station = getStation(forMsg.sender)
 		if station then
-			node:answer(forMsg.sender,{"STATION",station},forMsg.id)
+			node:answer(forMsg,{"STATION",station})
 		else
-			node:answer(forMsg.sender,{"STATIONS_FULL"},forMsg.id)
+			node:answer(forMsg,{"STATIONS_FULL"})
 		end
 	elseif forMsg.data[1] == "REQUEST_MAP" then
 		print("map request")
-		if global.map then
-			node:answer(forMsg.sender,{"MAP", global.map:getMap()},forMsg.id)
+		if map then
+			node:answer(forMsg,{"MAP", map:getMap()})
+			os.pullEvent(os.queueEvent("yield"))
 		else
-			node:answer(forMsg.sender,{"NO_MAP"},forMsg.id)
+			node:answer(forMsg,{"NO_MAP"})
 		end
+	elseif forMsg.data[1] == "REQUEST_CHUNK" then
+		local start = os.epoch("local")
+		if map then
+			--print("request_chunk",textutils.serialize(forMsg.data))
+			local chunkId = forMsg.data[2]
+			node:answer(forMsg,{"CHUNK", map:accessChunk(chunkId,false,true)})
+			-- mark the requested chunk as loaded, regardless if received?
+			if not turtles[forMsg.sender] then 
+				turtles[forMsg.sender] = {
+				--state = {},
+				mapLog = {},
+				mapBuffer = {},
+				loadedChunks = {}
+				}
+			end
+			turtles[forMsg.sender].loadedChunks[chunkId] = true
+			--print(id, forMsg.sender,"loaded chunk",chunkId)
+			-- !!! os.pullEvent steals from receive if called by handleMessage directly !!!
+			-- os.pullEvent(os.queueEvent("yield"))
+		else
+			node:answer(forMsg,{"NO_CHUNK"})
+		end
+		print(os.epoch("local")-start, "id", forMsg.sender, "chunk request", forMsg.data[2])
 	end
 end
 
@@ -76,55 +135,169 @@ end
 -- end
 
 function checkUpdates()
-	local update = table.remove(global.updates)
+	local update = table.remove(updates)
+	
+	
 	while update do
-		if not global.turtles[update.id] then 
-			global.turtles[update.id] = {
+		local turtle = turtles[update.id]
+		if not turtle then 
+			turtles[update.id] = {
 				state = update,
 				mapLog = {},
-				mapBuffer = {}
+				mapBuffer = {},
+				loadedChunks = {}
 			}
+			turtle = turtles[update.id]
 		else
-			--prevState = global.turtles[update.id].state
-			global.turtles[update.id].state = update
+			--prevState = turtles[update.id].state
+			turtle.state = update
+			turtle.state.online = true
+			turtle.state.timeDiff = 0
 		end
 		
-		
-		local pos = update.pos
-		local orientation = update.orientation
-		local task = update.task
-		local lastTask = update.lastTask
-		
-		for _,entry in ipairs(update.mapLog) do
-			global.map:setData(entry.x,entry.y,entry.z,entry.data)
-			global.map:logData(entry.x,entry.y,entry.z,entry.data)
-			if global.printStatus then
-				print("x,y,z,data", entry.x, entry.y, entry.z, entry.data)
+		-- keep track of unloaded chunks
+		-- could result in an infinite request loop, 
+		-- if the turtle just unloaded but another sent an update for this chunk
+		-- -> delay?
+		if update.unloadedLog then
+			for i=1,#update.unloadedLog do
+				turtle.loadedChunks[update.unloadedLog[i]] = nil
 			end
-			for id,data in pairs(global.turtles) do
+			-- for _,unloadedId in ipairs(update.unloadedLog) do
+				-- turtle.loadedChunks[unloadedId] = nil
+				-- --print(update.id,"unloaded chunk",unloadedId)
+			-- end
+		end
+		
+		for i=1,#update.mapLog do 
+			local entry = update.mapLog[i]
+		--for _,entry in ipairs(update.mapLog) do
+			--print(textutils.serialize(entry))
+			map:setChunkData(entry[1],entry[2],entry[3],true)
+			if global.printStatus then
+				print("chunkid,pos,data", entry[1],entry[2],entry[3])
+			end			
+			
+			-- turtle sent update for this chunk so it is probably loaded
+			turtle.loadedChunks[entry[1]]=true
+			
+			-- save data for distribution to other turtles
+			-- alternative: not each entry but chunkwise logs
+			-- loops should be reversed: turtles then entries
+			for id,otherTurtle in pairs(turtles) do
 				-- save data for distribution to other turtles
 				if not (update.id == id) then
-					table.insert(global.turtles[id].mapLog, entry)
+					if otherTurtle.loadedChunks[entry[1]] then
+						table.insert(otherTurtle.mapLog, entry)
+					end
 				end
 			end
+			
 		end
 		
+		
 		if global.printStatus then
+			local pos = update.pos
+			local orientation = update.orientation
+			local task = update.task
+			local lastTask = update.lastTask
 			print("state:", update.id, pos.x, pos.y, pos.z, orientation, lastTask, task)
 		end
 		
-		update = table.remove(global.updates)
+		update = table.remove(updates)
+	end
+	
+	local logs
+	
+	
+	
+	-- for i=1,#updates do
+		-- local update = updates[i]
+		
+		-- for id,turtle in pairs(turtles) do
+
+			-- for chunkId,chunkLog in pairs(update.chunkLogs) do
+				-- if turtle.loadedChunks[chunkId] then
+					-- turtle.chunkLogs[#turtle.chunkLogs+1] = chunkLog
+				-- end
+			-- end
+		-- end
+	-- end
+	
+	--process logs seperately to reduce nested loops ?
+	-- complexity = turtleCount*(turtleCount-1)*avgEntriesPerLog
+	-- for id,turtle in pairs(turtles) do
+		-- for i=1,#logs do 
+			-- local log = logs[i]
+			-- if not log.sender == id then
+				-- for k=1,#log do
+					-- local entry = log[k]
+					-- local chunkId = entry[1]
+					-- if turtle.loadedChunks[chunkId] then
+						-- if not turtle.chunkLogs[chunkId] then
+							-- turtle.chunkLogs[chunkId] = { entry[2] = entry[3] }
+						-- else
+							-- turtle.chunkLogs[chunkId]][entry[2]] = entry[3]
+						-- end
+					-- end
+					
+				-- end
+			-- end
+		-- end
+	-- end
+		
+		
+		-- for senderId,log in ipairs(logs) do
+			-- if not (senderId == id) then
+				-- for _,entry in ipairs(log) do
+					-- if turtle.loadedChunks[entry[1]] then
+						-- table.insert(turtle.maplog,entry)
+					-- end
+				-- end
+			-- end
+		-- end
+	-- end
+	
+end
+
+function refreshState()
+	-- refresh the online state of the turtles
+	for id,turtle in pairs(turtles) do
+		turtle.state.timeDiff = os.epoch("ingame") - turtle.state.time
+		if turtle.state.timeDiff > 144000 then
+			turtle.state.online = false
+		else
+			turtle.state.online = true
+		end
 	end
 end
 
 
-
 while global.running do
-	
-	node:checkEvents()
-	nodeStatus:checkEvents()
-	nodeUpdate:checkEvents()
+	local start = os.epoch("local")
+	local s = os.epoch("local")
+	--node:checkEvents()
+	node:checkMessages()
+	--print(os.epoch("local")-s,"events")
+	s = os.epoch("local")
+	--nodeStream:checkEvents()
+	nodeStream:checkMessages()
+	--print(os.epoch("local")-s,"nodeStream:checkEvents")
+	s = os.epoch("local")
+	--nodeUpdate:checkEvents()
+	nodeUpdate:checkMessages()
+	--print(os.epoch("local")-s,"nodeUpdate:checkEvents")
+	s = os.epoch("local")
 	checkUpdates()
+	--print(os.epoch("local")-s,"checkUpdates")
+	s = os.epoch("local")
+	refreshState()
+	--print(os.epoch("local")-s, "refreshState")
 	--monitor:checkEvents()
-	sleep(0.05)
+	if global.printMainTime then 
+		print(os.epoch("local")-start, "done")
+	end
+	sleep(0)
 end
+
+print("eeeh how")

@@ -220,6 +220,8 @@ end
 
 function Window:getBackgroundColorByPos(x,y)
     local o = self:getObjectByPos(x,y)
+	x = x - self.x + 1
+	y = y - self.y + 1
 	if o and o.visible then
 		if o.getBackgroundColorByPos then
 			return o:getBackgroundColorByPos(x,y)

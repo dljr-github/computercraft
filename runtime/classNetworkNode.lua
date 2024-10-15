@@ -74,6 +74,7 @@ function NetworkNode:setProtocol(protocol)
 	if self.protocol then
 		rednet.unhost(self.protocol)
 	end
+	self.protocol = protocol
 	self:hostProtocol()
 end
 
@@ -128,8 +129,8 @@ function NetworkNode:beforeSend(msg)
 	end
 end
 
-function NetworkNode:checkValid(msg)
-	if (os.epoch("ingame") - msg.time)/(72000) > default.waitTime then
+function NetworkNode:checkValid(msg,waitTime)
+	if (os.epoch("ingame") - msg.time)/(72000) > ( waitTime or msg.waitTime or default.waitTime) then
 		return false
 	end
 	return true
@@ -177,7 +178,8 @@ function NetworkNode:listenForAnswer(forMsg,waitTime)
 				break
 			else
 				-- different message
-				self:handleMessage(sender,msg,senderProtocol)
+				-- do not handle other messages, it came to the error below
+				-- self:handleMessage(sender,msg,senderProtocol)
 			end
 		else
 			self.waitlist:remove(forMsg) -- this could trigger errors if it has already been removed from the list OR because its not the same table as when it was inserted
@@ -272,7 +274,7 @@ function NetworkNode:answer(sender,data,uuid)
 	return msg -- return answerMsg
 end
 
-function NetworkNode:send(recipient,data,answer,wait)
+function NetworkNode:send(recipient,data,answer,wait,waitTime)
 	local retval
 	if recipient ~= self.id then
 		local msg = {}
@@ -285,11 +287,12 @@ function NetworkNode:send(recipient,data,answer,wait)
 		msg.data = data
 		msg.answer = answer
 		msg.wait = wait
+		msg.waitTime = waitTime
 		self:beforeSend(msg)
 		rednet.send(recipient, msg, self.protocol)
 		if wait then
 			-- wait for this exact answer
-			retval = self:listenForAnswer(msg,default.waitTime)
+			retval = self:listenForAnswer(msg, waitTime or default.waitTime)
 		else
 			-- return the sent message
 			retval = msg

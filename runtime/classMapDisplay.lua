@@ -136,7 +136,6 @@ function MapDisplay:handleClick(x,y)
 		if self.doSelectPosition then
 			self.doSelectPosition = false
 			if self.onPositionSelected then self:onPositionSelected(varX, self.mapMidY, varZ) end
-			print("returning position", varX, self.mapMidY, varZ)
 		else
 			self:setMid(varX, self.mapMidY, varZ)
 			self:redraw()

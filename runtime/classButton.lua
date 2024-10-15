@@ -100,4 +100,3 @@ end
 function Button:setDisabledColor(color)
 	self.disabledColor = color
 end
-

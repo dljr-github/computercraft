@@ -62,4 +62,3 @@ function CheckBox:setTextOff(text)
 	self:refresh()
 end
 	
-

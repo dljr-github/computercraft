@@ -61,4 +61,3 @@ function ToggleBtn:setTextOff(text)
 	self:refresh()
 end
 	
-

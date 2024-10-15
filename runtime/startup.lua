@@ -1,7 +1,7 @@
 
 
 -- COPY REQUIRED FILES
-folders = {
+local folders = {
 "general",
 "gui",
 "host",
@@ -58,6 +58,7 @@ package.path = package.path ..";../runtime/?.lua"
 
 os.loadAPI("/runtime/global.lua")
 os.loadAPI("/runtime/config.lua")
+os.loadAPI("/runtime/bluenet.lua")
 
 shell.run("runtime/initialize.lua")
 

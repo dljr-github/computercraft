@@ -6,7 +6,7 @@ local default = {
 		border = colors.gray
 	},
 	width = 20,
-	height = 10,
+	height = 12,
 	yLevel =  {
 		top = 73,
 		bottom = -60,
@@ -35,14 +35,17 @@ function TaskSelector:initialize()
 	self.btnMineArea = Button:new("mineArea",3,3,14,1)
 	self.btnNavigateToPos = Button:new("navigateToPos",3,5,14,1)
 	self.btnDigToPos = Button:new("digToPos", 3,7,14,1)
+	self.btnReboot = Button:new("reboot", 3,9,14,1)
 	
 	self.btnMineArea.click = function() self:mineArea() end
 	self.btnNavigateToPos.click = function() self:navigateToPos() end
 	self.btnDigToPos.click = function() self:digToPos() end
+	self.btnReboot.click = function() self:reboot() end
 	
 	self:addObject(self.btnMineArea)
 	self:addObject(self.btnNavigateToPos)
 	self:addObject(self.btnDigToPos)
+	self:addObject(self.btnReboot)
 end
 
 function TaskSelector:setNode(node)
@@ -125,7 +128,7 @@ function TaskSelector:onPositionSelected(x,y,z)
 	else
 		-- cancel position selection
 	end
-	
+
 	self:close()
 	self.mapDisplay:close()
 end
@@ -140,7 +143,13 @@ end
 function TaskSelector:digToPos()
 	if self.node then
 		self.taskName = "digToPos"
-		self.digToPos()
+		self:selectPosition()
 	end
 end
 
+function TaskSelector:reboot()
+	if self.node then
+		self.node:send(self.data.id, {"REBOOT"},false,false)
+		self:close()
+	end
+end

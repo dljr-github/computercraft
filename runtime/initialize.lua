@@ -1,15 +1,17 @@
 
-require("classNetworkNode")
+--require("classNetworkNode")
+require("classBluenetNode")
 require("classMonitor")
 require("classHostDisplay")
-require("classMap")
-
+--require("classMap")
+require("classChunkyMap")
+require("classTaskGroup")
 
 local function initNode()
 	global.node = NetworkNode:new("miner",true)
 end
-local function initStatus()
-	global.nodeStatus = NetworkNode:new("miner_status",true)
+local function initStream()
+	global.nodeStream = NetworkNode:new("miner_stream",true)
 end
 local function initUpdate()
 	global.nodeUpdate = NetworkNode:new("update",true)
@@ -26,15 +28,37 @@ local function initPosition()
 	print("position:",global.pos.x,global.pos.y,global.pos.z)
 end
 
+local function loadGroups(fileName)
+	if not fileName then fileName = "runtime/taskGroups.txt" end
+	local f = fs.open(fileName,"r")
+	local groups = nil
+	if f then
+		groups = textutils.unserialize( f.readAll() )
+		f.close()
+	else
+		-- no problem if this file does not exist yet
+		-- print("FILE DOES NOT EXIST", fileName)
+	end
+	if groups then 
+		for _,group in pairs(groups) do
+			local taskGroup = TaskGroup:new(global.turtles,nil,group)
+			global.taskGroups[taskGroup.id] = taskGroup
+		end
+	else
+		global.taskGroups = {}
+	end
+end
 
 -- quick boot
-parallel.waitForAll(initNode,initStatus,initUpdate)
+parallel.waitForAll(initNode,initStream,initUpdate)
 
 initPosition()
-global.map = Map:new()
+global.map = ChunkyMap:new(false)
+global.map:setMaxChunks(256) --256 for operational use
+global.map:setLifeTime(-1)
 global.map:load()
 global.loadTurtles()
 global.loadStations()
+loadGroups()
 global.monitor = Monitor:new()
 global.display = HostDisplay:new(1,1,global.monitor:getWidth(),global.monitor:getHeight())
-

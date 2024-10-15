@@ -1,8 +1,9 @@
-
+os.loadAPI("/runtime/bluenet.lua")
 shell.run("runtime/update.lua")
 
 os.loadAPI("/runtime/global.lua")
 os.loadAPI("/runtime/config.lua")
+
 
 shell.run("runtime/initialize.lua")
 tabMain = shell.openTab("runtime/main.lua")
@@ -14,6 +15,9 @@ multishell.setTitle(tabMain, "main")
 multishell.setTitle(tabReceive, "receive")
 multishell.setTitle(tabSend, "send")
 
+if global.miner then 
+	global.miner:initialize()
+end
 
 -- MultiShell tests: 
 -- shell.openTab("/multi/multi_1.lua")

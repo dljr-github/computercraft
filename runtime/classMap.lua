@@ -68,6 +68,7 @@ function Map:setData(x,y,z,data)
 	--0 = inspected but empty or mined
 	-- self:logData(x,y,z,data) -- logData is done by miner
 	if not self.map then self.map = {} end
+	--print(x,y,z,data)
 	if y > default.bedrockLevel then
 		self.map[self:xyzToId(x,y,z)] = data
 	else
@@ -156,30 +157,68 @@ function Map:getDistance(start,finish)
 	return math.sqrt( ( finish.x - start.x )^2 + ( finish.y - start.y )^2 + ( finish.z - start.z )^2 )
 end
 
-function Map:findNextBlock(curPos, id, maxDistance)
+function Map:findNextBlock(curPos, checkFunction, maxDistance)
 	-- TODO if type(id) == "Table" then ...
 	if not maxDistance then maxDistance = math.huge end
-	local ores
-	if not id then
-		ores = oreBlocks
-	elseif type(id) == "table" then
-		ores = id
-	else
-		ores = { [id]=true }
-	end
+	-- local ores
+	-- if not id then
+		-- ores = oreBlocks
+	-- elseif type(id) == "table" then
+		-- ores = id
+	-- else
+		-- ores = { [id]=true }
+	-- end
 	
+	local start = os.epoch("local")
+	local ct = 0
+	-- TODO: do not check entire table with pairs, only entries within maxDistance cube
+	-- -> more performant with big maps
 	local minDist = -1
 	local minPos = nil
-	
-	for key,value in pairs(self.map) do
-		if ores[value] then
-			local pos = self:idToPos(key)
-			local dist = self:getDistance(curPos, pos)
-			if ( minDist < 0 or dist < minDist) and dist <= maxDistance then 
-				minDist = dist
-				minPos = pos
+		
+	if maxDistance <= 16 then
+		-- still 32.768 positions to be checked
+		local totalRange = (maxDistance*2)+1
+		local halfRange = maxDistance+1
+		for x=1,totalRange do
+			for z=1,totalRange do
+				for y=1, totalRange do
+					local pos = vector.new(curPos.x-x+halfRange,
+											curPos.y-y+halfRange,
+											curPos.z-z+halfRange)
+					local blockName = self:getData(pos.x, pos.y, pos.z)
+					ct = ct +1
+					if checkFunction(nil,blockName) then
+						local dist = self:getDistance(curPos, pos)
+						if ( minDist < 0 or dist < minDist) and dist <= maxDistance and dist > 0 then 
+							minDist = dist
+							minPos = pos
+							-- if minDist<=1 then
+								-- -- cant be any more nearby
+								-- break
+							-- end
+						end
+					end
+				end
 			end
 		end
-	end	
+	end
+	print(os.epoch("local")-start, "findNextBlock", minPos, "count", ct)
+	
+	-- start = os.epoch("local")
+	-- for key,value in pairs(self.map) do
+		-- ct = ct + 1
+		-- -- pass nil as self
+		-- if checkFunction(nil,value) then
+			-- local pos = self:idToPos(key)
+			-- local dist = self:getDistance(curPos, pos)
+			
+			-- if ( minDist < 0 or dist < minDist) and dist <= maxDistance then 
+				-- minDist = dist
+				-- minPos = pos
+			-- end
+		-- end
+	-- end	
+	-- print(os.epoch("local")-start, "findNextBlock", minPos, "count", ct)
 	return minPos
 end

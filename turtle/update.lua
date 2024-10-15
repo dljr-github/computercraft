@@ -1,6 +1,8 @@
-require("classNetworkNode")
+require("classBluenetNode")
+--require("classNetworkNode")
 
 local node = NetworkNode:new("update")
+local waitTime = 10
 
 folders = {
 "general",
@@ -30,8 +32,13 @@ local function importFile(fileName, fileData)
 	end
 end
 
-node.onReceive = function(msg)
+node.onNoAnswer = function(forMsg)
+	print("NO ANSWER",forMsg.data[1])
+end
+
+node.onReceive = function(msg,forMsg)
 	if msg and msg.data then
+		
 		if msg.data[1] == "FILE" then
 			print("received",msg.data[2].fileName)
 			importFile(msg.data[2].fileName, msg.data[2].fileData)			
@@ -44,7 +51,7 @@ node.onReceive = function(msg)
 				end
 			end
 		else
-			print(msg.data[1], msg.data[2].fileName)
+			print(msg.data[1], textutils.serialize(msg.data[2]))
 		end
 	end
 end
@@ -57,13 +64,13 @@ else
 		print("requesting", file)
 		local data = { "FILE_REQUEST", { fileName = file } }
 		node:send(node.host, data, false)
-		node:listen(1)
+		node:listen(5)
 	end
 	for _,folder in ipairs(folders) do
 		print("requesting folder", folder)
 		local data = { "FOLDER_REQUEST", { folderName = folder } }
 		node:send(node.host, data, false)
-		node:listen(1) -- listen for max 1 second
+		node:listen(5)
 	end
 	if restart then
 		os.reboot()

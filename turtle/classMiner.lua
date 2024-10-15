@@ -1,18 +1,25 @@
-local Heap = require("classHeap")
-require("classMap")
+local PathFinder = require("classPathFinder")
+--require("classMap")
 require("classLogger")
 require("classList")
+require("classChunkyMap")
 
 local default = {
 	waitTimeFallingBlock = 0.5,
-	maxVeinRadius = 32,
+	maxVeinRadius = 10, --8 MAX:16
 	maxVeinSize = 256,
 	inventorySize = 16,
-	criticalFuelLevel = 128,
-	goodFuelLevel = 1600,
-	maxHomeDistance = 128,
+	criticalFuelLevel = 512,
+	goodFuelLevel = 4099,
+	--maxHomeDistance = 128, -- unused
 	file = "runtime/miner.txt",
 	fuelAmount = 16,
+	turtleName = "computercraft:turtle_advanced",
+	pathfinding = {
+		maxTries = 15,
+		maxParts = 2,
+		maxDistance = 10,
+	}
 }
 
 local mineBlocks = {
@@ -26,8 +33,14 @@ local mineBlocks = {
 ["minecraft:flint"]=true,
 ["minecraft:sandstone"]=true,
 ["minecraft:diorite"]=true,
+["minecraft:granite"]=true,
 ["minecraft:andesite"]=true,
+["minecraft:tuff"]=true,
 ["minecraft:deepslate"]=true,
+["minecraft:cobbled_deepslate"]=true,
+-- own array with fluids / allowedBlocks
+["minecraft:water"]=true,
+["minecraft:lava"]=true,
 --["minecraft:glass"]=true,
 }
 
@@ -45,7 +58,12 @@ local inventoryBlocks = {
 }
 
 local disallowedBlocks = {
-["minecraft:chest"] = true
+["minecraft:chest"] = true,
+["minecraft:hopper"]=true,
+["computercraft:turtle_advanced"] = true,
+["computercraft:computer_advanced"] = true,
+["computercraft:wireless_modem_advanced"] = true,
+["computercraft:monitor_advanced"] = true,
 }
 
 -- local blocks = {
@@ -71,6 +89,15 @@ local oreBlocks = {
 ["minecraft:deepslate_copper_ore"]=true,
 }
 
+local vector = vector
+
+local vectors = {
+	[0] = vector.new(0,0,1),  -- 	+z = 0	south
+	[1] = vector.new(-1,0,0), -- 	-x = 1	west
+	[2] = vector.new(0,0,-1), -- 	-z = 2	north
+	[3] = vector.new(1,0,0),  -- 	+x = 3 	east
+}
+
 Miner = {}
 
 function Miner:new()
@@ -88,18 +115,14 @@ function Miner:new()
 	o.homeOrientation = 0
 	o.orientation = 0
 	o.node = global.node
-	o.pos = {}
+	o.pos = vector.new(0,70,0)
 	o.gettingFuel = false
 	o.lookingAt = vector.new(0,0,0)
-	o.map = Map:new()
+	o.map = ChunkyMap:new(true)
 	o.taskList = List:new()
-	o.vectors = {}
-	o.vectors[0] = vector.new(0,0,1)  -- 	+z = 0	south
-	o.vectors[1] = vector.new(-1,0,0) -- 	-x = 1	west
-	o.vectors[2] = vector.new(0,0,-1) -- 	-z = 2	north
-	o.vectors[3] = vector.new(1,0,0)  -- 	+x = 3 	east
+	o.vectors = vectors
 	
-	o:initialize()
+	--o:initialize() -- initialize after starting parallel tasks in startup.lua
 	print("--------------------")
 	return o
 end
@@ -107,11 +130,16 @@ end
 
 function Miner:initialize()
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	self:requestMap()
-	self:refuel()
+	
+	self.map.requestChunk = function(chunkId) return self:requestChunk(chunkId) end
+	--self:requestMap()
+	
+	-- TODO: simple refuel without getFuel (position is not initialized)
 	print("fuel level:", turtle.getFuelLevel())
 	self:initPosition()
 	self:initOrientation()
+	self:refuel()
+	
 	if not self:requestStation() then
 		self:setHome(self.pos.x, self.pos.y, self.pos.z)
 	end
@@ -161,7 +189,7 @@ function Miner:initOrientation()
 		self:turnTo((self.orientation+turns)%4)
 		self.homeOrientation = self.orientation
 	end
-	-- print("orientation:", self.orientation)
+	print("orientation:", self.orientation)
 end
 
 function Miner:save(fileName)
@@ -189,12 +217,13 @@ function Miner:setHome(x,y,z)
 	self.home = vector.new(x,y,z)
 	print("home:", self.home.x, self.home.y, self.home.z)
 end
+
 function Miner:requestMap()
 	-- ask host for the map
 	local retval = false
-	if global.node and global.node.host then
+	if self.node and self.node.host then
 		local answer, forMsg = self.node:send(global.node.host,
-		{"REQUEST_MAP"},true,true)
+		{"REQUEST_MAP"},true,true,10)
 		if answer then
 			if answer.data[1] == "MAP" then
 				retval = true
@@ -206,11 +235,32 @@ function Miner:requestMap()
 	return retval 
 end
 
+function Miner:requestChunk(chunkId)
+	-- ask host for a chunk
+	-- perhaps use own protocol for this?
+	local start = os.epoch("local")
+	if self.node and self.node.host then
+		local answer, forMsg = self.node:send(global.node.host,
+			{"REQUEST_CHUNK", chunkId},true,true,1,"chunk")
+		if answer then
+			if answer.data[1] == "CHUNK" then
+				print(os.epoch("local")-start,"RECEIVED CHUNK", chunkId)
+				return answer.data[2]
+			else
+				print("received other", answer.data[1])
+			end
+		end
+		--print("no answer")
+	end
+	print(os.epoch("local")-start, "CHUNK REQUEST FAILED", chunkId)
+	return nil
+end
+
 function Miner:requestStation()
 	-- ask host for station
 	local retval = false
 	if global.node and global.node.host then
-		local answer, forMsg = self.node:send(global.node.host,{"REQUEST_STATION"},true,true)
+		local answer, forMsg = self.node:send(global.node.host,{"REQUEST_STATION"},true,true,10)
 		if answer then
 			if answer.data[1] == "STATION" then
 				retval = true
@@ -219,12 +269,14 @@ function Miner:requestStation()
 			elseif answer.data[1] == "STATIONS_FULL" then
 				self:setStation(nil)
 			end
+			--print("station", textutils.serialize(answer.data[2]))
 		else
-			--print("no station answer")
+			print("no station answer")
 		end
 	else
-		--print("no station host")
+		print("no station host or node", global.node, global.node.host)
 	end
+	
 	return retval
 end
 function Miner:setStation(station)
@@ -284,22 +336,8 @@ function Miner:checkStatus()
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	-- called by self:forward()
 	self:refuel()
-	if self:getEmptySlots() == 0 then
-		self:condenseInventory()
-		if self:getEmptySlots() < 2 then
-			self:dumpBadItems()
-			if self:getEmptySlots() < 2 then
-				self:returnHome()
-				self:transferItems()
-				if self:getEmptySlots() < 2 then
-					-- do nothing and return to task
-				else
-					-- catch this in stripmine e.g.
-					self:error("INVENTORY_FULL",true)
-				end
-			end
-		end
-	end
+	self:cleanInventory()
+	
 	self.taskList:remove(currentTask)
 end
 
@@ -325,6 +363,43 @@ function Miner:getEmptySlots()
 	return empty
 end
 
+function Miner:cleanInventory()
+	-- check for fully inventory and take action
+	if not self.cleaningInventory and self:getEmptySlots() == 0 then
+		self:condenseInventory()
+		if self:getEmptySlots() < 2 then
+			self:dumpBadItems()
+			if self:getEmptySlots() < 2 then
+				self:offloadItemsAtHome()
+			end
+		end
+	end
+end
+
+function Miner:offloadItemsAtHome()
+	-- return home, empty inventory, return to task
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	self.cleaningInventory = true
+	
+	local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
+	local startOrientation = self.orientation
+
+	self:returnHome()
+	self:transferItems()
+	if self:getEmptySlots() < 2 then
+		-- catch this in stripmine e.g.
+		self.cleaningInventory = false
+		self:error("INVENTORY_FULL",true)
+	else
+		-- do nothing and return to task
+		self:navigateToPos(startPos.x, startPos.y, startPos.z)
+		self:turnTo(startOrientation)
+	end
+	
+	self.cleaningInventory = false
+	self.taskList:remove(currentTask)
+end
+
 function Miner:transferItems()
 	--check for chest and transfer items
 	--do not transfer all fuel items (keep 1 stack)
@@ -335,7 +410,7 @@ function Miner:transferItems()
 	
 	for k=1,4 do
 	--check for chest
-		self:inspect()
+		self:inspect(true)
 		local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
 		if block and inventoryBlocks[block] then
 			hasInventory = true
@@ -360,6 +435,7 @@ function Miner:transferItems()
 					local ok = turtle.drop(data.count)
 					if ok ~= true then
 						print(ok,"inventory in front is full")
+						break
 					end
 				end
 			end
@@ -455,6 +531,9 @@ function Miner:refuel()
 		end
 		if turtle.getFuelLevel() > default.criticalFuelLevel then
 			refueled = true
+		elseif turtle.getFuelLevel() == 0 then
+			-- ran out of fuel
+			self:error("NEED FUEL, STUCK",true)
 		else
 			--if self:getCostHome() * 2 > turtle.getFuelLevel() then
 				local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
@@ -496,7 +575,7 @@ function Miner:getFuel()
 			
 			for k=1,4 do
 			--check for chest
-				self:inspect()
+				self:inspect(true) -- true for wrong map entries or new stations
 				local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
 				if block and inventoryBlocks[block] then
 					hasInventory = true
@@ -515,6 +594,11 @@ function Miner:getFuel()
 		end
 	end
 	
+	if self:getEmptySlots() < 8 then
+		-- already at home, also offload items
+		self:offloadItemsAtHome() 
+	end
+	-- cancellation while getting fuel can result in this never being set to false
 	self.gettingFuel = false
 	
 	if not result then
@@ -527,8 +611,8 @@ function Miner:getFuel()
 end
 
 function Miner:setMapValue(x,y,z,value)
-	self.map:logData(x,y,z,value)
-	self.map:setData(x,y,z,value)
+	--self.map:logData(x,y,z,value)
+	self.map:setData(x,y,z,value,true)
 end
 
 function Miner:getMapValue(x,y,z)
@@ -566,6 +650,8 @@ function Miner:forward()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos = self.pos + self.vectors[self.orientation]
+		-- TODO: setMapValue of current position to avoid wrong entries
+		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
 	self:checkStatus()
 	self.taskList:remove(currentTask)
@@ -578,6 +664,7 @@ function Miner:back()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos = self.pos - self.vectors[self.orientation]
+		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
 	self.taskList:remove(currentTask)
 	return result
@@ -589,6 +676,7 @@ function Miner:up()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos.y = self.pos.y + 1
+		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
 	self.taskList:remove(currentTask)
 	return result
@@ -600,6 +688,7 @@ function Miner:down()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos.y = self.pos.y - 1
+		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
 	self.taskList:remove(currentTask)
 	return result
@@ -654,164 +743,42 @@ function Miner:digDown(side)
 	return result
 end
 
-function Miner:checkSafe(id)
+function Miner.checkOreBlock(blockName)
+	if blockName and blockName ~= 0 then
+		if string.find(blockName, "_ore") then
+			return true
+		else
+			return oreBlocks[blockName]
+		end
+	end
+	return false
+end
+local checkOreBlock = Miner.checkOreBlock
+
+function Miner.checkDisallowed(id)
+	-- blacklist function
+	return disallowedBlocks[id]
+	-- local isDisallowed = false
+	-- if disallowedBlocks[id] then
+		-- isDisallowed = true
+	-- end
+	-- return isDisallowed
+end
+local checkDisallowed = Miner.checkDisallowed
+
+function Miner.checkSafe(id)
+	-- whitelist function
 	-- does not take changed blocks into account if id comes from the map value
 	local isSafe = false
-	if not id or id == 0 or mineBlocks[id] or oreBlocks[id] then
+	if not id or id == 0 or mineBlocks[id] or checkOreBlock(id) then
 		isSafe = true
 	end
 	return isSafe
 end
-
-function Miner:safeDig(side)
-	local blockName = self:inspect()
-	if self:checkSafe(blockName) then self:dig() return true end
-	return false
-end
-
-function Miner:safeDigUp(side)
-	local blockName = self:inspectUp()
-	if self:checkSafe(blockName) then self:digUp() return true end
-	return false
-end
-
-function Miner:safeDigDown(side)
-	local blockName = self:inspectDown()
-	if self:checkSafe(blockName) then self:digDown() return true end
-	return false
-end
-
-function Miner:safeDigMove()		
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	local ct = 0
-	local result = true
-	--try to move
-	while not self:forward() do
-		local blockName = self:inspect(true)
-		--check block
-		if blockName then
-			--dig if safe
-			if self:checkSafe(blockName) then
-				self:dig()
-				sleep(0.25)
-				print(self:checkSafe(blockname), blockName)
-			else
-				print("NOT SAFE",blockName)
-				result = false -- return false
-				break
-			end
-		end
-		ct = ct + 1
-		if ct > 100 then
-			if turtle.getFuelLevel == 0 then
-				self:refuel()
-				ct = 90
-				--possible endless loop if fuel is empty -> no refuel raises error
-			else
-				print("UNABLE TO MOVE")
-			end
-			result = false -- return false
-			break
-		end
-	end
-
-	self.taskList:remove(currentTask)
-	return result
-end
-
-function Miner:digMove()
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	local ct = 0
-	local result = true
-	
-	while not self:forward() do
-		local hasBlock = turtle.detect()
-		if hasBlock then
-			self:dig()
-			sleep(0.25)
-		end
-		ct = ct + 1
-		if ct > 100 then
-			if turtle.getFuelLevel == 0 then
-				self:refuel()
-				ct = 90
-			else
-				print("UNABLE TO MOVE")
-			end
-			result = false -- return false
-			break
-		end
-	end
-	
-	self.taskList:remove(currentTask)
-	return result
-end
-
-function Miner:digToPos(x,y,z,safe)	
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	--print("digToPos:", x, y, z, "safe:", safe)
-	local result = true
-	
-	if self.pos.x < x then
-		self:turnTo(3) -- +x
-		self:inspect()
-	elseif self.pos.x > x then
-		self:turnTo(1) -- -x
-		self:inspect()
-	end
-	while self.pos.x ~= x do
-		if safe then 
-			if not self:safeDigMove() then result = false; break end
-		else self:digMove() end
-		self:inspect()
-		self:inspectDown()
-		self:inspectUp()
-	end
-	if result then
-		if self.pos.z < z then
-			self:turnTo(0) -- +z
-			self:inspect()
-		elseif self.pos.z > z then
-			self:turnTo(2) -- -z
-			self:inspect()
-		end
-		
-		while self.pos.z ~= z do
-			if safe then 
-				if not self:safeDigMove() then result = false; break end
-			else self:digMove() end
-			self:inspect()
-			self:inspectDown()
-			self:inspectUp()
-		end
-		
-		if result then
-			while self.pos.y ~= y do
-				if self.pos.y < y then
-					if safe then 
-						if not self:safeDigUp() then result = false; break end
-					else self:digUp() end
-					self:up()
-					self:inspect()
-					self:inspectUp()
-				else
-					if safe then 
-						if not self:safeDigDown() then result = false; break end
-					else self:digDown() end
-					self:down()
-					self:inspect()
-					self:inspectDown()
-				end
-			end
-		end
-	end
-	self.taskList:remove(currentTask)
-	return result
-end
+local checkSafe = Miner.checkSafe
 
 function Miner:inspect(safe)
-	-- WARNING: does NOT update the Map if the block has been explored before
-	-- -> separate function safeInspect or inspect(safe)
+	-- WARNING: NOT safe does NOT update the Map if the block has been explored before
 	self:updateLookingAt()
 	local blockName 
 	if not safe then 
@@ -826,22 +793,12 @@ function Miner:inspect(safe)
 	end
 	return blockName
 end
--- function Miner:inspect()
-	-- -- WARNING: does NOT update the Map if the block has been explored before
-	-- -- -> separate function safeInspect or inspect(safe)
-	-- self:updateLookingAt()
-	-- local blockName = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
-	-- if blockName == nil then
-		-- -- never inspected before
-		-- local hasBlock, data = turtle.inspect()
-		-- self:setMapValue(self.lookingAt.x,self.lookingAt.y,self.lookingAt.z,
-		-- ( data and data.name ) or 0)
-		-- blockName = data.name
-	-- end
-	-- return blockName
--- end
-function Miner:inspectUp()
-	local blockName = self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)
+
+function Miner:inspectUp(safe)
+	local blockName
+	if not safe then
+		blockName = self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)
+	end
 	if blockName == nil then
 		local hasBlock, data = turtle.inspectUp()
 		self:setMapValue(self.pos.x,self.pos.y+1,self.pos.z,
@@ -850,8 +807,12 @@ function Miner:inspectUp()
 	end
 	return blockName
 end
-function Miner:inspectDown()
-	local blockName = self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z)
+
+function Miner:inspectDown(safe)
+	local blockName
+	if not safe then
+		blockName = self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z)
+	end
 	if blockName == nil then
 		local hasBlock, data = turtle.inspectDown()
 		self:setMapValue(self.pos.x,self.pos.y-1,self.pos.z,
@@ -909,7 +870,240 @@ function Miner:inspectAll()
 	self.taskList:remove(currentTask)
 end
 
-function Miner:mineVein(id) 
+function Miner:digMove(safe)		
+	-- tries to dig the block in front and move forwards
+	-- while not mining any turtles
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	local ct = 0
+	local result = true	
+	
+	-- all changes here should be made in Down and Up as well
+	
+	-- optimization: if it is known that a block is in front -> dig first, then move
+	-- trust, that the mapvalue is correct/up to date?
+	-- could lead to mining another turtle
+	-- why have the map in the first place if it cannot be trusted?
+	-- solution: only check block if not safe -> no trust issues
+	local blockName
+	-- if not safe then
+		-- blockName = self:inspect() -- or getMapValue for faster mining
+		-- if blockName and blockName ~= 0 then
+			-- if not checkDisallowed(blockName) then
+				-- self:dig()
+			-- end
+		-- end
+		-- -- else 
+			-- -- nonone has been here before -> must be safe -- only for getMapValue
+			-- -- but block could also be free so dig is redundant
+			-- -- self:dig()
+		-- -- end
+	-- end
+	-- end of optimization --> perhaps delete
+	
+	--try to move
+	while not self:forward() do
+		blockName = self:inspect(true) -- cannot move so there has to be a block
+		--check block
+		if blockName then
+			--dig if safe
+			local doMine = true
+			if safe then
+				doMine = checkSafe(blockName)
+			else
+				-- -> check if its explictly disallowed
+				doMine = not checkDisallowed(blockName)
+			end
+			if doMine then
+				self:dig()
+				sleep(0.25)
+				--print("digMove", checkSafe(blockname), blockName)
+			else
+				print("NOT SAFE",blockName)
+				result = false -- return false
+				break
+			end
+		end
+		ct = ct + 1
+		if ct > 100 then
+			if turtle.getFuelLevel() == 0 then
+				self:refuel()
+				ct = 90
+				--possible endless loop if fuel is empty -> no refuel raises error
+			else
+				print("UNABLE TO MOVE")
+			end
+			result = false -- return false
+			break
+		end
+	end
+
+	self.taskList:remove(currentTask)
+	return result
+end
+
+function Miner:digMoveDown(safe)
+	-- check digMove for documentation
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	local ct = 0
+	local result = true
+	
+	-- might be an unnecessary optimization for up/down
+	-- delete if there are problems with turtles mining each other
+	local blockName
+	-- if not safe then
+		-- blockName = self:inspectDown()
+		-- if blockName and blockName ~= 0 then
+			-- if not checkDisallowed(blockName) then
+				-- self:digDown()
+			-- end
+		-- end
+	-- end
+	
+	while not self:down() do
+		blockName = self:inspectDown(true)
+		if blockName then
+			local doMine = true
+			if safe then
+				doMine = checkSafe(blockName)
+			else
+				doMine = not checkDisallowed(blockName)
+			end
+			if doMine then
+				self:digDown()
+				sleep(0.25)
+				--print("digMoveDown", checkSafe(blockName), blockName)
+			else
+				print("NOT SAFE DOWN", blockName)
+				result = false
+				break
+			end
+		end
+		ct = ct+1
+		if ct>100 then
+			if turtle.getFuelLevel() == 0 then
+				self:refuel()
+				ct = 90
+			else
+				print("UNABLE TO MOVE DOWN")
+			end
+			result = false
+			break
+		end
+	end
+	
+	self.taskList:remove(currentTask)
+	return result
+end
+
+function Miner:digMoveUp(safe)
+	-- check digMove for documentation
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	local ct = 0
+	local result = true
+	
+	local blockName
+	-- if not safe then
+		-- blockName = self:inspectUp()
+		-- if blockName and blockName ~= 0 then
+			-- if not checkDisallowed(blockName) then
+				-- self:digUp()
+			-- end
+		-- end
+	-- end
+	
+	while not self:up() do
+		blockName = self:inspectUp(true)
+		if blockName then
+			local doMine = true
+			if safe then
+				doMine = checkSafe(blockName)
+			else
+				doMine = not checkDisallowed(blockName)
+			end
+			if doMine then
+				self:digUp()
+				sleep(0.25)
+				--print("digMoveUp", checkSafe(blockName), blockName)
+			else
+				print("NOT SAFE UP", blockName)
+				result = false
+				break
+			end
+		end
+		ct = ct+1
+		if ct>100 then
+			if turtle.getFuelLevel() == 0 then
+				self:refuel()
+				ct = 90
+			else
+				print("UNABLE TO MOVE UP")
+			end
+			result = false
+			break
+		end
+	end
+	self.taskList:remove(currentTask)
+	return result
+end
+
+
+function Miner:digToPos(x,y,z,safe)	
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	print("digToPos:", x, y, z, "safe:", safe)
+	-- TODO: if digToPos fails, retry with navigateToPos
+	-- 		if that fails as well (not immediately), return to digToPos
+	
+	-- inspect is unnecessary due to digMove inspecting on demand
+	local result = true
+	
+	if self.pos.x < x then
+		self:turnTo(3) -- +x
+		self:inspect()
+	elseif self.pos.x > x then
+		self:turnTo(1) -- -x
+		self:inspect()
+	end
+	while self.pos.x ~= x do
+		if not self:digMove(safe) then result = false; break end
+		self:inspect()
+		self:inspectDown()
+		self:inspectUp()
+	end
+	if result then
+		if self.pos.z < z then
+			self:turnTo(0) -- +z
+			self:inspect()
+		elseif self.pos.z > z then
+			self:turnTo(2) -- -z
+			self:inspect()
+		end
+		
+		while self.pos.z ~= z do
+			if not self:digMove(safe) then result = false; break end
+			self:inspect()
+			self:inspectDown()
+			self:inspectUp()
+		end
+		
+		if result then
+			while self.pos.y ~= y do
+				if self.pos.y < y then
+					if not self:digMoveUp(safe) then result = false; break end
+					self:inspect()
+					self:inspectUp()
+				else
+					if not self:digMoveDown(safe) then result = false; break end
+					self:inspect()
+					self:inspectDown()
+				end
+			end
+		end
+	end
+	self.taskList:remove(currentTask)
+	return result
+end
+
+function Miner:mineVein() 
 	--ore in front? dig, move, inspect
 	--ore left? turnleft, dig, move, inspect
 	--ore right? turnright, dig, move, inspect
@@ -923,57 +1117,69 @@ function Miner:mineVein(id)
 	--else repeat
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	
-	local ores
-	if not id then
-		ores = oreBlocks
-	elseif type(id) == "table" then
-		ores = id
-	else
-		ores = { [id]=true }
-	end
+	-- local ores
+	-- if not id then
+		-- ores = oreBlocks
+	-- elseif type(id) == "table" then
+		-- ores = id
+	-- else
+		-- ores = { [id]=true }
+	-- end
 	
 	local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
 	local startOrientation = self.orientation
 	local block
 	local ct = 0
+	local isInVein = false
 	
 	repeat
 	
 	self:inspectAll()
 	--in front
 	block = self.pos + self.vectors[self.orientation]
-	if ores[self:getMapValue(block.x, block.y, block.z)] then
+	if checkOreBlock(self:getMapValue(block.x, block.y, block.z)) then
 		self:digMove()
+		isInVein = true
 	else -- left
 		block = self.pos + self.vectors[(self.orientation-1)%4]
-		if ores[self:getMapValue(block.x, block.y, block.z)] then
+		if checkOreBlock(self:getMapValue(block.x, block.y, block.z)) then
 			self:turnLeft()
 			self:digMove()
+			isInVein = true
 		else -- right
 			block = self.pos + self.vectors[(self.orientation+1)%4]
-			if ores[self:getMapValue(block.x, block.y, block.z)] then
+			if checkOreBlock(self:getMapValue(block.x, block.y, block.z)) then
 				self:turnRight()
 				self:digMove()
+				isInVein = true
 			else -- behind
 				block = self.pos + self.vectors[(self.orientation+2)%4]
-				if ores[self:getMapValue(block.x, block.y, block.z)] then
+				if checkOreBlock(self:getMapValue(block.x, block.y, block.z)) then
 					self:turnRight()
 					self:turnRight()
 					self:digMove()
+					isInVein = true
 				else -- up
-					if ores[self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)] then
-						self:digUp()
-						self:up()
+					if checkOreBlock(self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)) then
+						self:digMoveUp()
+						isInVein = true
 					else -- down
-						if ores[self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z)] then
-							self:digDown()
-							self:down()
-						else -- nearest ore
-							local nextOre = self.map:findNextBlock(self.pos, ores, default.maxVeinRadius)
-							if nextOre then
-								self:digToPos(nextOre.x, nextOre.y, nextOre.z)
+						if checkOreBlock(self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z)) then
+							self:digMoveDown()
+							isInVein = true
+						else -- nearest ore, if ore has been found before
+							if isInVein then
+								local nextOre = self.map:findNextBlock(self.pos, 
+									self.checkOreBlock
+									,default.maxVeinRadius)
+								if nextOre then
+									self:digToPos(nextOre.x, nextOre.y, nextOre.z)
+								else
+									-- done
+									break
+								end
 							else
-								-- done
+								-- do not look if none has been found before
 								break
 							end
 						end
@@ -994,7 +1200,7 @@ end
 
 function Miner:stripMine(rowLength, rows, levels, rowFactor, levelFactor)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	
+	print("stripmining", "rows", rows, "levels", levels)
 	if not levels then levels = 1 end
 	local positiveLevel = true
 	if levels < 0 then 
@@ -1156,6 +1362,8 @@ function Miner:mineArea(start, finish)
 		end
 	end
 	
+	print("start", start,"end",finish)
+	
 	start = corners[minId]
 	finish = corners[((minId+3)%8)+1] -- opposite corner
 	
@@ -1191,9 +1399,16 @@ function Miner:mineArea(start, finish)
 		rowLength = width
 		rows = (depth+rowFactor)/rowFactor
 	end
-	levels = math.floor(((diff.y+levelFactor)/levelFactor)+0.5)
+	if diff.y < 0 then
+		levels = math.floor(((-height-levelFactor)/levelFactor)+0.5)
+	else
+		levels = math.floor(((height+levelFactor)/levelFactor)+0.5)
+	end
+	
 	rows = math.floor(rows+0.5)
 	--self.map:load()
+	
+		print("start", start,"end",finish, "diff", diff, "levels", levels)
 	
 	self:navigateToPos(start.x, start.y, start.z)
 	self:turnTo(orientation)
@@ -1225,8 +1440,7 @@ function Miner:tunnelUp(height)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	for i=1,height do
 		self:inspectMine()
-		self:digUp()
-		self:up()
+		self:digMoveUp()
 	end
 	self:inspectMine()
 	self.taskList:remove(currentTask)
@@ -1235,8 +1449,7 @@ function Miner:tunnelDown(height)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	for i=1,height do
 		self:inspectMine()
-		self:digDown()
-		self:down()
+		self:digMoveDown()
 	end
 	self:inspectMine()
 	self.taskList:remove(currentTask)
@@ -1262,24 +1475,40 @@ function Miner:navigateToPos(x,y,z)
 		local diff = self.pos - goal
 		local cost = math.abs(diff.x) + math.abs(diff.y) + math.abs(diff.z)	
 		local maxTries = cost / 2
-		if maxTries < 15 then maxTries = 15 end
+		if maxTries < 15 then maxTries = default.pathfinding.maxTries end
+		local maxParts = ( cost / default.pathfinding.maxDistance ) * 2
+		if maxParts < 2 then maxParts = default.pathfinding.maxParts end
 		local ct = 0
-
+		
+		local pathFinder = PathFinder()
+		pathFinder.checkValid = checkSafe
+		
 		repeat
 			ct = ct + 1
-			local path = self:aStar(self.pos, self.orientation, goal , self.map.map)
-			if path then 
-				if not self:followPath(path) then 
-					print("NOT SAFE TO FOLLOW PATH")
-					result = false
-				else result = true end
-			else
-				if not self:digToPos(self.home.x, self.home.y, self.home.z, true) then
-					--path was not safe
-					print("NOT SAFE TO DIG TO POS")
-					result = false
-				else result = true end
-			end
+			local countParts = 0
+			repeat 
+				countParts = countParts+1
+				local path = pathFinder:aStarPart(self.pos, self.orientation, goal , self.map, nil)
+				if path then 
+					if not self:followPath(path) then 
+						print("NOT SAFE TO FOLLOW PATH")
+						result = false
+					else 
+						if self.pos == goal then
+							result = true 
+						else
+							result = false
+						end
+					end
+				else
+					if not self:digToPos(self.home.x, self.home.y, self.home.z, true) then
+						--path was not safe
+						print("NOT SAFE TO DIG TO POS")
+						result = false
+						countParts = maxParts
+					else result = true end
+				end
+			until result == true or countParts >= maxParts
 		until result == true or ct >= maxTries
 	end
 	
@@ -1291,254 +1520,14 @@ function Miner:navigateToPos(x,y,z)
 	return result
 end
 
-function Miner:reconstructPath(flatPath, cameFrom, currentNode)
-	-- doesnt have to be recursive ...
-	local fromNode = cameFrom[self:posToString(currentNode)]
-	if fromNode then
-		table.insert(flatPath, 1, fromNode) 
-		return self:reconstructPath(flatPath, cameFrom, fromNode)
-	else
-		return flatPath
-	end
-end
-
-function Miner:calculateHeuristic(current,goal)
-	--manhattan = orthogonal
-	local h = math.abs(current.x - goal.x) + math.abs(current.y - goal.y) + math.abs(current.z - goal.z)
-	--local h = math.sqrt((current.x-goal.x)^2 + (current.y+goal.y)^2 + (current.z+goal.z)^2)
-	return h
-	-- --diagonal = 8 richtigungen mit grid
-	-- dx = abs(current – goal.x)
-	-- dy = abs(current – goal.y)
-	-- dz = abs(current.z - goal.z)
-	-- -- D = length of node (cost) ... 
-	-- -- D2 is diagonal distance = sqrt(2) <-- 2D
-	-- h = D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
-
-	--euclidian = omnidirektional (ohne grid)
-end
-
-function Miner:posToId(pos)
-	--return self:xyzToId(pos.x, pos.y, pos.z)
-	return self.map:xyzToId(pos.x, pos.y, pos.z)
-end
-
-function Miner:posToString(pos, orientation)
-    if orientation then
-        return pos.x .. ',' .. pos.y .. ',' .. pos.z .. ':' .. orientation
-    else
-        return pos.x .. ',' .. pos.y .. ',' .. pos.z
-    end
-end
-
-function Miner:posFromString(str) end
-
---REWRITE GETBLOCK BECAUSE ITS RELATIVE Miner:getBlockUp
-function Miner:getBlockForward(current)
-	local block = { pos = current.pos + self.vectors[current.orientation], orientation = current.orientation }
-	return block
-end
-function Miner:getBlockUp(current)
-	--if not current then current = { pos = self.pos, orientation = self.orientation } end
-	local block = { pos = vector.new(current.pos.x, current.pos.y+1, current.pos.z), orientation = current.orientation }
-	return block
-end
-function Miner:getBlockDown(current)
-	local block = { pos = vector.new(current.pos.x, current.pos.y-1, current.pos.z), orientation = current.orientation }
-	return block
-end
-function Miner:getBlockLeft(current)
-	-- self reference is missing
-	local block = { pos = current.pos + self.vectors[(current.orientation-1)%4], orientation = (current.orientation-1)%4 }
-	return block
-end
-function Miner:getBlockRight(current)
-	local block = { pos = current.pos + self.vectors[(current.orientation+1)%4], orientation = (current.orientation+1)%4 }
-	return block
-end
-function Miner:getBlockBack(current)
-	local block = { pos = current.pos + self.vectors[(current.orientation+2)%4], orientation = (current.orientation+2)%4 }
-	return block
-end
-
-function Miner:checkValidNode(block, map)
-	local blockName = self:getMapValue(block.x, block.y, block.z)
-	-- if blockName and ( blockName == 0 or mineBlocks[blockName] or oreBlocks[blockName] ) then
-	-- --UNCOMMENTED: allow digging through unknown blocks.
-		-- return true
-	-- end
-	-- return false
-	return self:checkSafe(blockName)
-end
-
-function Miner:getNeighbours(current, map)
-	local neighbours = {}
-	-- neighbour = { pos, orientation }
-	local neighbour
-	
-	neighbour = self:getBlockDown(current)
-	if self:checkValidNode(neighbour.pos, map) == true then
-		table.insert(neighbours, neighbour)
-	end
-	neighbour = self:getBlockUp(current)
-	if self:checkValidNode(neighbour.pos, map) == true then
-		table.insert(neighbours, neighbour)
-	end
-	
-	neighbour = self:getBlockLeft(current)
-	if self:checkValidNode(neighbour.pos, map) == true then
-		table.insert(neighbours, neighbour)
-	end
-	neighbour = self:getBlockRight(current)
-	if self:checkValidNode(neighbour.pos, map) == true then
-		table.insert(neighbours, neighbour )
-	end
-	neighbour = self:getBlockBack(current)
-	if self:checkValidNode(neighbour.pos, map) == true then
-		table.insert(neighbours, neighbour)
-	end
-	
-	neighbour = self:getBlockForward(current)
-	if self:checkValidNode(neighbour.pos, map) == true then
-		table.insert(neighbours, neighbour)
-	end
-	
-	return neighbours
-end
-
-costOrientation = {
-[0] = 1, 	-- forward, up, down
-[2] = 1.75, -- back
-[-2] = 1.75, -- back
-[-1] = 1.5, -- left
-[3] = 1.5,	-- left
-[1] = 1.5,	-- right
-[-3] = 1.5,	-- right
-}
-
---KEEP COSTS LOW BECAUSE HEURISTIC VALUE IS ALSO SMALL IN DIFFERENCE
-
-function Miner:calculateCost(current,neighbour)
-	
-	local cost = costOrientation[(neighbour.orientation-current.orientation)]
-	neighbour.blockName = self:getMapValue(neighbour.pos.x, neighbour.pos.y, neighbour.pos.z)
-	--TODO: move mapCheck to checkValidNode and attach blockName to neighbour
-	
-	if neighbour.blockName then
-		--block already explored
-		if neighbour.blockName == 0 then
-			-- no extra cost
-		else
-			-- if block is mineable is checked in checkValidNode -> not yet
-			cost = cost + 0.75 -- 0.75 fastest
-			-- WARNING: we dont neccessarily know which block comes after this one...
-		end
-	else
-		-- it is unknown what type of block is here could be air, could be a chest
-		-- SOLUTION -> recalculate path when it is blocked by a disallowed block
-		cost = cost + 1.5 -- 1.5 fastest
-	end
-	return cost
-end
-
-function Miner:aStar(startPos, startOrientation, finishPos, map)
-	-- very good path for medium distances
-	-- e.g. navigateHome
-	-- start and finish must be free!
-	if not self:checkValidNode(finishPos, map) then
-		print("ASTAR: FINISH NOT VALID", self:getMapValue(finishPos.x, finishPos.y, finishPos.z))
-		self:setMapValue(finishPos.x, finishPos.y, finishPos.z,0)
-		-- override current map value
-	end
-	
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	local start = { pos = startPos, orientation = startOrientation }
-	local finish = { pos = finishPos }
-	start.blockName = 0 -- for followPath
-	
-	local gScore = {}
-	local startId = self:posToId(start.pos)
-	gScore[startId] = 0
-	start.gScore = 0
-	start.fScore = self:calculateHeuristic(start.pos, finish.pos)
-	
-	local open = Heap()
-	local closed = {}
-	open.Compare = function(a,b)
-		return a.fScore < b.fScore
-	end
-	open:Push(start)
-	
-	local ct = 0
-	
-	while not open:Empty() do
-		ct = ct + 1
-		
-		local current = open:Pop()
-		--logger:add(tostring(current.pos))
-		
-		local currentId = self:posToId(current.pos)
-		if not closed[currentId] then
-			if current.pos == finish.pos then
-				local path = {}
-				while true do
-					if current.previous then
-						table.insert(path, 1, current)
-						current = current.previous
-					else
-						table.insert(path, 1, start)
-						print("FOUND PATH, MOVES:", #path, "ITERATIONS:", ct)
-						self.taskList:remove(currentTask)
-						return path
-					end		
-				end
-			end
-			closed[currentId] = true
-			
-			local neighbours = self:getNeighbours(current, map)
-			for i=1, #neighbours do
-				local neighbour = neighbours[i]
-				local neighbourId = self:posToId(neighbour.pos)
-				if not closed[neighbourId] then
-					local addedGScore = current.gScore + self:calculateCost(current,neighbour)
-					
-					neighbour.gScore = gScore[neighbourId]
-					if not neighbour.gScore or addedGScore < neighbour.gScore then
-						gScore[neighbourId] = addedGScore
-						neighbour.gScore = addedGScore
-						
-						if not neighbour.hScore then
-							neighbour.hScore = self:calculateHeuristic(neighbour.pos,finish.pos)
-						end
-						neighbour.fScore = addedGScore + neighbour.hScore
-						
-						open:Push(neighbour)
-						neighbour.previous = current
-					end
-				end
-			end
-		end
-		if ct > 1000000 then
-			print("NO PATH FOUND")
-			self.taskList:remove(currentTask)
-			return nil
-		end
-		if ct%10000 == 0 then
-			sleep(0.001) -- to avoid timeout
-		end
-	end
-	self.taskList:remove(currentTask)
-	return nil
-	--https://github.com/GlorifiedPig/Luafinding/blob/master/src/luafinding.lua
-end
-
 function Miner:followPath(path)
 	-- safe function
-	print("FOLLOWING PATH TO", path[#path].pos)
+	--print("FOLLOWING PATH TO", path[#path].pos)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = true
+	local safe = true -- always safe?
 	for _,step in ipairs(path) do
-		if step.pos ~= self.pos then
+		if step.pos ~= self.pos  then
 			local diff = step.pos - self.pos
 			local newOr
 			local upDown = 0
@@ -1548,38 +1537,32 @@ function Miner:followPath(path)
 			elseif diff.z > 0 then newOr = 0
 			elseif diff.y < 0 then upDown = -1
 			else upDown = 1 end
-			
-			--TODO: check if path is blocked by a block that is not allowed to mine
-			-- while following: check if safeDigMove fails 
-			-- -> compare Block to Block from map,
-			-- -> recalculate Path, repeat, done
-			
-			
+	
 			if upDown > 0 then
-				if not self:safeDigUp() then 
-					print("1")
+				if not self:digMoveUp(safe) then 
 					result = false --return false
 					break
 				end
-				self:up()
 			elseif upDown < 0 then
-				if not self:safeDigDown() then 
-					print("2")
+				if not self:digMoveDown(safe) then 
 					result = false --return false
 					break
 				end
-				self:down()
 			else
-				if (newOr-2)%4 == self.orientation and step.blockName == 0 then
-					self:back()
+				if (newOr-2)%4 == self.orientation and step.block == 0 then
+					if not self:back() then
+						self:turnTo(newOr)
+						print("cannot move backwards")
+						result = false
+						break
+					end
 				else
 					if newOr ~= self.orientation then
 						self:turnTo(newOr)
 						self:inspect() --inspect left / right
 					end
-					if not self:safeDigMove() then
-						print("3")
-						result = false --return false
+					if not self:digMove(safe) then
+						result = false
 						break
 					end
 				end

@@ -6,7 +6,7 @@ list = {}
 miner = nil
 err = nil
 node = nil
-nodeStatus = nil
+nodeStream = nil
 
 handleError = function(err,status)
 	if not status then

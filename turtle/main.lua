@@ -1,7 +1,7 @@
 
-tasks = global.tasks
-list = global.list
-miner = global.miner
+local tasks = global.tasks
+local list = global.list
+local miner = global.miner
 
 function openTab(task_2, task_3)
 	--TODO: error handling has to be done by the file itself

@@ -52,6 +52,21 @@ function List:remove(n)
             n._prev._next = nil
             self.last = n._prev -- n._next holy maccaroni
         else
+			if n ~= self.first and n ~= self.last then	
+				f = fs.open("trace.txt", "r")
+				local text = ""
+				if f then 
+					text = f.readAll() 
+					f.close()
+				end
+				
+				f = fs.open("trace.txt", "w")
+				f.write(text.." END")
+				f.write(textutils.serialize(debug.traceback()))
+				f.close()
+				--print(debug.traceback())
+				--error("asd")
+			end
             assert(n == self.first and n == self.last)
             self.first = nil
             self.last = nil
@@ -85,3 +100,31 @@ function List:getPrev(n)
         return self.last
     end
 end   
+
+function List:toString()
+	local text = ""
+	node = self:getFirst()
+	while node do
+		text = text .. ":" .. textutils.serialize(node[1])
+		node = self:getNext(node)
+	end
+	return text
+end
+
+function List:moveToFront(n)
+	-- for least recently used functionality. not used
+	if n == self.first then
+		return
+	end
+	if n._prev then
+		n._prev._next = n._next
+	end
+	if n._next then
+		n._next._prev = n._prev
+	end
+	if n == self.last then
+		self.last = n._prev
+	end
+	self.count = self.count - 1
+	return self:add(n)
+end
