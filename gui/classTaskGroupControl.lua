@@ -1,9 +1,9 @@
 
-require("classButton")
-require("classLabel")
-require("classWindow")
-require("classFrame")
-require("classTaskSelector")
+local Button = require("classButton")
+local Label = require("classLabel")
+local Window = require("classWindow")
+local Frame = require("classFrame")
+local TaskSelector = require("classTaskSelector")
 
 local default = {
 	colors = {
@@ -18,7 +18,7 @@ local default = {
 	height = 7,
 }
 
-TaskGroupControl = Window:new()
+local TaskGroupControl = Window:new()
 
 function TaskGroupControl:new(x,y,taskGroup,node,taskGroups)
 	local o = o or Window:new(x,y,default.width,default.height) or {}
@@ -260,3 +260,5 @@ function TaskGroupControl:deleteGroup()
 	end
 	return true
 end
+
+return TaskGroupControl

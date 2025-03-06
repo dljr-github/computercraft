@@ -1,4 +1,4 @@
-GPU = 
+local GPU = 
 {
 prvBackgroundColor,
 prvTextColor,
@@ -82,3 +82,5 @@ function GPU:drawBox(x,y,width,height,color)
     self:restoreColor()
     
 end
+
+return GPU

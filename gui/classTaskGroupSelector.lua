@@ -1,7 +1,7 @@
-require("classButton")
-require("classLabel")
-require("classWindow")
-require("classFrame")
+local Button = require("classButton")
+local Label = require("classLabel")
+local Window = require("classWindow")
+local Frame = require("classFrame")
 require("classTaskGroup")
 
 local default = {
@@ -22,7 +22,7 @@ local default = {
 	}
 }
 
-TaskGroupSelector = Window:new()
+local TaskGroupSelector = Window:new()
 
 function TaskGroupSelector:new(x,y,turtles,node,taskGroups)
 	local o = o or Window:new(x,y,width or default.width ,height or default.height ) or {}
@@ -287,3 +287,4 @@ function TaskGroupSelector:navigateToPos()
 	end
 end
 
+return TaskGroupSelector

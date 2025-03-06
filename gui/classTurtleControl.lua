@@ -1,9 +1,9 @@
 
-require("classButton")
-require("classLabel")
-require("classWindow")
-require("classFrame")
-require("classTaskSelector")
+local Button = require("classButton")
+local Label = require("classLabel")
+local Window = require("classWindow")
+local Frame = require("classFrame")
+local TaskSelector = require("classTaskSelector")
 
 local default = {
 	colors = {
@@ -24,7 +24,7 @@ local default = {
 	},
 }
 
-TurtleControl = Window:new()
+local TurtleControl = Window:new()
 
 function TurtleControl:new(x,y,data,node)
 	local o = o or Window:new(x,y,default.collapsed.width,default.collapsed.height) or {}
@@ -307,3 +307,5 @@ function TurtleControl:deleteTurtle()
 	end
 	return true
 end
+
+return TurtleControl

@@ -1,6 +1,6 @@
 local defaultBackgroundColor = colors.gray
 
-Box = {}
+local Box = {}
 
 function Box:new(x,y,width,height,color)
     local o = o or {}
@@ -81,3 +81,5 @@ function Box:redraw()
 		end
 	end
 end
+
+return Box

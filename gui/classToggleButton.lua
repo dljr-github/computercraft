@@ -1,11 +1,11 @@
-require("classButton")
+local Button = require("classButton")
 
 local defaultColorOn = colors.green
 local defaultColorOff = colors.red
 local defaultTextOn = "ON"
 local defaultTextOff = "OFF"
 
-ToggleBtn = Button:new()
+local ToggleBtn = Button:new()
 
 function ToggleBtn:new(x,y,width,height,colorOn,colorOff)
 	local o = o or Button:new(defaultTextOn, x,y,width ,height, colorOn or defaultColorOn)
@@ -61,3 +61,4 @@ function ToggleBtn:setTextOff(text)
 	self:refresh()
 end
 	
+return ToggleBtn

@@ -1,11 +1,11 @@
-require("classButton")
+local Button = require("classButton")
 
 local defaultBackgroundColor = colors.black
 local defaultHeight = 1
 local defaultTextOn = "[X]"
 local defaultTextOff = "[ ]"
 
-CheckBox = Button:new()
+local CheckBox = Button:new()
 
 function CheckBox:new(x,y,text,active, width,height,color)
 	local o = o or Button:new(text, x,y,width ,height or defaultHeight, color or defaultBackgroundColor)
@@ -62,3 +62,4 @@ function CheckBox:setTextOff(text)
 	self:refresh()
 end
 	
+return CheckBox

@@ -1,19 +1,19 @@
-require("classMonitor")
-require("classButton")
-require("classGPU")
-require("classBox")
-require("classToggleButton")
-require("classFrame")
-require("classLabel")
+local Monitor = require("classMonitor")
+local Button = require("classButton")
+local GPU = require("classGPU")
+local Box = require("classBox")
+local ToggleButton = require("classToggleButton")
+local Frame = require("classFrame")
+local Label = require("classLabel")
 --require("classBluenetNode")
 --require("classNetworkNode")
-require("classCheckBox")
-require("classWindow")
+local CheckBox = require("classCheckBox")
+local Window = require("classWindow")
 require("classMap")
-require("classMapDisplay")
-require("classTurtleControl")
-require("classTaskGroupSelector")
-require("classTaskGroupControl")
+local MapDisplay = require("classMapDisplay")
+local TurtleControl = require("classTurtleControl")
+local TaskGroupSelector = require("classTaskGroupSelector")
+local TaskGroupControl = require("classTaskGroupControl")
 
 local default = {
 	colors = {
@@ -22,7 +22,7 @@ local default = {
 }
 local global = global
 
-HostDisplay = Window:new()
+local HostDisplay = Window:new()
 
 function HostDisplay:new(x,y,width,height)
 	local o = o or Window:new(x,y,width,height)
@@ -65,11 +65,13 @@ function HostDisplay:initialize()
 	self.winMain.btnTerminate = Button:new("STOP", self:getWidth()-9,1,10,3,colors.red)
 	self.winMain.btnGlobalReboot = Button:new("REBOOT ALL", self:getWidth()-9,7,11,3)
 	self.winMain.btnGlobalRebootSlow = Button:new("REBOOT SLW", self:getWidth()-9,10,11,3)
+	self.winMain.btnGlobalShutdown = Button:new("SHUTDOWN", self:getWidth()-9,13,11,3,colors.pink)
 	
 	self.winMain.btnReboot.click = function() self:reboot() end
 	self.winMain.btnTerminate.click = function() return self:terminate() end
 	self.winMain.btnGlobalReboot.click = function() return self:globalReboot(false) end
 	self.winMain.btnGlobalRebootSlow.click = function() return self:globalReboot(true) end
+	self.winMain.btnGlobalShutdown.click = function() return self:globalShutdown() end
 	
 	self.winMain:addObject(self.winMain.lblHeading)
 	self.winMain:addObject(self.winFunctions)
@@ -78,7 +80,7 @@ function HostDisplay:initialize()
 	self.winMain:addObject(self.winMain.btnTerminate)
 	self.winMain:addObject(self.winMain.btnGlobalReboot)
 	self.winMain:addObject(self.winMain.btnGlobalRebootSlow)
-	
+	self.winMain:addObject(self.winMain.btnGlobalShutdown)
 	
 	-- add functions window objects
 	self.winFunctions.frmFunctions = Frame:new("Functions",1,1,20,20)
@@ -170,25 +172,25 @@ end
 function HostDisplay:redraw()
 	-- only redraw the top window and set the rest invisible
 	-- get first visible window
-	local winTop = self.objects:getFirst()
+	local winTop = self.objects.first
 	local o = winTop
 	while o do
 		if o.visible then
 			winTop = o
 			break
 		end
-		o = self.objects:getNext(o)
+		o = o._next
 	end
 	
 	-- set other windows invisible
-	local o = self.objects:getNext(winTop)
+	local o = winTop._next
 	while o do
 		if o.setVisible then
 			o:setVisible(false)
 		else
 			o.visible = false
 		end
-		o = self.objects:getNext(o)
+		o = o._next
 	end
 	
 	-- make sure the window is set to visible
@@ -227,27 +229,29 @@ function HostDisplay:displayTurtles()
 	return true
 end
 function HostDisplay:updateTurtles()
-	local y = 3
-	local prvHeight = 1
-	for id,data in pairs(self.turtles) do
+	if self.winTurtles.visible then 
+		local y = 3
+		local prvHeight = 1
 		local turtleControls = self.winTurtles.turtleControls
-		if not turtleControls[id] then 		
-			turtleControls[id] = TurtleControl:new(1,y,data.state,self.node)
-			self.winTurtles:addObject(turtleControls[id])
-			turtleControls[id]:fillWidth()
-			turtleControls[id]:setHostDisplay(self)
-			self.winTurtles.turtleCt = self.winTurtles.turtleCt + 1
-		else
-			if prvHeight > 3 and turtleControls[id]:getHeight() > 3 then
-				y = y - 1
+		for id,data in pairs(self.turtles) do
+			if not turtleControls[id] then 		
+				turtleControls[id] = TurtleControl:new(1,y,data.state,self.node)
+				self.winTurtles:addObject(turtleControls[id])
+				turtleControls[id]:fillWidth()
+				turtleControls[id]:setHostDisplay(self)
+				self.winTurtles.turtleCt = self.winTurtles.turtleCt + 1
+			else
+				if prvHeight > 3 and turtleControls[id]:getHeight() > 3 then
+					y = y - 1
+				end
+				turtleControls[id]:setY(y)
+				turtleControls[id]:setData(data.state)
 			end
-			turtleControls[id]:setY(y)
-			turtleControls[id]:setData(data.state)
+			y = y + turtleControls[id]:getHeight()
+			prvHeight = turtleControls[id]:getHeight()
 		end
-		y = y + turtleControls[id]:getHeight()
-		prvHeight = turtleControls[id]:getHeight()
+		self.winTurtles:redraw()
 	end
-	self.winTurtles:redraw()
 end
 function HostDisplay:deleteTurtle(id)
 	if self.turtles[id] then
@@ -283,21 +287,23 @@ function HostDisplay:addGroup()
 end
 
 function HostDisplay:updateGroups()
-	for id,taskGroup in pairs(self.taskGroups) do
+	if self.winGroups.visible then 
 		local taskControls = self.winGroups.taskGroupControls
-		if not taskControls[id] then 
-			
-			taskControls[id] = TaskGroupControl:new(1,3+6*self.winGroups.groupCt,
-				taskGroup,self.node,self.taskGroups)
-			self.winGroups:addObject(taskControls[id])
-			taskControls[id]:fillWidth()
-			taskControls[id]:setHostDisplay(self)
-			self.winGroups.groupCt = self.winGroups.groupCt + 1
-		else
-			-- nothing
+		for id,taskGroup in pairs(self.taskGroups) do
+		
+			if not taskControls[id] then 		
+				taskControls[id] = TaskGroupControl:new(1,3+6*self.winGroups.groupCt,
+					taskGroup,self.node,self.taskGroups)
+				self.winGroups:addObject(taskControls[id])
+				taskControls[id]:fillWidth()
+				taskControls[id]:setHostDisplay(self)
+				self.winGroups.groupCt = self.winGroups.groupCt + 1
+			else
+				-- nothing
+			end
 		end
+		self.winGroups:redraw()
 	end
-	self.winGroups:redraw()
 end
 function HostDisplay:deleteGroup(id)
 	if self.taskGroups[id] then
@@ -316,11 +322,18 @@ function HostDisplay:globalReboot(slow)
 		if slow then 
 		for id,turtle in pairs(self.turtles) do
 			self.node:send(id, {"REBOOT"},false,false)
-			sleep(0.5)
+			sleep(0.15)
 		end
 		else
 			self.node:broadcast({"REBOOT"},true)
 		end
+	end
+	--self:reboot()
+end
+
+function HostDisplay:globalShutdown()
+	if self.node then
+		self.node:broadcast({"SHUTDOWN"},true)
 	end
 	--self:reboot()
 end
@@ -333,20 +346,24 @@ function HostDisplay:beforeTerminate()
 end
 
 function HostDisplay:reboot()
-	self:beforeTerminate()
 	self:clear()
-    self:setCursorPos((self:getWidth()-10)/2,self:getHeight()/2)
+    self:setCursorPos(math.floor((self:getWidth()-10)/2),math.floor(self:getHeight()/2))
     self:write("REBOOTING")
+	self:update()
+	self:beforeTerminate()
 	-- self.node:broadcast({"REBOOT"},true)
     os.reboot()
 end
 
 function HostDisplay:terminate()
-	self:beforeTerminate()
 	global.running = false
 	self:clear()
-	self:setCursorPos((self:getWidth()-10)/2,self:getHeight()/2)
+	self:setCursorPos(math.floor((self:getWidth()-10)/2),math.floor(self:getHeight()/2))
 	self:write("TERMINATED")
+	self:update()
+	self:beforeTerminate()
 	print("TERMINATED")
 	return true
 end
+
+return HostDisplay

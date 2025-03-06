@@ -1,4 +1,5 @@
-require("classButton")
+local Button = require("classButton")
+local Window = require("classWindow")
 
 local default = {
 	colors = {
@@ -13,7 +14,7 @@ local default = {
 	}
 }
 
-TaskSelector = Window:new()
+local TaskSelector = Window:new()
 
 function TaskSelector:new(x,y,width,height)
 	local o = o or Window:new(x,y,width or default.width ,height or default.height ) or {}
@@ -153,3 +154,5 @@ function TaskSelector:reboot()
 		self:close()
 	end
 end
+
+return TaskSelector

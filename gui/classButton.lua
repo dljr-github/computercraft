@@ -1,4 +1,4 @@
-require("classBox")
+local Box = require("classBox")
 
 local defaultBackgroundColor = colors.gray
 local defaultTextColor = colors.white
@@ -7,7 +7,7 @@ local defaultWidth = 10
 local defaultHeight = 3
 local blinkTime = 0.12
 
-Button = Box:new()
+local Button = Box:new()
 
 function Button:new(text,x,y,width,height,color)
     local o = o or Box:new(x,y,width or defaultWidth,height or defaultHeight,color or defaultBackgroundColor)
@@ -42,9 +42,11 @@ function Button:blink()
 	if self.parent then
 		self:setBackgroundColor(self.disabledColor)
 		self:redraw()
+		self.parent:update() 
 		sleep(blinkTime)
 		self:setBackgroundColor(col)
 		self:redraw()
+		self.parent:update()
 	end
 end
 function Button:handleClick()
@@ -76,11 +78,7 @@ function Button:redraw()
     
     --text
 	if self.parent and self.visible then
-		self.parent:setBackgroundColor(self.backgroundColor)
-		self.parent:setTextColor(self.textColor)
-		self.parent:setCursorPos(self.midX, self.midY)
-		self.parent:write(self.text)
-		self.parent:restoreColor()
+		self.parent:drawText(self.midX, self.midY, self.text, self.textColor, self.backgroundColor)
 	end
 end
 
@@ -100,3 +98,5 @@ end
 function Button:setDisabledColor(color)
 	self.disabledColor = color
 end
+
+return Button

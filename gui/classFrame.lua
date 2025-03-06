@@ -1,11 +1,11 @@
-require("classBox")
+local Box = require("classBox")
 
 local default = {
 	borderColor = colors.gray,
 	backgroundColor = colors.black,
 	textColor = colors.white
 }
-Frame = Box:new()
+local Frame = Box:new()
 
 function Frame:new(text,x,y,width,height,borderColor)
 	local o = o or Box:new(x,y,width,height,default.backgroundColor)
@@ -46,6 +46,8 @@ function Frame:redraw()
 	
 	--Label
 	if self.parent and self.visible then
-		self.parent:drawText(self.x+3, self.y, " " .. self:getText() .. " ", self.textColor)
+		self.parent:drawText(self.x+3, self.y, " " .. self:getText() .. " ", self.textColor, self.backgroundColor)
 	end
 end
+
+return Frame
