@@ -21,10 +21,12 @@ local chunkOffsetY = math.ceil(64/default.chunkSize)
 local chunkOffsetX = math.ceil(448/default.chunkSize)
 local chunkOffsetZ = math.ceil(896/default.chunkSize)
 
+-- efficient storage, not memory though: https://github.com/Fatboychummy-CC/Simplify-Mapping/blob/main/mapping/file_io.lua
 
 -- for performance perhaps
 local osEpoch = os.epoch -- do not use "local" -> worse performance
 local floor = math.floor
+local sqrt = math.sqrt
 local sqSize = default.chunkSize^2
 
 ChunkyMap = {}
@@ -79,7 +81,7 @@ function ChunkyMap:setMaxChunks(maxChunks)
 end
 function ChunkyMap:setLifeTime(lifeTime)
 	self.lifeTime = lifeTime
-	self.cleanInterval = math.floor(self.lifeTime/2)
+	self.cleanInterval = floor(self.lifeTime/2)
 end
 
 
@@ -129,12 +131,12 @@ local xyzToRelativeChunkId = ChunkyMap.xyzToRelativeChunkId
 
 function ChunkyMap.undoCantorPairing(id)
 	-- undo cantor pairing
-	local w = math.floor( ( math.sqrt( 8 * id + 1 ) - 1 ) / 2 )
+	local w = floor( ( sqrt( 8 * id + 1 ) - 1 ) / 2 )
 	local t = ( w^2 + w ) / 2
 	local z = id - t
 	local temp = w - z
 	
-	w =  math.floor( ( math.sqrt( 8 * temp + 1 ) - 1 ) / 2 )
+	w =  floor( ( sqrt( 8 * temp + 1 ) - 1 ) / 2 )
 	t = ( w^2 + w ) / 2
 	local y = temp - t
 	local x = w - y
@@ -181,9 +183,6 @@ function ChunkyMap:save()
 end
 
 function ChunkyMap:saveChunk(chunkId)
-	if not chunkId then
-		print(textutils.serialize(debug.traceback()))
-	end
 	local path = default.folder .. chunkId .. ".txt"
 	local f = fs.open(path,"w")
 	f.write(textutils.serialize(self.chunks[chunkId]))
@@ -231,6 +230,10 @@ function ChunkyMap:loadChunk(chunkId)
 	return result
 end
 
+-- TODO: Optimization: keep latest chunk in latestChunk, to reduce accessChunk calls
+--		 only keep it while chunkId stays unchanged
+-- 		 Increment accessCount and lastAccess in getData/setData
+
 function ChunkyMap:accessChunk(chunkId,writing,realAccess)
 	local chunk = self.chunks[chunkId]
 	if not chunk then
@@ -254,6 +257,8 @@ function ChunkyMap:accessChunk(chunkId,writing,realAccess)
 		chunk._accessCount = (chunk._accessCount or 0) + 1
 		chunk._lastAccess = osEpoch()
 	end
+	-- self.currentChunk = chunk 
+	-- self.currentChunkId = chunkId
 	return chunk
 end
 
@@ -277,7 +282,7 @@ end
 function ChunkyMap:setChunkData(chunkId,relativeId,data,real)
 	-- no translation needed -> ids are known so translation should have happenend by now
 	local chunk = self:accessChunk(chunkId,true,real)
-	if chunk then
+	if chunk then -- and chunk[relativeId] ~= data then -- not really needed here
 		if real then
 			table.insert(self.log,{chunkId,relativeId,data})
 			--self.log[#self.log]
@@ -300,8 +305,19 @@ function ChunkyMap:setData(x,y,z,data,real)
 	local relativeId = xyzToRelativeChunkId(x,y,z)
 	local value = (nameToId[data] or data)
 	
+	-- if self.currentChunkId == chunkId then 
+		-- -- skip accessChunk
+		-- chunk = self.currentChunk
+		-- if real then 
+			-- chunk._accessCount = chunk._accessCount + 1
+			-- chunk._lastAccess = osEpoch()
+		-- end
+	-- else
+		-- chunk = self:accessChunk(chunkId,true,real)
+	-- end
+	
 	local chunk = self:accessChunk(chunkId,true,real)
-	if chunk then
+	if chunk and chunk[relativeId] ~= value then
 		if real then
 			table.insert(self.log,{chunkId,relativeId,value})
 		end
@@ -309,8 +325,9 @@ function ChunkyMap:setData(x,y,z,data,real)
 	end
 end
 
+local bedrockLevel = default.bedrockLevel
 function ChunkyMap:getData(x,y,z)
-	if y <= default.bedrockLevel then
+	if y <= bedrockLevel then
 		return -1
 	else
 		local chunk = self:accessChunk(xyzToChunkId(x,y,z),false,true)
@@ -323,6 +340,11 @@ function ChunkyMap:getData(x,y,z)
 	return nil
 end
 
+
+function ChunkyMap:resetChunk(chunkId)
+	-- to avoid impossible path finiding tasks
+	self.chunks[chunkId] = {}
+end
 
 function ChunkyMap:lockChunk(chunkId)
 	-- prevent chunk from being cleared from cache
@@ -457,23 +479,14 @@ local function manhattanDistance(sx,sy,sz,ex,ey,ez)
 end
 
 function ChunkyMap:findNextBlock(curPos, checkFunction, maxDistance)
-	-- TODO if type(id) == "Table" then ...
+
 	if not maxDistance or maxDistance > default.maxFindDistance then 
 		maxDistance = default.maxFindDistance end
-	-- local ores
-	-- if not id then
-		-- ores = oreBlocks
-	-- elseif type(id) == "table" then
-		-- ores = id
-	-- else
-		-- ores = { [id]=true }
-	-- end
 	
 	local start = os.epoch("local")
 	local ct = 0
 	local chunkCt = 0
-	-- TODO: do not check entire table with pairs, only entries within maxDistance cube
-	-- -> more performant with big maps
+	
 	local minDist = -1
 	local minPos = nil
 	
@@ -578,7 +591,7 @@ function ChunkyMap:findNextBlock(curPos, checkFunction, maxDistance)
 				-- fully check the chunk
 				ct = ct +1
 				
-				if checkFunction(nil,idToName[block] or block) then -- 40 ms
+				if checkFunction(idToName[block] or block) then -- 40 ms
 					
 					if type(id) == "number" then 
 						-- because of paris loop, _accessCount is also looped
@@ -723,12 +736,12 @@ end
 local posToId = ChunkyMap.posToId
 
 function ChunkyMap.idToXYZ(id)
-	local w = math.floor( ( math.sqrt( 8 * id + 1 ) - 1 ) / 2 )
+	local w = floor( ( sqrt( 8 * id + 1 ) - 1 ) / 2 )
 	local t = ( w^2 + w ) / 2
 	local z = id - t
 	local temp = w - z
 	
-	w =  math.floor( ( math.sqrt( 8 * temp + 1 ) - 1 ) / 2 )
+	w =  floor( ( sqrt( 8 * temp + 1 ) - 1 ) / 2 )
 	t = ( w^2 + w ) / 2
 	local y = temp - t
 	local x = w - y

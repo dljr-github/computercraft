@@ -109,6 +109,42 @@ local function calculateCost(current,neighbour)
 	return cost
 end
 
+function PathFinder:checkPossible(startPos, startOrientation, finishPos, map, distance, doReset)
+	-- reverse search
+	distance = distance or default.distance * 2
+	local path, closed = self:aStarPart(finishPos,0,startPos,map,distance)
+	if path then 
+		--print(#path, path[#path].pos, startPos)
+		if path[#path].pos == startPos then
+			-- return the reversed path
+			local reversed = {}
+			local ct = 0
+			for i = #path, 1, -1 do
+				ct = ct + 1
+				reversed[ct] = path[i]
+			end
+			return reversed
+		else
+			-- not neccessarily impossible but out of the search range
+			return false
+		end
+	else
+		if doReset then 
+			print("RESET CLOSED")
+			-- set the visited blocks to nil
+			for x,closedx in pairs(closed) do
+				for y,closedy in pairs(closedx) do
+					for z,_ in pairs(closedy) do
+						map:setData(x,y,z,nil,true)
+					end
+				end
+			end
+		end
+		return false
+	end
+	
+end
+
 function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distance)
 	-- very good path for medium distances
 	-- e.g. navigateHome
@@ -176,15 +212,16 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 		ct = ct + 1
 		
 		local current = open:Pop()
+		local cx,cy,cz = current.x, current.y, current.z
 		--logger:add(tostring(current.pos))
 		
 		--local currentId = xyzToId(current.x, current.y, current.z)
 		--print(currentId)
 
 		
-		if not closed[current.x][current.y][current.z] then
-			if current.x == finish.x and current.y == finish.y and current.z == finish.z
-			or abs(current.x - start.x) + abs(current.y - start.y) + abs(current.z - start.z) >= distance then
+		if not closed[cx][cy][cz] then
+			if cx == finish.x and cy == finish.y and cz == finish.z
+			or abs(cx - start.x) + abs(cy - start.y) + abs(cz - start.z) >= distance then
 				-- check if current pos is further than threshold for max distance
 				-- or use time/iteration based approach
 				
@@ -194,33 +231,34 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 				return path
 
 			end
-			closed[current.x][current.y][current.z] = true
+			closed[cx][cy][cz] = true
 			
 			local neighbours = getNeighbours(current)
 			for i=1, #neighbours do
 				local neighbour = neighbours[i]
+				local nx, ny, nz = neighbour.x, neighbour.y, neighbour.z
 				
 				--local neighbourId = xyzToId(neighbour.x, neighbour.y, neighbour.z)
-				if not closed[neighbour.x] then 
-					closed[neighbour.x] = {} 
-					gScore[neighbour.x] = {}
+				if not closed[nx] then 
+					closed[nx] = {} 
+					gScore[nx] = {}
 				end
-				if not closed[neighbour.x][neighbour.y] then 
-					closed[neighbour.x][neighbour.y] = {} 
-					gScore[neighbour.x][neighbour.y] = {}
+				if not closed[nx][ny] then 
+					closed[nx][ny] = {} 
+					gScore[nx][ny] = {}
 				end
 				
-				if not closed[neighbour.x][neighbour.y][neighbour.z] then
+				if not closed[nx][ny][nz] then
 
-					neighbour.block = map:getData(neighbour.x, neighbour.y, neighbour.z)
+					neighbour.block = map:getData(nx, ny, nz)
 					if checkValid(neighbour.block) then
 					
 						openCount = openCount + 1
 							
 						local addedGScore = current.gScore + calculateCost(current,neighbour)
-						neighbour.gScore = gScore[neighbour.x][neighbour.y][neighbour.z]
+						neighbour.gScore = gScore[nx][ny][nz]
 						if not neighbour.gScore or addedGScore < neighbour.gScore then
-							gScore[neighbour.x][neighbour.y][neighbour.z] = addedGScore
+							gScore[nx][ny][nz] = addedGScore
 							neighbour.gScore = addedGScore
 							
 							neighbour.hScore = calculateHeuristic(neighbour,finish)
@@ -236,7 +274,7 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 					else
 						-- path not safe
 						-- close this id? TEST
-						closed[neighbour.x][neighbour.y][neighbour.z] = true
+						closed[nx][ny][nz] = true
 					end
 				else
 					closedCount = closedCount + 1
@@ -258,7 +296,8 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 			-- print(os.epoch("local")-startTime, ct)
 		end
 	end
-	return nil
+	print(os.epoch("local")-startTime, "NO PATH FOUND", "CT", ct)
+	return nil, closed
 	--https://github.com/GlorifiedPig/Luafinding/blob/master/src/luafinding.lua
 end
 

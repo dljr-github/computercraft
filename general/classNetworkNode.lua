@@ -125,7 +125,7 @@ end
 function NetworkNode:beforeSend(msg)
 	-- add original message to waitlist
 	if msg.answer then
-		self.waitlist:add(msg)
+		self.waitlist:addFirst(msg)
 	end
 end
 
@@ -138,16 +138,15 @@ end
 
 function NetworkNode:checkWaitList()
 	-- regularly check this list to trigger onNoAnswer events
-	local msg = self.waitlist:getLast()
+	local msg = self.waitlist.last
 	while msg do
-		local prev = self.waitlist:getPrev(msg)
 		if not self:checkValid(msg) then
 			self.waitlist:remove(msg)
 			if self.onNoAnswer then
 				self.onNoAnswer(msg)
 			end
 		end
-		msg = prev
+		msg = msg._prev
 	end
 end
 
@@ -155,13 +154,13 @@ end
 function NetworkNode:findMessage(uuid)
 	-- find original message to answer to
 	local msg
-	local node = self.waitlist:getFirst()
+	local node = self.waitlist.first
 	while node do
 		if node.id == uuid then
 			msg = node
 			break
 		end
-		node = self.waitlist:getNext(node)
+		node = node._next
 	end
 	return msg
 end
@@ -205,16 +204,15 @@ function NetworkNode:listen(waitTime)
 end
 
 function NetworkNode:addEvent(event)
-	self.events:add(event)
+	self.events:addFirst(event)
 end
 function NetworkNode:checkEvents()
 	-- check all events, oldest first
-	local event = self.events:getPrev()
+	local event = self.events.last
 	while event do
-		local prev = self.events:getPrev(event)
 		self.events:remove(event)
 		self:handleEvent(event)
-		event = prev
+		event = event._prev
 	end
 	self:checkWaitList()
 end

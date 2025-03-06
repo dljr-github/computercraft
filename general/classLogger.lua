@@ -26,7 +26,7 @@ function Logger:save(fileName)
 	f.close()
 end
 
-function Logger:add(entry)
+function Logger:addFirst(entry)
 	table.insert(self.entries, entry)
 end
 
