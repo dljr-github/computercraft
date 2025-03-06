@@ -4,6 +4,10 @@ require("classLogger")
 require("classList")
 require("classChunkyMap")
 
+-- local blockTranslation = require("blockTranslation")
+-- local nameToId = blockTranslation.nameToId
+-- local idToName = blockTranslation.idToName
+
 local default = {
 	waitTimeFallingBlock = 0.5,
 	maxVeinRadius = 10, --8 MAX:16
@@ -21,6 +25,14 @@ local default = {
 		maxDistance = 10,
 	}
 }
+
+local fuelItems = {
+["minecraft:coal"]=true,
+["minecraft:charcoal"]=true,
+["minecraft:coal_block"]=true,
+["minecraft:lava_bucket"]=true,
+}
+-- do not translate
 
 local mineBlocks = {
 ["minecraft:cobblestone"]=true,
@@ -43,19 +55,14 @@ local mineBlocks = {
 ["minecraft:lava"]=true,
 --["minecraft:glass"]=true,
 }
+--mineBlocks = blockTranslation.translateTable(mineBlocks)
 
-
-local fuelItems = {
-["minecraft:coal"]=true,
-["minecraft:charcoal"]=true,
-["minecraft:coal_block"]=true,
-["minecraft:lava_bucket"]=true,
-}
 
 local inventoryBlocks = {
 ["minecraft:chest"]=true,
 ["minecraft:hopper"]=true,
 }
+--inventoryBlocks = blockTranslation.translateTable(inventoryBlocks)
 
 local disallowedBlocks = {
 ["minecraft:chest"] = true,
@@ -65,7 +72,7 @@ local disallowedBlocks = {
 ["computercraft:wireless_modem_advanced"] = true,
 ["computercraft:monitor_advanced"] = true,
 }
-
+--disallowedBlocks = blockTranslation.translateTable(disallowedBlocks)
 -- local blocks = {
 -- iron = { iron_ore = { id = "minecraft:iron_ore", doMine = true, level = 99 },
 	-- { deepslate_iron_ore = { id = "minecraft:deepslate_iron_ore", doMine = true, level = 99 } }
@@ -88,8 +95,10 @@ local oreBlocks = {
 ["minecraft:copper_ore"]=true,
 ["minecraft:deepslate_copper_ore"]=true,
 }
+--oreBlocks = blockTranslation.translateTable(oreBlocks)
 
 local vector = vector
+local debuginfo = debug.getinfo
 
 local vectors = {
 	[0] = vector.new(0,0,1),  -- 	+z = 0	south
@@ -97,6 +106,9 @@ local vectors = {
 	[2] = vector.new(0,0,-1), -- 	-z = 2	north
 	[3] = vector.new(1,0,0),  -- 	+x = 3 	east
 }
+
+local vectorUp = vector.new(0,1,0)
+local vectorDown = vector.new(0,-1,0)
 
 Miner = {}
 
@@ -117,13 +129,14 @@ function Miner:new()
 	o.node = global.node
 	o.pos = vector.new(0,70,0)
 	o.gettingFuel = false
+	o.initializing = true
 	o.lookingAt = vector.new(0,0,0)
 	o.map = ChunkyMap:new(true)
 	o.taskList = List:new()
 	o.vectors = vectors
 	
-	--o:initialize() -- initialize after starting parallel tasks in startup.lua
-	print("--------------------")
+	o:initialize() -- initialize after starting parallel tasks in startup.lua
+	--print("--------------------")
 	return o
 end
 
@@ -138,15 +151,23 @@ function Miner:initialize()
 	print("fuel level:", turtle.getFuelLevel())
 	self:initPosition()
 	self:initOrientation()
-	self:refuel()
+
+	self.taskList:remove(currentTask)
+end	
+
+function Miner:finishInitialization()
+	-- split initialization into two parts
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	
+	self:refuel()
 	if not self:requestStation() then
 		self:setHome(self.pos.x, self.pos.y, self.pos.z)
 	end
 	self:setStartupPos(self.pos)
+	self.initializing = nil
 	
 	self.taskList:remove(currentTask)
-end	
+end
 
 function Miner:initPosition()
 	local x,y,z = gps.locate()
@@ -154,8 +175,8 @@ function Miner:initPosition()
 		self.pos = vector.new(x,y,z)
 	else
 		--gps not working
-		print("gps not working")
-		self.pos = vector.new(0,70,0)
+		self:error("GPS UNAVAILABLE",true)
+		-- self.pos = vector.new(0,70,0)
 	end
 	print("position:",self.pos.x,self.pos.y,self.pos.z)
 end
@@ -164,7 +185,7 @@ function Miner:initOrientation()
 	local newPos
 	local turns = 0
 	for i=1,4 do
-		
+		print(i,"forward")
 		if not turtle.forward() then
 			self:turnLeft()
 			turns = turns + 1
@@ -174,9 +195,10 @@ function Miner:initOrientation()
 		end
 	end
 	if not newPos then
-		print("orientation not determinable")
+		self:error("ORIENTATION NOT DETERMINABLE",true)
 		self.orientation = 0
 	else
+		print(newPos, self.pos, turns, self.orientation)
 		local diff = newPos - self.pos
 		self.pos = newPos
 		if diff.x < 0 then self.orientation = 1
@@ -232,7 +254,7 @@ function Miner:requestMap()
 			end
 		end
 	end
-	return retval 
+	return retval  
 end
 
 function Miner:requestChunk(chunkId)
@@ -306,11 +328,13 @@ end
 
 function Miner:returnHome()
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	self.returningHome = true
 	if self.home then
 		print("RETURNING HOME", self.home.x, self.home.y, self.home.z)
 		self:navigateToPos(self.home.x, self.home.y, self.home.z)
 		self:turnTo(self.homeOrientation)
 	end
+	self.returningHome = false
 	self.taskList:remove(currentTask)
 end
 
@@ -318,7 +342,7 @@ function Miner:error(reason,real)
 	-- TODO: create image of current Miner to load later on
 	-- self:save()
 
-	if self.taskList.count > 0 then func = "ERR:"..self.taskList:getFirst()[1]
+	if self.taskList.count > 0 then func = "ERR:"..self.taskList.first[1]
 	else func = "ERR:unknown" end
 	self.taskList:clear()
 	error({real=real,text=reason,func=func})
@@ -329,7 +353,7 @@ function Miner:addCheckTask(task)
 		self.stop = false
 		self:error("stopped",false)
 	end
-	return self.taskList:add(task)
+	return self.taskList:addFirst(task)
 end
 
 function Miner:checkStatus()
@@ -543,8 +567,10 @@ function Miner:refuel()
 					self:error("NEED FUEL",true) -- -> terminates stripMine etc.
 				else
 					refueled = true
-					self:navigateToPos(startPos.x, startPos.y, startPos.z)
-					self:turnTo(startOrientation)
+					if not self.returningHome then
+						self:navigateToPos(startPos.x, startPos.y, startPos.z)
+						self:turnTo(startOrientation)
+					end
 					-- actual refueling happens with the next refuel call
 				end
 			--end
@@ -645,7 +671,7 @@ function Miner:updateLookingAt()
 end
 
 function Miner:forward()
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.forward()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
@@ -654,51 +680,51 @@ function Miner:forward()
 		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
 	self:checkStatus()
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner:back()
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.back()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos = self.pos - self.vectors[self.orientation]
 		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner:up()
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.up()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos.y = self.pos.y + 1
 		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner:down()
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.down()
 	if result then
 		self:setMapValue(self.pos.x, self.pos.y, self.pos.z, 0)
 		self.pos.y = self.pos.y - 1
 		--self:setMapValue(self.pos.x, self.pos.y, self.pos.z,default.turtleName)
 	end
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner:turnLeft()
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	turtle.turnLeft()
 	self.orientation = ( self.orientation - 1 ) % 4
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 end
 
 function Miner:turnRight()
@@ -707,48 +733,53 @@ function Miner:turnRight()
 end
 
 function Miner:dig(side)
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.dig(side)
 	if result then
 		self:updateLookingAt()
-		if self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z) then
+		-- local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
+		-- if block and block ~= 0 then
 			self:setMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z,0)
-		end
+		-- end
 	end
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner:digUp(side)
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.digUp(side)
 	if result then
-		if self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z) then
+		-- local block = self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)
+		-- if block and block ~= 0 then
 			self:setMapValue(self.pos.x, self.pos.y+1, self.pos.z, 0)
-		end
+		-- end
 	end
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner:digDown(side)
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	--local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = turtle.digDown(side)
 	if result then
-		if self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z) then
+		-- local block = self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z) 
+		-- if block and block ~= 0 then
 			self:setMapValue(self.pos.x, self.pos.y-1, self.pos.z, 0)
-		end
+		-- end
 	end
-	self.taskList:remove(currentTask)
+	--self.taskList:remove(currentTask)
 	return result
 end
 
 function Miner.checkOreBlock(blockName)
 	if blockName and blockName ~= 0 then
-		if string.find(blockName, "_ore") then
+		if oreBlocks[blockName] then
 			return true
-		else
-			return oreBlocks[blockName]
+		elseif string.find(blockName, "_ore") then
+			oreBlocks[blockName] = true -- save this block as an ore
+			-- TODO: save new blocks in translation on host when seeting map data?
+			return true
 		end
 	end
 	return false
@@ -758,92 +789,87 @@ local checkOreBlock = Miner.checkOreBlock
 function Miner.checkDisallowed(id)
 	-- blacklist function
 	return disallowedBlocks[id]
-	-- local isDisallowed = false
-	-- if disallowedBlocks[id] then
-		-- isDisallowed = true
-	-- end
-	-- return isDisallowed
 end
 local checkDisallowed = Miner.checkDisallowed
 
 function Miner.checkSafe(id)
 	-- whitelist function
 	-- does not take changed blocks into account if id comes from the map value
-	local isSafe = false
 	if not id or id == 0 or mineBlocks[id] or checkOreBlock(id) then
-		isSafe = true
+		return true
 	end
-	return isSafe
+	return false
 end
 local checkSafe = Miner.checkSafe
 
 function Miner:inspect(safe)
 	-- WARNING: NOT safe does NOT update the Map if the block has been explored before
 	self:updateLookingAt()
-	local blockName 
+	local block 
 	if not safe then 
-		blockName = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
+		block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
 	end
-	if blockName == nil then
+	if block == nil then
 		-- never inspected before
 		local hasBlock, data = turtle.inspect()
+		--block = hasBlock and ( nameToId[data.name] or data.name ) or 0
 		self:setMapValue(self.lookingAt.x,self.lookingAt.y,self.lookingAt.z,
 		( data and data.name ) or 0)
-		blockName = data.name
+		block = data.name
 	end
-	return blockName
+	return block
 end
 
 function Miner:inspectUp(safe)
-	local blockName
+	local block
 	if not safe then
-		blockName = self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)
+		block = self:getMapValue(self.pos.x, self.pos.y+1, self.pos.z)
 	end
-	if blockName == nil then
+	if block == nil then
 		local hasBlock, data = turtle.inspectUp()
 		self:setMapValue(self.pos.x,self.pos.y+1,self.pos.z,
 		( data and data.name ) or 0)
-		blockName = data.name
+		block = data.name
 	end
-	return blockName
+	return block
 end
 
 function Miner:inspectDown(safe)
-	local blockName
+	local block
 	if not safe then
-		blockName = self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z)
+		block = self:getMapValue(self.pos.x, self.pos.y-1, self.pos.z)
 	end
-	if blockName == nil then
+	if block == nil then
 		local hasBlock, data = turtle.inspectDown()
 		self:setMapValue(self.pos.x,self.pos.y-1,self.pos.z,
 		( data and data.name ) or 0)
-		blockName = data.name
+		block = data.name
 	end
-	return blockName
+	return block
 end
 function Miner:inspectLeft()
 	local block = self.pos + self.vectors[(orientation-1)%4]
-	local blockName = self:getMapValue(block.x, block.y, block.z)
-	if blockName == nil then
+	local block = self:getMapValue(block.x, block.y, block.z)
+	if block == nil then
 		self:turnTo((orientation-1)%4)
 		local hasBlock, data = turtle.inspect()
 		self:setMapValue(block.x, block.y, block.z, 
 		( data and data.name ) or 0)
-		blockName = data.name
+		block = data.name
 	end
-	return blockName
+	return block
 end
 function Miner:inspectRight()
 	local block = self.pos + self.vectors[(orientation+1)%4]
-	local blockName = self:getMapValue(block.x, block.y, block.z)
-	if blockName == nil then
+	local block = self:getMapValue(block.x, block.y, block.z)
+	if block == nil then
 		self:turnTo((orientation+1)%4)
 		local hasBlock, data = turtle.inspect()
 		self:setMapValue(block.x, block.y, block.z,
 		( data and data.name ) or 0)
-		blockName = data.name
+		block = data.name
 	end
-	return blockName
+	return block
 end
 
 function Miner:inspectAll()
@@ -1170,7 +1196,7 @@ function Miner:mineVein()
 						else -- nearest ore, if ore has been found before
 							if isInVein then
 								local nextOre = self.map:findNextBlock(self.pos, 
-									self.checkOreBlock
+									checkOreBlock
 									,default.maxVeinRadius)
 								if nextOre then
 									self:digToPos(nextOre.x, nextOre.y, nextOre.z)
@@ -1254,58 +1280,68 @@ function Miner:stripMine(rowLength, rows, levels, rowFactor, levelFactor)
 --	 * M * * M * * M *
 --	   *     *     *	
 --------------------
-	if not rowFactor then rowFactor = 3 end
-	if not levelFactor then levelFactor = 2 end
 
-	-- local rowLength = (rows-1) * rowFactor
-	local rowOrientation = startOrientation
-	local tunnelDirection = -1 * directionFactor
-	
-	for currentLevel=1,levels do
-		if currentLevel%2 == 0 and rows%2 == 0 then 
-		tunnelDirection = 1 * directionFactor
-		else tunnelDirection = -1 * directionFactor end
+	-- try, catch
+	local ok,err = pcall(function()
+
+		if not rowFactor then rowFactor = 3 end
+		if not levelFactor then levelFactor = 2 end
+
+		-- local rowLength = (rows-1) * rowFactor
+		local rowOrientation = startOrientation
+		local tunnelDirection = -1 * directionFactor
 		
-		for currentRow=1,rows do
-			self:tunnelMine(rowLength,1,1)
-			if currentRow < rows then
-				self:turnTo(rowOrientation+tunnelDirection)
-				self:tunnelMine(rowFactor,1,1)
-				if currentRow%2 == 1 then
-					self:turnTo(rowOrientation-2)
-				else
-					self:turnTo(rowOrientation)
-				end
-			end
-		end
-		if currentLevel < levels then
-			-- move up
-			if positiveLevel then
-				self:tunnelUp(levelFactor)
-			else
-				self:tunnelDown(levelFactor)
-			end
-			if self.orientation == startOrientation or currentLevel%2 == 0 then
-					self:turnRight()
-					self:tunnelMine(1,1,1)
-					self:turnRight()
-					self:tunnelMine(1,1,1)
-			else
-				if rows%2 == 0 then
-					self:tunnelMine(1,1,1)
-					self:turnLeft()
-					self:tunnelMine(1,1,1)
-					self:turnLeft()
-				else
-					self:turnLeft()
-					self:tunnelMine(1,1,1)
-					self:turnLeft()
-					self:tunnelMine(1,1,1)
-				end
-			end
+		for currentLevel=1,levels do
+			if currentLevel%2 == 0 and rows%2 == 0 then 
+				tunnelDirection = 1 * directionFactor
+			else tunnelDirection = -1 * directionFactor end
 			
+			for currentRow=1,rows do
+				self:tunnelStraight(rowLength)
+				if currentRow < rows then
+					self:turnTo(rowOrientation+tunnelDirection)
+					self:tunnelStraight(rowFactor)
+					if currentRow%2 == 1 then
+						self:turnTo(rowOrientation-2)
+					else
+						self:turnTo(rowOrientation)
+					end
+				end
+			end
+			if currentLevel < levels then
+				-- move up
+				if positiveLevel then
+					self:tunnelUp(levelFactor)
+				else
+					self:tunnelDown(levelFactor)
+				end
+				if self.orientation == startOrientation or currentLevel%2 == 0 then
+						self:turnRight() 
+						self:tunnelStraight(1)
+						self:turnRight()
+						self:tunnelStraight(1)
+				else
+					if rows%2 == 0 then
+						self:tunnelStraight(1)
+						self:turnLeft()
+						self:tunnelStraight(1)
+						self:turnLeft()
+					else
+						self:turnLeft()
+						self:tunnelStraight(1)
+						self:turnLeft()
+						self:tunnelStraight(1)
+					end
+				end
+				
+			end
+			rowOrientation = self.orientation
 		end
-		rowOrientation = self.orientation
+		
+	end)
+	
+	if not ok then 
+		print(ok, err)
 	end
 
 --SINGLE LEVEL PART OF MULTILEVEL
@@ -1315,6 +1351,7 @@ function Miner:stripMine(rowLength, rows, levels, rowFactor, levelFactor)
 --	 *     *     *
 --------------------
 
+	-- only needed for testing i guess
 	self:navigateToPos(startPos.x, startPos.y, startPos.z)
 	self:turnTo(startOrientation)
 
@@ -1408,58 +1445,114 @@ function Miner:mineArea(start, finish)
 	rows = math.floor(rows+0.5)
 	--self.map:load()
 	
-		print("start", start,"end",finish, "diff", diff, "levels", levels)
+	print("start", start,"end",finish, "diff", diff, "levels", levels)
 	
-	self:navigateToPos(start.x, start.y, start.z)
-	self:turnTo(orientation)
+	if not self:navigateToPos(start.x, start.y, start.z) then
+		print("unable to get to area")
+		self:returnHome()
+	else
 	
-	self:stripMine(rowLength, rows, levels)
-	
-	self:returnHome()
-	self:condenseInventory()
-	self:dumpBadItems()
-	self:transferItems()
-	--self:getFuel()
-	--self.map:save()
-	
-	
+		self:turnTo(orientation)
+		
+		self:stripMine(rowLength, rows, levels)
+		
+		self:returnHome()
+		self:condenseInventory()
+		self:dumpBadItems()
+		self:transferItems()
+		--self:getFuel()
+		--self.map:save()
+	end 
 	self.taskList:remove(currentTask)
 end
 
-function Miner:tunnelMine(length,height,width)
+
+function Miner:tunnel(length, direction)
+	-- throws error
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	for i=1,length do
-		self:inspectMine()
-		self:digMove()
+	
+	local result = true
+	local skipSteps = 0
+	
+	-- determine direction to mine
+	if not direction or direction == "straight" then 
+		directionVector = self.vectors[self.orientation]
+		digFunc = Miner.digMove
+	elseif direction == "up" then
+		directionVector = vectorUp
+		digFunc = Miner.digMoveUp
+	elseif direction == "down" then
+		directionVector = vectorDown
+		digFunc = Miner.digMoveDown
 	end
+	
+	local expectedEndPos = self.pos + directionVector * length
+	local startOrientation = self.orientation
+	
+	-- actually mine
+	for i=1,length do
+		if skipSteps == 0 then 
+		
+			self:inspectMine()
+			if not digFunc(self) then 
+				-- if two turtles get in each others way, steps could be skipped
+				-- try to navigate to next step, else quit
+				if i < length - 1 then
+					newPos = self.pos + directionVector * 2
+					if not self:navigateToPos(newPos.x, newPos.y, newPos.z) then
+						result = false
+						break
+					else 
+						self:turnTo(startOrientation)
+						skipSteps = 2
+						--skip the next step as well
+					end
+				else
+					result = false
+					break
+				end
+			end
+		else
+			skipSteps = skipSteps - 1
+		end
+		
+	end
+	
 	self:inspectMine()
+	
+	if self.pos ~= expectedEndPos then
+		-- try navigating to the position we should be at
+		if not self:navigateToPos(expectedEndPos.x, expectedEndPos.y, expectedEndPos.z) then
+			-- we truly failed
+			result = false
+		else 
+			result = true
+		end
+		self:turnTo(startOrientation)
+	end
+	
 	self.taskList:remove(currentTask)
+	
+	if not result then error("TUNNEL FAIL") end
+	return result
+	
+end
+
+function Miner:tunnelStraight(length)
+	return self:tunnel(length,"straight")
 end
 
 function Miner:tunnelUp(height)
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	for i=1,height do
-		self:inspectMine()
-		self:digMoveUp()
-	end
-	self:inspectMine()
-	self.taskList:remove(currentTask)
+	return self:tunnel(height,"up")
 end
+
 function Miner:tunnelDown(height)
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
-	for i=1,height do
-		self:inspectMine()
-		self:digMoveDown()
-	end
-	self:inspectMine()
-	self.taskList:remove(currentTask)
+	return self:tunnel(height,"down")
 end
 
 function Miner:inspectMine()
 	-- useless function
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	self:mineVein()
-	self.taskList:remove(currentTask)
 	return
 end
 
@@ -1479,6 +1572,8 @@ function Miner:navigateToPos(x,y,z)
 		local maxParts = ( cost / default.pathfinding.maxDistance ) * 2
 		if maxParts < 2 then maxParts = default.pathfinding.maxParts end
 		local ct = 0
+		local minDist = -1
+		local mapReset = false
 		
 		local pathFinder = PathFinder()
 		pathFinder.checkValid = checkSafe
@@ -1491,13 +1586,43 @@ function Miner:navigateToPos(x,y,z)
 				local path = pathFinder:aStarPart(self.pos, self.orientation, goal , self.map, nil)
 				if path then 
 					if not self:followPath(path) then 
-						print("NOT SAFE TO FOLLOW PATH")
+						-- print("NOT SAFE TO FOLLOW PATH")
 						result = false
 					else 
 						if self.pos == goal then
 							result = true 
 						else
+							-- check if the goal can be reached
+							local cp = self.pos
+							local dist = math.abs(cp.x - goal.x) + math.abs(cp.y - goal.y) + math.abs(cp.z - goal.z)
+							--print("min", minDist, "dist", dist, "try", ct, "part", countParts)
 							result = false
+							if minDist < 0 or dist < minDist then 
+								minDist = dist
+							elseif dist >= minDist and ct > 1 then  
+								path = pathFinder:checkPossible(self.pos, self.orientation, goal, self.map, nil, not mapReset)
+								if not path then 
+									
+									if not mapReset then 
+										mapReset = true
+										countParts = 0
+										ct = math.max(ct, maxTries/2)
+									else
+										-- path truly impossible
+										print("IMPOSSIBLE GOAL", goal)
+										
+										ct = maxTries
+										countParts = maxParts
+										-- get home as near as possible
+										result = self:digToPos(self.home.x, self.home.y, self.home.z, true)
+										
+									end
+									
+								else
+									print("GOAL POSSIBLE", goal, #path)
+									result = self:followPath(path)
+								end
+							end
 						end
 					end
 				else
