@@ -9,24 +9,26 @@ local folders = {
 
 local reboot = false
 
+local function copyFile(fileName, targetFileName)
+	local modified = fs.attributes(fileName).modified
+	if fs.exists(targetFileName) then
+		local modifiedTarget = fs.attributes(targetFileName).modified
+		if modified > modifiedTarget then 
+			fs.delete(targetFileName)
+			fs.copy(fileName, targetFileName)
+			reboot = true
+		end
+	end
+end
+
 local function copyFolder(folderName, targetFolder)
-	if not fs.exists(targetFolder) or not fs.isDir(targetFolder) then
+	print("copying", folderName, targetFolder)
+	if not fs.isDir(targetFolder) then
 		print("no such folder", folderName)
 	end
-	if fs.exists(folderName) and fs.isDir(folderName) then
-		for _, fileName in pairs(fs.list('/' .. folderName)) do
-			local targetData
-			if fs.exists(targetFolder.."/"..fileName) then
-				local file = fs.open(targetFolder.."/"..fileName, "r")
-				targetData = file.readAll()
-				file.close()
-				fs.delete(targetFolder.."/"..fileName)
-			end
-			local file = fs.open(folderName.."/"..fileName, "r")
-			local fileData = file.readAll()
-			file.close()
-			if (fileData == targetData) == false then reboot = true end
-			fs.copy(folderName.."/"..fileName, targetFolder.."/"..fileName)
+	if fs.isDir(folderName) then
+		for _, fileName in ipairs(fs.list('/' .. folderName)) do
+			copyFile(folderName.."/"..fileName, targetFolder.."/"..fileName)
 		end
 	else
 		print("no such folder", folderName)
@@ -37,24 +39,26 @@ local function copyFiles()
 	for _,folderName in ipairs(folders) do
 		copyFolder(folderName, "runtime")
 	end
-	if fs.exists("startup.lua") then
-		fs.delete("startup.lua")
-	end
-	fs.copy("runtime/startup.lua", "startup.lua")
+	copyFile("runtime/startup.lua", "startup.lua")
 	if reboot then
 		os.reboot()
 	end
 end
 -- END OF COPY
 
-copyFiles()
-
+copyFiles()    
+ 
 -- add runtime as default environment
 package.path = package.path ..";../runtime/?.lua"
 --package.path = package.path .. ";../?.lua" .. ";../runtime/?.lua"
 --require("classMonitor")
 --require("../runtime/classMonitor")
 --require("runtime/classMonitor")
+
+if rednet then	
+	shell.run("runtime/killRednet.lua")
+	return
+end
 
 os.loadAPI("/runtime/global.lua")
 os.loadAPI("/runtime/config.lua")
