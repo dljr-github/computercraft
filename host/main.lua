@@ -1,4 +1,6 @@
 
+local global = global
+
 local node = global.node
 local nodeStream = global.nodeStream
 local nodeUpdate = global.nodeUpdate
@@ -7,12 +9,17 @@ local map = global.map
 local turtles = global.turtles
 local updates = global.updates
 
+local fileExpiration = 1000 * 5 -- 30s
+local files = {}
+local folders = {}
+local foldersLastRead = {}
 -- nodeStatus.onRequestAnswer = function(forMsg)
 	-- -- check if state is outdated before answering
 	-- no, best to go by newest only, not oldest first
 	-- if node:checkValid(forMsg) then
 	-- node:answer(forMsg,{"RECEIVED"})
 -- end
+local osEpoch = os.epoch
 
 nodeStream.onStreamMessage = function(msg,previous)
 	if previous.data[1] == "MAP_UPDATE" then	
@@ -22,7 +29,8 @@ nodeStream.onStreamMessage = function(msg,previous)
 		turtles[msg.sender].mapBuffer = {}
 	end
 	if msg.data[1] == "STATE" then
-		table.insert(updates, msg.data[2])
+		updates[#updates+1] = msg.data[2]
+		--table.insert(updates, msg.data[2])
 	end
 end
 
@@ -30,13 +38,169 @@ nodeStream.onStreamBroken = function(previous)
 	-- idk
 end
 
+nodeUpdate.onRequestAnswer = function(forMsg)
+
+	if forMsg.data[1] == "FILE_REQUEST" then
+		local requestedFile = forMsg.data[2]
+		local requestedModified = requestedFile.modified
+		local fileName = requestedFile.fileName
+		local timeRead = os.epoch("local")
+		print("----sending", fileName .."----")	
+		if not files[fileName] then
+		
+			local file = fs.open(fileName, "r")
+			if file then 
+				local modified = fs.attributes(fileName).modified
+				local fileData = file.readAll()
+				file.close()
+				files[fileName] = { name = fileName, data = fileData, lastRead = timeRead, modified = modified }
+			end
+
+		elseif timeRead - files[fileName].lastRead > fileExpiration then 
+			if fs.exists(fileName) then 
+				local modified = fs.attributes(fileName).modified
+				if modified > files[fileName].lastRead then 
+					-- file has been changed since last read
+					local file = fs.open(fileName, "r")
+					if file then 
+						local fileData = file.readAll()
+						file.close()
+						files[fileName] = { name = fileName, data = fileData, lastRead = timeRead, modified = modified }
+					end					
+				else
+					files[fileName].lastRead = timeRead
+				end
+			else
+				files[fileName] = nil
+			end
+		end
+		
+		local file = files[fileName] 
+		if file then 
+			if not requestedModified or file.modified > requestedModified then
+				nodeupdate:answer(forMsg, { "FILE" , file })
+				sleep(0)
+			else
+				nodeUpdate:answer(forMsg, { "FILE_UNCHANGED", { name = fileName } })
+			end
+		else
+			nodeUpdate:answer(forMsg, { "FILE_MISSING", { name = fileName } })
+		end
+		
+	elseif forMsg.data[1] == "FOLDERS_REQUEST" then
+	
+		local requestedFolders = forMsg.data[2]
+		local folderNames = requestedFolders.folderNames
+		local existingFiles = requestedFolders.files
+		local foldersToSend = {}
+		local missingFolders = {}
+		
+		local timeRead = os.epoch("local")
+		
+		for _,folderName in ipairs(folderNames) do
+		
+			local filesToSend = {}	
+			
+			local folder = folders[folderName]
+			if not folder then
+				if fs.isDir(folderName) then 
+					folders[folderName] = {}
+					foldersLastRead[folderName] = timeRead
+					-- read files
+					for _, fileName in ipairs(fs.list('/' .. folderName)) do
+						local modified = fs.attributes(folderName.."/"..fileName).modified
+						local file = fs.open(folderName.."/"..fileName, "r")
+						if file then 
+							local fileData = file.readAll()
+							file.close()
+							folders[folderName][fileName] = { data = fileData, lastRead = timeRead, modified = modified }
+						end
+						
+						local existingFile = existingFiles and existingFiles[fileName]
+						if not existingFile or modified > existingFile.modified then 
+							print("add read", fileName, modified, existingFile and existingFile.modified)
+							filesToSend[fileName] = folders[folderName][fileName]
+						end
+						
+					end
+				else
+					filesToSend = nil
+				end
+			else 
+				if timeRead - foldersLastRead[folderName] > fileExpiration then 
+					-- folder must be updated
+					foldersLastRead[folderName] = timeRead
+					
+					for _, fileName in ipairs(fs.list('/' .. folderName)) do
+						local cachedFile = folder[fileName]
+						local modified = fs.attributes(folderName.."/"..fileName).modified					
+						
+						if not cachedFile or modified > cachedFile.lastRead then 
+							local file = fs.open(folderName.."/"..fileName, "r")
+							if file then 
+								local fileData = file.readAll()
+								file.close()
+								folder[fileName] = { data = fileData, lastRead = timeRead, modified = modified }
+							end	
+						elseif cachedFile then 
+							cachedFile.lastRead = timeRead
+						end
+						
+						local existingFile = existingFiles and existingFiles[fileName]
+						if not existingFile or modified > existingFile.modified then 
+							print("add chg", fileName, modified, existingFile and existingFile.modified)
+							filesToSend[fileName] = folder[fileName]
+						end
+						
+					end
+					-- !! does not detect if files which exist in cache have been deleted
+				else
+					if existingFiles then 
+						for fileName, file in pairs(folder) do
+							local existingFile = existingFiles[fileName]
+							if not existingFile or file.modified > existingFile.modified then 
+								print("add cache", fileName, file.modified, existingFile and existingFile.modified)
+								filesToSend[fileName] = file
+							end
+						end
+					else
+						print("full folder, no existing files")
+						filesToSend = folder
+					end
+					
+				end
+			end
+			if filesToSend then 
+				foldersToSend[folderName] = filesToSend
+			else
+				table.insert(missingFolders, folderName)
+			end
+			
+		end
+		
+		
+		if foldersToSend then 
+			nodeUpdate:answer(forMsg, {"FOLDERS", foldersToSend})
+			--sleep(0)
+		else
+			nodeUpdate:answer(forMsg, { "FOLDERS_MISSING", missingFolders })
+		end
+		
+		local timeFolders = os.epoch("local")-timeRead
+		print(timeFolders, forMsg.sender, "FOLDERS")	
+		if timeFolders > 50 then 
+			sleep(0)
+		end
+		
+	end
+end
 
 
 function checkOnline(id)
 	local turt = turtles[id]
 	local online = false
 	if turt then
-		local timeDiff = os.epoch("ingame") - turt.state.time
+		local timeDiff = osEpoch() - turt.state.time
 		if timeDiff > 144000 then
 			online = false
 		else
@@ -87,23 +251,8 @@ function getStation(id)
 end
 
 node.onRequestAnswer = function(forMsg)
-	if forMsg.data[1] == "REQUEST_STATION" then
-		print("station request")
-		local station = getStation(forMsg.sender)
-		if station then
-			node:answer(forMsg,{"STATION",station})
-		else
-			node:answer(forMsg,{"STATIONS_FULL"})
-		end
-	elseif forMsg.data[1] == "REQUEST_MAP" then
-		print("map request")
-		if map then
-			node:answer(forMsg,{"MAP", map:getMap()})
-			os.pullEvent(os.queueEvent("yield"))
-		else
-			node:answer(forMsg,{"NO_MAP"})
-		end
-	elseif forMsg.data[1] == "REQUEST_CHUNK" then
+	
+	if forMsg.data[1] == "REQUEST_CHUNK" then
 		local start = os.epoch("local")
 		if map then
 			--print("request_chunk",textutils.serialize(forMsg.data))
@@ -126,6 +275,23 @@ node.onRequestAnswer = function(forMsg)
 			node:answer(forMsg,{"NO_CHUNK"})
 		end
 		print(os.epoch("local")-start, "id", forMsg.sender, "chunk request", forMsg.data[2])
+		
+	elseif forMsg.data[1] == "REQUEST_STATION" then
+		--print(forMsg.sender, "station request")
+		local station = getStation(forMsg.sender)
+		if station then
+			node:answer(forMsg,{"STATION",station})
+		else
+			node:answer(forMsg,{"STATIONS_FULL"})
+		end
+	-- elseif forMsg.data[1] == "REQUEST_MAP" then
+		-- print("map request")
+		-- if map then
+			-- node:answer(forMsg,{"MAP", map:getMap()})
+			-- os.pullEvent(os.queueEvent("yield"))
+		-- else
+			-- node:answer(forMsg,{"NO_MAP"})
+		-- end
 	end
 end
 
@@ -135,10 +301,14 @@ end
 -- end
 
 function checkUpdates()
-	local update = table.remove(updates)
+	--local update = table.remove(updates)
 	
+	-- function not allowed to yield!!!
 	
-	while update do
+	for i = 1, #updates do
+		local update = updates[i]
+	
+	--while update do
 		local turtle = turtles[update.id]
 		if not turtle then 
 			turtles[update.id] = {
@@ -163,16 +333,11 @@ function checkUpdates()
 			for i=1,#update.unloadedLog do
 				turtle.loadedChunks[update.unloadedLog[i]] = nil
 			end
-			-- for _,unloadedId in ipairs(update.unloadedLog) do
-				-- turtle.loadedChunks[unloadedId] = nil
-				-- --print(update.id,"unloaded chunk",unloadedId)
-			-- end
 		end
 		
 		for i=1,#update.mapLog do 
 			local entry = update.mapLog[i]
-		--for _,entry in ipairs(update.mapLog) do
-			--print(textutils.serialize(entry))
+
 			map:setChunkData(entry[1],entry[2],entry[3],true)
 			if global.printStatus then
 				print("chunkid,pos,data", entry[1],entry[2],entry[3])
@@ -189,6 +354,7 @@ function checkUpdates()
 				if not (update.id == id) then
 					if otherTurtle.loadedChunks[entry[1]] then
 						table.insert(otherTurtle.mapLog, entry)
+						-- otherTurtle.chunks[entry[1]][entry[2]] = entry[3]
 					end
 				end
 			end
@@ -204,8 +370,10 @@ function checkUpdates()
 			print("state:", update.id, pos.x, pos.y, pos.z, orientation, lastTask, task)
 		end
 		
-		update = table.remove(updates)
+		--update = table.remove(updates)
 	end
+	updates = {}
+	
 	
 	local logs
 	
