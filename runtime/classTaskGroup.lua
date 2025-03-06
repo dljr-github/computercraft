@@ -140,9 +140,9 @@ end
 
 
 function TaskGroup.approximate3dDivisions(n)
-	local nx = math.ceil(n^(1/3))
-	local ny = math.ceil(math.sqrt(n/nx))
-	local nz = math.ceil(n/(nx*ny))
+	-- local nx = math.ceil(n^(1/3))
+	-- local ny = math.ceil(math.sqrt(n/nx))
+	-- local nz = math.ceil(n/(nx*ny))
 	
 	-- Start with the cube root approximation
     local k = math.floor(n ^ (1 / 3))
@@ -342,7 +342,7 @@ function TaskGroup:splitArea()
 	local start = self.area.start
 	local finish = self.area.finish
 	
-	local areas = self.split3dArea(start,finish,self.groupSize,1,1)
+	local areas = self.split3dArea(start,finish,self.groupSize,2,1)
 	self:assignAreas(areas)
 end
 

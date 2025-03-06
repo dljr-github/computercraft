@@ -1180,6 +1180,15 @@ local nameToId = {
 
 }
 
+local function translateTable(nameTab)
+	local t = {}
+	for name,value in pairs(nameTab) do
+		local id = nameToId[name] or name
+		t[id] = value
+	end
+	return t
+end
+
 local function reverseTranslation()
 	local t = {}
 	for name,id in pairs(nameToId) do
@@ -1190,5 +1199,5 @@ end
 
 idToName = reverseTranslation()
 
-return {nameToId = nameToId, idToName=idToName}
+return {nameToId = nameToId, idToName=idToName, translateTable=translateTable}
 --return nameToId

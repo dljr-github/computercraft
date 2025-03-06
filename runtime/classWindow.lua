@@ -1,5 +1,6 @@
 
 require("classList")
+local Button = require("classButton")
 
 local default = {
 backgroundColor = colors.black,
@@ -11,7 +12,7 @@ width = 45,
 height = 19,
 }
 
-Window = {}
+local Window = {}
 
 function Window:new(x,y,width,height)
 	local o = o or {}
@@ -41,24 +42,25 @@ function Window:initialize()
 end
 
 function Window:close()
-	local m = self.parent or self.monitor
 	--self:clearObjects() -- not needed
 	self:setVisible(false) -- instead of clearObjects
-	m:removeObject(self)
-	m:redraw()
+	if self.parent then 
+		self.parent:removeObject(self)
+		self.parent:redraw()
+	end
 	return true
 end
 
 function Window:setVisible(isVisible)
 	self.visible = isVisible
-	local node = self.objects:getFirst()
+	local node = self.objects.first
     while node do
 		if node.setVisible then
 			node:setVisible(isVisible)
 		else
 			node.visible = isVisible
 		end
-		node = self.objects:getNext(node)
+		node = node._next
 	end
 end
 
@@ -71,18 +73,11 @@ function Window:fillParent()
 		self:setWidth(self.parent:getWidth())
 		self:setHeight(self.parent:getHeight())
 		self:setPos(1,1)
-	elseif self.monitor then
-		self:setWidth(self.monitor:getWidth())
-		self:setHeight(self.monitor:getHeight())
-		self:setPos(1,1)
 	end
 end
 function Window:fillWidth()
 	if self.parent then
 		self:setWidth(self.parent:getWidth())
-		self:setPos(1,self.y)
-	elseif self.monitor then
-		self:setWidth(self.monitor:getWidth())
 		self:setPos(1,self.y)
 	end
 end
@@ -90,19 +85,17 @@ function Window:fillHeight()
 	if self.parent then
 		self:setHeight(self.parent:getHeight())
 		self:setPos(self.x,1)
-	elseif self.monitor then
-		self:setHeight(self.monitor:getHeight())
-		self:setPos(self.x,1)
 	end
 end
 
 function Window:onResize()
 	self:calculateMid()
+	-- TODO: shouldnt this be the oldest first?
 	self.btnClose:setPos(self.width-2,1) 
-	local o = self.objects:getFirst()
+	local o = self.objects.first
 	while o do
 		if o.onResize then o:onResize() end
-		o = self.objects:getNext(o)
+		o = self.objects.next
 	end
 end
 
@@ -146,16 +139,16 @@ function Window:getHeight()
 end
 
 function Window:redraw()
-	if (self.monitor or self.parent) and self.visible then
+	if self.parent and self.visible then
 		
 		self:drawFilledBox(1, 1, self.width, self.height, self.backgroundColor)
 		if self.borderColor ~= self.backgroundColor then
 			self:drawBox(1,1,self.width,self.height,self.borderColor)
 		end
-		local node = self.objects:getPrev()
+		local node = self.objects.last
 		while node do
 			node:redraw()
-			node = self.objects:getPrev(node)
+			node = node._prev
 		end
 	end
 end
@@ -163,7 +156,7 @@ end
 function Window:getObjectByPos(x,y)
 	x = x - self.x + 1
 	y = y - self.y + 1
-    local node = self.objects:getFirst()
+    local node = self.objects.first
     while node do
         if node.width and node.height and node.visible then
             if x >= node.x and x <= (node.x + node.width - 1)
@@ -171,7 +164,7 @@ function Window:getObjectByPos(x,y)
                 return node
             end
         end
-        node = self.objects:getNext(node)
+        node = node._next
     end
     return nil
 end
@@ -185,14 +178,13 @@ function Window:handleClick(x,y)
 	end
 end
 function Window:addObject(o)
-    self.objects:add(o)
+    self.objects:addFirst(o)
 	if o.setVisible then
 		o:setVisible(true)
 	else
 		o.visible = true
 	end
 	o.parent = self
-	o.monitor = self
 	if o.onAdd then o:onAdd(self) end
 	
     return o
@@ -205,16 +197,15 @@ function Window:removeObject(o)
 		o.visible = false
 	end
 	o.window = nil
-	o.monitor = nil
 	if o.onRemove then o:onRemove(self) end
     return o
 end
 
 function Window:clearObjects()
-	local node = self.objects:getFirst()
+	local node = self.objects.first
     while node do
 		self:removeObject(node)
-		node = self.objects:getFirst()
+		node = self.objects.first
     end
 end
 
@@ -245,8 +236,6 @@ function Window:setBackgroundColor(color)
     self.backgroundColor = color
 	if self.parent then
 		self.parent:setBackgroundColor(self.backgroundColor)
-	else
-		self.monitor:setBackgroundCol(self.backgroundColor)
 	end
 end
 
@@ -258,8 +247,6 @@ function Window:restoreBackgroundColor()
     self.backgroundColor = color
 	if self.parent then
 		self.parent:restoreBackgroundColor()
-	else
-		self.monitor:restoreBackgroundColor()
 	end
 end
 
@@ -271,8 +258,6 @@ function Window:setTextColor(color)
     self.textColor = color
 	if self.parent then
 		self.parent:setTextColor(color)
-	else
-		self.monitor:setTextCol(color)
 	end
 end
 function Window:restoreTextColor()
@@ -283,8 +268,6 @@ function Window:restoreTextColor()
     self.textColor = color
 	if self.parent then
 		self.parent:restoreBackgroundColor()
-	else
-		self.monitor:restoreTextColor()
 	end
 end
 
@@ -293,68 +276,60 @@ function Window:restoreColor()
     self:restoreTextColor()
 end
 
+function Window:update()
+	--if self.parent then 
+		self.parent:update()
+	--end
+end
+
 -- DRAW COMMANDS WITH RELATIVE POSITIONS
 -- WOW a default window implementation already exists ... window.create
 function Window:setCursorPos(x,y)
-	if self.parent then
+	--if self.parent then
 		self.parent:setCursorPos(self.x-1+x, self.y-1+y)
-	else
-		self.monitor.setCursorPos(self.x-1+x, self.y-1+y)
-	end
+	--end
 end
 
 function Window:clear()
-	if self.parent then
+	--if self.parent then
 		self.parent:clear()
-	else
-		self.monitor.clear()
-	end
+	--end
 end
 
 function Window:write(text)
-	if self.parent then
+	--if self.parent then
 		self.parent:write(text)
-	else
-		self.monitor.write(text)
-	end
+	--end
 end
 
 function Window:blit(text,textColor,backgroundColor)
-	if self.parent then
+	--if self.parent then
 		self.parent:blit(text,textColor,backgroundColor)
-	else
-		self.monitor.blit(tostring(text),tostring(textColor),tostring(backgroundColor))
-	end
+	--end
 end
 
-function Window:drawText(x,y,text,color)
-	if self.parent then
-		self.parent:drawText(self.x-1+x, self.y-1+y, text, color)
-	else
-		self.monitor:drawText(self.x-1+x, self.y-1+y, text, color)
-	end
+function Window:drawText(x,y,text,textColor,backgroundColor)
+	--if self.parent then
+		self.parent:drawText(self.x-1+x, self.y-1+y, text, textColor, backgroundColor)
+	--end
 end
 
 function Window:drawLine(x,y,endX,endY,color)
-	if self.parent then
+	--if self.parent then
 		self.parent:drawLine(self.x-1+x, self.y-1+y, self.x-1+endX, self.y-1+endY, color)
-	else
-		self.monitor:drawLine(self.x-1+x, self.y-1+y, self.x-1+endX, self.y-1+endY, color)
-	end
+	--end
 end
 
 function Window:drawBox(x,y,width,height,color)
-	if self.parent then
+	--if self.parent then
 		self.parent:drawBox(self.x-1+x, self.y-1+y, width, height, color)
-	else
-		self.monitor:drawBox(self.x-1+x, self.y-1+y, width, height, color)
-	end
+	--end
 end
 
 function Window:drawFilledBox(x,y,width,height,color)
-	if self.parent then
+	--if self.parent then
 		self.parent:drawFilledBox(self.x-1+x, self.y-1+y, width, height, color)
-	else
-		self.monitor:drawFilledBox(self.x-1+x, self.y-1+y, width, height, color)
-	end
+	--end
 end
+
+return Window

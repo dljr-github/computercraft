@@ -6,7 +6,9 @@ local defaultBackgroundColor = colors.black
 local defaultTextColor = colors.white
 local defaultTextScale = 0.5
 
-Monitor = {}
+-- special characters: https://thox.madefor.cc/through/topics/encodings.html#computercraft-encoding
+
+local Monitor = {}
 
 local function findMonitor()
     local monitors = {peripheral.find("monitor")}
@@ -16,18 +18,35 @@ local function findMonitor()
     return monitors[1]
 end
 
+local min = math.min
+local stringbyte, stringchar = string.byte, string.char
+local tableconcat = table.concat
+local toBlit = colors.toBlit
+
 --Class Initialization
 function Monitor:new(m)
-    local m = m or findMonitor() or {}
+	local term = m or findMonitor()
+    local m = {} --Window:new(1,1,term.getSize())
     setmetatable(m, self)
     self.__index = self
-	if m.setTextScale then
-		m.setTextScale(defaultTextScale)
+	
+	m.term = term
+	if m.term.setTextScale then 
+		m.term.setTextScale(defaultTextScale)
 	end
-    m.setBackgroundColor(defaultBackgroundColor)
-    m.setTextColor(defaultTextColor)
-    m.clear()
+    m.term.setBackgroundColor(defaultBackgroundColor)
+	self.backgroundColor = defaultBackgroundColor
+	
+    m.term.setTextColor(defaultTextColor)
+	self.textColor = defaultTextColor
+    
 	m.visible = true
+	m.frame = {}
+	m.emptyLine = {}
+	
+	m.term.clear()
+	m.curX, m.curY = m.term.getCursorPos()
+	
     m:initialize()
     
     return m
@@ -38,16 +57,65 @@ function Monitor:initialize()
     --DoStuff
     self.objects = List:new()
 	self.events = List:new()
+	self:updateSize()
+	self:resizeFrame()
+end
+
+function Monitor:resizeFrame()
+	local textColor = toBlit(self.textColor)
+	local backgroundColor = toBlit(self.backgroundColor)
+	
+	for r=1, self.height do
+		local line = self.frame[r]
+		if not line then
+			--self.frame[r] = emptyLine
+			--self.frame[r].modified = false
+			self.frame[r] = {text={}, textColor={}, backgroundColor={}}
+			line = self.frame[r]
+			for i=1, self.width do
+				line.text[i] = " "
+				line.textColor[i] = textColor
+				line.backgroundColor[i] = backgroundColor
+			end
+		else
+			for i=#line.text+1, self.width do
+				line.text[i] = " "
+				line.textColor[i] = textColor
+				line.backgroundColor[i] = backgroundColor
+			end
+		end
+	end
+	-- for r=self.height+1, #self.frame do
+		-- self.frame[r] = nil
+	-- end
+end
+
+function Monitor:clearFrame()
+	local textColor = toBlit(self.textColor)
+	local backgroundColor = toBlit(self.backgroundColor)
+	
+	for r=1, self.height do
+		local line = self.frame[r]
+		if line then 
+			for i=1, self.width do
+				line.text[i] = " "
+				line.textColor[i] = textColor
+				line.backgroundColor[i] = backgroundColor
+			end
+		end
+	end
 end
 
 function Monitor:handleEvent(event)
-	if event[1] == "monitor_touch" or event[1] == "mouse_up" then
+	if event[1] == "monitor_touch" or event[1] == "mouse_up" or event[1] == "mouse_click" then
 		local x = event[3]
 		local y = event[4]
 		local o = self:getObjectByPos(x,y)
 		if o and o.handleClick then
 			o:handleClick(x,y)
 		end
+	elseif event[1] == "monitor_resize" then 
+		self:onResize()
 	end
 end
 
@@ -61,59 +129,29 @@ function Monitor:pullEvent(eventName)
 	self:handleEvent(event)
 end
 function Monitor:addEvent(event)
-	self.events:add(event)
+	self.events:addFirst(event)
 end
 function Monitor:checkEvents()
-	local event = self.events:getFirst()
+	local event = self.events.last
 	if event then
 		self.events:remove(event)
 		self:handleEvent(event)
 	end
 end
 
-function Monitor:setVisible(isVisible)
-	self.visible = isVisible
-	local node = self.objects:getFirst()
-    while node do
-		if node.setVisible then
-			node:setVisible(isVisible)
-		else
-			node.visible = isVisible
-		end
-		node = self.objects:getNext(node)
+function Monitor:onResize()
+	self:updateSize()
+	self:resizeFrame()
+	local o = self.objects.first
+	while o do
+		if o.onResize then o:onResize() end
+		o = o._next
 	end
+	self:redraw()
 end
 
-function Monitor:getObjectByPos(x,y)
-    local node = self.objects:getNext()
-    while node do
-        if node.width and node.height and node.visible then
-            if x >= node.x and x <= (node.x + node.width - 1)
-                and y >= node.y and y <= (node.y + node.height - 1) then
-                return node
-            end
-        end
-        node = self.objects:getNext(node)
-    end
-    return nil
-end
-function Monitor:getBackgroundColorByPos(x,y)
-    local o = self:getObjectByPos(x,y)
-	if o and o.visible then
-		if o.getBackgroundColorByPos then
-			return o:getBackgroundColorByPos(x,y)
-		elseif o.getBackgroundColor then
-			return o:getBackgroundColor()
-		elseif o.backgroundColor then
-			return o.backgroundColor
-		end
-	elseif self.visible then
-		return self.getBackgroundColor()
-	end
-    return nil
-end
 function Monitor:updateSize()
-    self.width, self.height = self.getSize()
+    self.width, self.height = self.term.getSize()
 end
 
 function Monitor:getWidth()
@@ -126,50 +164,28 @@ function Monitor:getHeight()
     return self.height
 end
 
-function Monitor:setBackgroundCol(color) -- obsolete
-    self.prvBackgroundColor = self.getBackgroundColor()
-    if color == nil then
-        color = defaultBackgroundColor
-    end
-    self.setBackgroundColor(color)
-end
-function Monitor:setTextCol(color)
-    self.prvTextColor = self.getTextColor()
-    if color == nil then
-        color = defaultTextColor
-    end
-    self.setTextColor(color)
-end
 
-function Monitor:restoreBackgroundColor() -- obsolete
-    local color = self.prvBackgroundColor
-    if color == nil then
-        color = defaultBackgroundColor
-    end
-    self.setBackgroundColor(color)
-end
-
-function Monitor:restoreTextColor()
-    local color = self.prvTextColor
-    if color == nil then
-        color = defaultTextColor
-    end
-    self.setTextColor(color)
-end
-
-function Monitor:restoreColor()
-    self:restoreBackgroundColor()
-    self:restoreTextColor()
+function Monitor:setVisible(isVisible)
+	self.visible = isVisible
+	local node = self.objects.first
+    while node do
+		if node.setVisible then
+			node:setVisible(isVisible)
+		else
+			node.visible = isVisible
+		end
+		node = node._next
+	end
 end
 
 function Monitor:addObject(o)
-    self.objects:add(o)
+    self.objects:addFirst(o)
 	if o.setVisible then
 		o:setVisible(true)
 	else
 		o.visible = true
 	end
-	o.monitor = self
+	o.parent = self
 	if o.onAdd then o:onAdd(self) end
     return o
 end
@@ -181,85 +197,286 @@ function Monitor:removeObject(o)
 	else
 		o.visible = false
 	end
-	o.monitor = nil
+	o.parent = nil
 	if o.onRemove then o:onRemove(self) end
     return o
 end
 
 function Monitor:redraw()
 	--if self.visible then -- not needed?
-    self.clear()
+    self:clear()
     --draw oldest first -> inverse list
     
-    local node = self.objects:getPrev()
+    local node = self.objects.last
     while node do
         node:redraw()
-        node = self.objects:getPrev(node)
+        node = node._prev
     end
 end
 
-function Monitor:drawText(x,y,text,color)
-    self.setCursorPos(x,y)
-	if not color then
-		color = defaultTextColor
+function Monitor:getObjectByPos(x,y)
+    local node = self.objects.first
+    while node do
+        if node.width and node.height and node.visible then
+            if x >= node.x and x <= (node.x + node.width - 1)
+                and y >= node.y and y <= (node.y + node.height - 1) then
+                return node
+            end
+        end
+        node = node._next
+    end
+    return nil
+end
+
+function Monitor:getBackgroundColorByPos(x,y)
+	-- high performance impact
+    local o = self:getObjectByPos(x,y)
+	if o and o.visible then
+		if o.getBackgroundColorByPos then
+			return o:getBackgroundColorByPos(x,y)
+		elseif o.getBackgroundColor then
+			return o:getBackgroundColor()
+		elseif o.backgroundColor then
+			return o.backgroundColor
+		end
+	elseif self.visible then
+		return self:getBackgroundColor()
 	end
-	local backgroundColor = self:getBackgroundColorByPos(x,y)
-	if not backgroundColor then
-		backgroundColor = defaultBackgroundColor
+    return nil
+end
+
+function Monitor:getBackgroundColor()
+	return self.backgroundColor
+end
+function Monitor:setBackgroundColor(color)
+    self.prvBackgroundColor = self.backgroundColor
+    if color == nil then
+        color = defaultBackgroundColor
+    end
+	self.backgroundColor = color
+    --self.setBackgroundColor(color)
+end
+
+function Monitor:getTextColor()
+	return self.textColor
+end
+function Monitor:setTextColor(color)
+    self.prvTextColor = self.textColor
+    if color == nil then
+        color = defaultTextColor
+    end
+	self.textColor = color
+    --self.setTextColor(color)
+end
+
+function Monitor:restoreBackgroundColor()
+    local color = self.prvBackgroundColor
+    if color == nil then
+        color = defaultBackgroundColor
+    end
+	self.backgroundColor = color
+    --self.setBackgroundColor(color)
+end
+
+function Monitor:restoreTextColor()
+    local color = self.prvTextColor
+    if color == nil then
+        color = defaultTextColor
+    end
+	self.textColor = color
+    --self.setTextColor(color)
+end
+
+function Monitor:restoreColor()
+    self:restoreBackgroundColor()
+    self:restoreTextColor()
+end
+
+function Monitor:setCursorPos(x,y)
+	self.curX = x
+	self.curY = y
+end
+
+function Monitor:clear()
+	self.term.clear()
+	self:clearFrame()
+end
+
+function Monitor:update()
+	-- update the changed frame regions
+	local ct = 0
+	for i = 1, min(#self.frame,self.height) do
+		local line = self.frame[i]
+		if line.modified then 
+			self.term.setCursorPos(1,i)
+			self.term.blit(tableconcat(line.text),
+				tableconcat(line.textColor),
+				tableconcat(line.backgroundColor))
+			line.modified = false
+			ct = ct + 1
+		end
 	end
-	self:setBackgroundCol(backgroundColor)
-    self:setTextCol(color)
-	self.setCursorPos(x,y)
-	self.write(text)
-    --TODO: check backgroundColor for each char (with blit)
-    self:restoreColor()
+	-- if ct > 0 then 
+		-- print(os.epoch("local")/1000, "updated", ct)
+	-- end
+end
+
+function Monitor:blit(text,textColor, backgroundColor)
+	local line = self.frame[self.curY]
+	if line then 
+	
+		local text = {stringbyte(text,1,#text)}
+		local textColor = {stringbyte(textColor,1,#textColor)}
+		local backgroundColor = {stringbyte(backgroundColor,1,#backgroundColor)}
+		
+		local cx = self.curX-1
+		for i=self.curX, min(#text+cx, self.width) do
+			local charPos = i-cx
+			line.text[i] = stringchar(text[charPos])
+			line.textColor[i] = stringchar(textColor[charPos])
+			line.backgroundColor[i] = stringchar(backgroundColor[charPos])
+		end
+		line.modified = true
+	end
+end
+
+function Monitor:blitTable(text, textColor, backgroundColor)
+	-- text, textColor, backgroundColor should be table of chars
+	local line = self.frame[self.curY]
+	if line then 
+		local cx = self.curX-1
+		for i=self.curX, min(#text+cx, self.width) do
+			local charPos = i-cx
+			line.text[i] = text[charPos]
+			line.textColor[i] = textColor[charPos]
+			line.backgroundColor[i] = backgroundColor[charPos]
+		end
+		line.modified = true
+	end
+end
+
+function Monitor:write(text)
+
+	local line = self.frame[self.curY]
+	if line then 
+	
+		local chars = {stringbyte(text, 1, #text)}
+		local textColor = toBlit(self.textColor)
+		local backgroundColor = toBlit(self.backgroundColor)
+		local cx = self.curX-1
+		for i=self.curX, min(#chars+cx, self.width) do
+			line.text[i] = stringchar(chars[i-cx])
+			line.textColor[i] = textColor
+			line.backgroundColor[i] = backgroundColor
+		end
+		line.modified = true
+		
+	end
+end
+
+function Monitor:drawText(x,y,text,textColor,backgroundColor)
+	-- no real performance impact 1 ms
+	local line = self.frame[y]
+	if line then 
+
+		local chars = {stringbyte(text, 1, #text)}
+		if not textColor then
+			textColor = defaultTextColor
+		end
+		local textColor = toBlit(textColor)
+		
+		if backgroundColor then 
+			backgroundColor = toBlit(backgroundColor)
+		end
+		local cx = x-1
+		for i=x, min(#chars+cx, self.width) do
+			line.text[i] = stringchar(chars[i-cx])
+			line.textColor[i] = textColor
+			if backgroundColor then
+				line.backgroundColor[i] = backgroundColor
+			end
+		end
+		line.modified = true
+	end
+
+
+    -- self:setCursorPos(x,y)
+	-- if not color then
+		-- color = defaultTextColor
+	-- end
+	-- local backgroundColor = self:getBackgroundColorByPos(x,y)
+	-- if not backgroundColor then
+		-- backgroundColor = defaultBackgroundColor
+	-- end
+	-- self:setBackgroundColor(backgroundColor)
+    -- self:setTextColor(color)
+	-- self:setCursorPos(x,y)
+	-- self:write(text)
+    -- --TODO: check backgroundColor for each char (with blit)
+    -- self:restoreColor()
 end
 
 function Monitor:drawLine(x,y,endX,endY,color)
-    self:setBackgroundCol(color)
-    local old = term.redirect(self)
+    self:setBackgroundColor(color)
+    local old = term.redirect(self.term)
     paintutils.drawLine(x,y,endX,endY,color)
     term.redirect(old)
     self:restoreBackgroundColor()
 end
 
 function Monitor:drawBox(x,y,width,height,color)
-    -- self:setBackgroundCol(color)
-    -- self.setCursorPos(x,y)
+
+	-- 4-5/13 ms for drawBox and drawFilled
+	
+	-- color = toBlit(color)
     -- for c=1,height do
+		-- self:setCursorPos(x,y+c-1)
         -- if c == 1 or c == height then
+			-- local text, textColor, backgroundColor = {},{},{}
             -- for ln=1,width do
-                -- self.write(" ")
+				-- text[ln] = " "
+				-- textColor[ln] = 0
+				-- backgroundColor[ln] = color
             -- end
+			-- self:blitTable(text,textColor,backgroundColor)
         -- else
-            -- self.write(" ")
+            -- self:blitTable({" "},{"0"},{color})
             -- if width > 1 then
-                -- self.setCursorPos(x+width-1, y+c-1)
-                -- self.write(" ")
+                -- self:setCursorPos(x+width-1, y+c-1)
+                -- self:blitTable({" "},{"0"},{color})
             -- end
         -- end
-        -- self.setCursorPos(x, y+c)
     -- end
-    -- self:restoreBackgroundColor()
 	
-	color = colors.toBlit(color)
-    for c=1,height do
-		self.setCursorPos(x,y+c-1)
-        if c == 1 or c == height then
-			local text, textColor, backgroundColor = {},{},{}
-            for ln=1,width do
-				text[ln] = " "
-				textColor[ln] = 0
-				backgroundColor[ln] = color
+	--if 1 == 1 then return nil end
+	
+	
+	local startX = min(x,self.width)
+	local maxX = x+width-1
+	local endX = min(maxX, self.width)
+	
+	
+	local color = toBlit(color)
+	local ly = y-1
+    for cy=y,min(height+ly,self.height) do
+		local line = self.frame[cy]
+        if cy-y == 0 or cy-ly == height then
+            for ln=x, endX do
+				line.text[ln] = " "
+				line.textColor[ln] = 0
+				line.backgroundColor[ln] = color
             end
-			self.blit(table.concat(text),table.concat(textColor),table.concat(backgroundColor))
         else
-            self.blit(" ","0",color)
-            if width > 1 then
-                self.setCursorPos(x+width-1, y+c-1)
-                self.blit(" ","0",color)
-            end
+			line.text[startX] = " "
+			line.textColor[startX] = "0"
+			line.backgroundColor[startX] = color
+            if width > 1 and maxX <= endX then
+				line.text[maxX] = " "
+				line.textColor[maxX] = "0"
+				line.backgroundColor[maxX] = color
+			end
         end
+		line.modified = true
     end
 	
 	-- self:setBackgroundCol()
@@ -273,26 +490,33 @@ end
 function Monitor:drawFilledBox(x,y,width,height,color)
 	-- three options to draw a box
 	
-	-- self:setBackgroundCol(color)
-    -- self.setCursorPos(x,y)
+	-- color = toBlit(color)
     -- for c=1,height do
-        -- for ln=1,width do
-            -- self.write(" ")
-        -- end
-        -- self.setCursorPos(x,y+c)
-    -- end
-    -- self:restoreBackgroundColor()
+		-- self:setCursorPos(x,y+c-1)
+		-- local text, textColor, backgroundColor = {},{},{}
+		-- for ln=1,width do
+			-- text[ln] = " "
+			-- textColor[ln] = 0
+			-- backgroundColor[ln] = color
+		-- end
+		-- self:blitTable(text, textColor, backgroundColor)
+	-- end
 	
-	color = colors.toBlit(color)
-    for c=1,height do
-		self.setCursorPos(x,y+c-1)
-		local text, textColor, backgroundColor = {},{},{}
-		for ln=1,width do
-			text[ln] = " "
-			textColor[ln] = 0
-			backgroundColor[ln] = color
+	--if 1 == 1 then return nil end
+	
+	local startX = min(x,self.width)
+	local maxX = x+width-1
+	local endX = min(maxX, self.width)
+	
+	local color = toBlit(color)
+    for cy=y,min(height+y-1,self.height) do
+		local line = self.frame[cy]
+		for ln=x,endX do
+			line.text[ln] = " "
+			line.textColor[ln] = 0
+			line.backgroundColor[ln] = color
 		end
-		self.blit(table.concat(text), table.concat(textColor), table.concat(backgroundColor))
+		line.modified = true
 	end
 	
 	-- self:setBackgroundCol()
@@ -300,5 +524,6 @@ function Monitor:drawFilledBox(x,y,width,height,color)
     -- paintutils.drawFilledBox(x,y,x+width-1,y+height-1,color)
     -- term.redirect(old)
 	-- self:restoreBackgroundColor()
-
 end
+
+return Monitor

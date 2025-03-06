@@ -1,9 +1,10 @@
 
 require("classMap")
-require("classButton")
-require("classCheckBox")
+local Button = require("classButton")
+local CheckBox = require("classCheckBox")
 require("classList")
-require("classWindow")
+local Window = require("classWindow")
+local Label = require("classLabel")
 
 local default = {
 backgroundColor = colors.gray,
@@ -17,7 +18,7 @@ homeColor = colors.magenta,
 }
 
 
-MapDisplay = Window:new()
+local MapDisplay = Window:new()
 
 function MapDisplay:new(x,y,width,height,map)
 	local o = o or Window:new(x,y,width,height) or {}
@@ -39,6 +40,7 @@ function MapDisplay:new(x,y,width,height,map)
 	self.displayTurtles = true
 	self.displayHome = true
 	self.focusId = nil
+	self.focusPos = nil
 	
 	o:initialize()
 	
@@ -235,6 +237,7 @@ function MapDisplay:setFocus(id)
 	if self.focusId then
 		local data = global.turtles[self.focusId]
 		if data and data.state and data.state.pos then
+			self.focusPos = data.state.pos
 			self:setMid(data.state.pos.x, data.state.pos.y, data.state.pos.z)
 		end
 	end
@@ -243,13 +246,18 @@ end
 function MapDisplay:checkUpdates()
 	if not self.prvLogCount then self.prvLogCount = 0 end
 	
-	if ( self.monitor or self.parent ) and self.visible then
+	if self.parent and self.visible then
 		local redraw = false
 		if self.focusId then
 			local data = global.turtles[self.focusId]
 			if data and data.state and data.state.pos then
-				self:setMid(data.state.pos.x, data.state.pos.y, data.state.pos.z)
-				redraw = true
+				local fp, sp = self.focusPos, data.state.pos
+				if not fp or fp.x ~= sp.x or fp.y ~= sp.y or fp.z ~= sp.z then 
+					self.focusPos = sp
+					self:setMid(sp.x, sp.y, sp.z)
+					redraw = true
+				end
+				
 			end
 		end
 		
@@ -262,7 +270,7 @@ function MapDisplay:checkUpdates()
 	end
 end
 function MapDisplay:redraw() -- super override
-	if ( self.monitor or self.parent ) and self.visible then
+	if self.parent and self.visible then
 		--self:drawFilledBox(1, 1, self.width, self.height, self.backgroundColor)
 		--TODO: improve drawing speed (buffer each line and update with blit)
 		
@@ -297,10 +305,10 @@ function MapDisplay:redraw() -- super override
 		end
 		self:redrawOverlay()
 		-- redraw map elements
-		local node = self.objects:getPrev()
+		local node = self.objects.last
 		while node do
 			node:redraw()
-			node = self.objects:getPrev(node)
+			node = node._prev
 		end
 	end
 end
@@ -394,3 +402,5 @@ function MapDisplay:selectPosition()
 	-- needs to return a position but is not allowed to block the current process
 	self.doSelectPosition = true
 end
+
+return MapDisplay

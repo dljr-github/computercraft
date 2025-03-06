@@ -10,6 +10,7 @@ default = {
 	channels = {
 		broadcast = 65401, 
 		repeater = 65402,
+		host = 65403,
 		max = 65400
 	}
 }
@@ -45,21 +46,16 @@ function open(modem)
 		end
 		peripheral.call(modem, "open", ownChannel)
 		peripheral.call(modem, "open", default.channels.broadcast)
-		print("opened",ownChannel,default.channels.broadcast,
-		peripheral.call(modem, "isOpen", ownChannel),
-		peripheral.call(modem, "isOpen", default.channels.broadcast), 
-		"channel 0:", peripheral.call(modem, "isOpen", 0))
-	
+		print("opened",ownChannel,default.channels.broadcast)
+		
 	end
-	-- open rednet as well
-	peripheral.find("modem",rednet.open)
 	opened = true
 	return true
-end
+end		
 
 function close(modem)
 	if modem then
-		if peripheral.getType(modem) == modem then
+		if peripheral.getType(modem) == "modem" then
 			peripheral.call(modem, "close", ownChannel)
 			peripheral.call(modem, "close", default.channels.broadcast)
 			opened = false
@@ -71,7 +67,6 @@ function close(modem)
 			end
 		end
 	end
-	rednet.close()
 end
 
 function isOpen(modem)
@@ -90,32 +85,82 @@ function isOpen(modem)
 	return false
 end
 
+function openChannel(modem, channel)
+	if not isChannelOpen(modem, channel) then 
+		if not modem then
+			print("NO MODEM")
+			return false
+		end
+		peripheral.call(modem, "open", channel)
+		print("opened", channel)
+	end
+	return true
+end
+
+function closeChannel(modem, channel)
+	if not modem then 
+		print("NO MODEM", modem)
+		return false
+	end
+	if isChannelOpen(modem, channel) then 
+		return peripheral.call(modem, "close", channel)
+	end
+	return true
+end
+
+function isChannelOpen(modem, channel)
+	if not modem then 
+		print("NO MODEM", modem)
+		return false
+	end
+	return peripheral.call(modem, "isOpen", channel)
+end
+
+
+local startTimer = os.startTimer
+local cancelTimer = os.cancelTimer
+local osClock = os.clock
+local timerClocks = {}
+local timers = {}
+
 function receive(protocol, waitTime)
 	local timer = nil
 	local eventFilter = nil
 	
+	-- CAUTION: if bluenet is loaded globally, 
+	--	TODO:	the timers must be distinguished by protocol/coroutine
+	
 	if waitTime then
-		timer = os.startTimer(waitTime)
+		local t = osClock()
+		if timerClocks[waitTime] ~= t then 
+			--cancel the previous timer and create a new one
+			cancelTimer((timers[waitTime] or 0))
+			timer = os.startTimer(waitTime)
+			--print("cancelled", timers[waitTime], "created", timer, "diff", timer - (timers[waitTime]or 0))
+			timerClocks[waitTime] = t
+			timers[waitTime] = timer
+		else
+			timer = timers[waitTime]
+		end
+		
 		eventFilter = nil
 	else
 		eventFilter = "modem_message"
 	end
 	
-	-- PROBLEM: infinitely receiving because the timer event was missed
-	-- check >= timer 
-	
 	--print("receiving", protocol, waitTime, timer, eventFilter)
 	while true do
-		local event, modem, channel, sender, msg, distance = os.pullEvent(eventFilter)
-		--if event == "modem_message" then print(event, modem,channel,sender,msg,distance) end
+		local event, modem, channel, sender, msg, distance = os.pullEventRaw(eventFilter)
 		--if event == "modem_message" then print(os.clock(),event, modem, channel, sender) end
 		
-		if event == "modem_message" 
-			and ( channel == ownChannel or channel == default.channels.broadcast ) 
+		if event == "modem_message"
+			--and ( channel == ownChannel or channel == default.channels.broadcast 
+			--	or channel == default.channels.host ) 
 			and type(msg) == "table" 
 			--and type(msg.id) == "number" and not receivedMessages[msg.id]
 			and ( type(msg.recipient) == "number" and msg.recipient
-			and ( msg.recipient == computerId or msg.recipient == default.channels.broadcast ) )
+			and ( msg.recipient == computerId or msg.recipient == default.channels.broadcast 
+				or msg.recipient == default.channels.host ) )
 			and ( protocol == nil or protocol == msg.protocol )
 			-- just to make sure its a bluenet message
 			then
@@ -124,31 +169,26 @@ function receive(protocol, waitTime)
 				--print("received", msg.id, msg.protocol)
 				--receivedMessages[msg.id] = os.clock() + 9.5
 				--resetTimer()
+				--cancelTimer(timer)
+				-- if osEpoch() > t then 
+					-- print("cancel old timer")
+					-- cancelTimer(timer)
+				-- end
 				return msg
 				
 		elseif event == "timer" then
 			--print(os.clock(),event, modem, channel, sender, timer)
+			
 			if modem == timer then -- must be equal! >= geht nicht
 				--print("returning nil")
 				return nil
 			end
+		elseif event == "terminate" then 
+			error("Terminated",0)
 		end
 		
 	end
 	
-end
-
-
--- use rednet for hosting related stuff
-function host(protocol, hostName)
-	return rednet.host(protocol, hostName)
-end
-function unhost(protocol)
-	return rednet.unhost(protocol)
-end
-function lookup(protocol, hostName)
-	--print(os.epoch("local")/1000,"lookup", protocol, hostName)
-	return rednet.lookup(protocol, hostName)
 end
 
 function resetTimer()

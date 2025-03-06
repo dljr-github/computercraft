@@ -1,8 +1,8 @@
 
 --require("classNetworkNode")
 require("classBluenetNode")
-require("classMonitor")
-require("classHostDisplay")
+local Monitor = require("classMonitor")
+local HostDisplay = require("classHostDisplay")
 --require("classMap")
 require("classChunkyMap")
 require("classTaskGroup")

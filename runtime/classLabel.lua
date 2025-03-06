@@ -3,7 +3,7 @@ local default = {
 	backgroundColor = colors.black,
 }
 
-Label = {}
+local Label = {}
 
 function Label:new(text,x,y,textColor)
 	local o = o or {}
@@ -37,7 +37,9 @@ function Label:getText()
 	return self.text
 end
 function Label:redraw()
-	if self.monitor and self.visible then
-		self.monitor:drawText(self.x, self.y, self:getText(), self.textColor)
+	if self.parent and self.visible then
+		self.parent:drawText(self.x, self.y, self:getText(), self.textColor, nil)
 	end
 end
+
+return Label
