@@ -1,4 +1,5 @@
 local PathFinder = require("classPathFinder")
+local CheckPointer = require("classCheckPointer")
 --require("classMap")
 require("classLogger")
 require("classList")
@@ -9,7 +10,7 @@ require("classChunkyMap")
 -- local idToName = blockTranslation.idToName
 
 local default = {
-	waitTimeFallingBlock = 0.5,
+	waitTimeFallingBlock = 0.25,
 	maxVeinRadius = 10, --8 MAX:16
 	maxVeinSize = 256,
 	inventorySize = 16,
@@ -99,6 +100,8 @@ local oreBlocks = {
 
 local vector = vector
 local debuginfo = debug.getinfo
+local tablepack = table.pack
+local tableunpack = table.unpack
 
 local vectors = {
 	[0] = vector.new(0,0,1),  -- 	+z = 0	south
@@ -134,6 +137,7 @@ function Miner:new()
 	o.map = ChunkyMap:new(true)
 	o.taskList = List:new()
 	o.vectors = vectors
+	o.checkPointer = CheckPointer:new()
 	
 	o:initialize() -- initialize after starting parallel tasks in startup.lua
 	--print("--------------------")
@@ -164,9 +168,24 @@ function Miner:finishInitialization()
 		self:setHome(self.pos.x, self.pos.y, self.pos.z)
 	end
 	self:setStartupPos(self.pos)
-	self.initializing = nil
+
 	
+	local existsCheckpoint = self.checkPointer:existsCheckpoint()
+	if not existsCheckpoint then
+		self:returnHome()
+	end
+
+	self.initializing = nil
 	self.taskList:remove(currentTask)
+
+	if existsCheckpoint then
+		if self.checkPointer:load(self) then
+			if not self.checkPointer:executeTasks(self) then
+				self:error("CHECKPOINT NOT EXECUTED")
+			end
+		end
+	end
+	
 end
 
 function Miner:initPosition()
@@ -185,13 +204,30 @@ function Miner:initOrientation()
 	local newPos
 	local turns = 0
 	for i=1,4 do
-		print(i,"forward")
 		if not turtle.forward() then
 			self:turnLeft()
 			turns = turns + 1
 		else
 			newPos = vector.new(gps.locate())
 			break
+		end
+	end
+	if not newPos then
+		-- retry with breaking
+		print("breaking blocks")
+		for i=1,4 do
+			local hasBlock, data = turtle.inspect()
+			if not Miner.checkDisallowed(data.name) then -- or checkSafe(data.name)
+				turtle.dig()
+				sleep(default.waitTimeFallingBlock)
+			end
+			if not turtle.forward() then
+				self:turnLeft()
+				turns = turns + 1
+			else
+				newPos = vector.new(gps.locate())
+				break
+			end
 		end
 	end
 	if not newPos then
@@ -308,10 +344,10 @@ function Miner:setStation(station)
 			self.homeOrientation = station.orientation
 		end
 		
-		if self.taskList.count == 0 -- no task
-			or self.taskList.count == 1 then -- or initializing
-			self:returnHome()
-		end
+		--if self.taskList.count == 0 -- no task
+		--	or self.taskList.count == 1 then -- or initializing
+		--	self:returnHome()
+		--end
 	else
 		print("NO STATION AVAILABLE")
 	end
@@ -345,15 +381,28 @@ function Miner:error(reason,real)
 	if self.taskList.count > 0 then func = "ERR:"..self.taskList.first[1]
 	else func = "ERR:unknown" end
 	self.taskList:clear()
-	error({real=real,text=reason,func=func})
+	-- OPTI: optional: delete Checkpoint / save after clearing taskList
+	if real ~= true then
+		self.checkPointer:save(self)
+	end
+	error({real=real,text=reason,func=func}) -- watch out that this is not caught by some other function
 end
-function Miner:addCheckTask(task)
+function Miner:addCheckTask(task, isCheckpointable, ...)
 	-- called by most functions to interrupt execution
+	-- if task[1] is nil, could be due to return self:function()
+
 	if self.stop then
 		self.stop = false
 		self:error("stopped",false)
 	end
-	return self.taskList:addFirst(task)
+
+	if isCheckpointable and self.taskList.first
+		and ( task[1] == "?" or self.taskList.first[1] == task[1] ) then
+		-- task already currently in list (probably loaded by checkpointer)
+		return self.taskList.first
+	else
+		return self.taskList:addFirst(task)
+	end
 end
 
 function Miner:checkStatus()
@@ -1078,6 +1127,7 @@ function Miner:digToPos(x,y,z,safe)
 	print("digToPos:", x, y, z, "safe:", safe)
 	-- TODO: if digToPos fails, retry with navigateToPos
 	-- 		if that fails as well (not immediately), return to digToPos
+	-- NO, navigateToPos calls digToPos which could lead to recursive calls
 	
 	-- inspect is unnecessary due to digMove inspecting on demand
 	local result = true
@@ -1225,19 +1275,42 @@ function Miner:mineVein()
 end
 
 function Miner:stripMine(rowLength, rows, levels, rowFactor, levelFactor)
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name}, true)
 	print("stripmining", "rows", rows, "levels", levels)
+
+	local directionFactor = 1 -- -1 for right hand mining
+
+	local taskState = currentTask.taskState
+	if taskState then
+		rowLength, rows, levels, rowFactor, levelFactor = tableunpack(taskState.args,1,taskState.args.n)
+	else
+		taskState = {
+			stage = 1,
+			ignorePosition = false,
+			vars = {
+				currentRow = 1,
+				currentLevel = 1,
+				rowOrientation = self.orientation,
+				tunnelDirection = -1 * directionFactor,
+				startPos = vector.new(self.pos.x, self.pos.y, self.pos.z),
+				startOrientation = self.orientation,
+			},
+			args = tablepack(rowLength, rows, levels, rowFactor, levelFactor),
+		}
+	end
+	local vars = taskState.vars
+	currentTask.taskState = taskState
+	self.checkPointer:save(self)
+	-- prepare values
+
 	if not levels then levels = 1 end
 	local positiveLevel = true
 	if levels < 0 then 
 		positiveLevel = false 
 		levels = levels * -1
 	end
-	local directionFactor = 1 -- -1 for right hand mining
-	
-	local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
-	local startOrientation = self.orientation
-	
+
+
 -- OPTIMAL STRATEGIES
 -- M -> Mine
 -- * -> gets looked at
@@ -1281,67 +1354,80 @@ function Miner:stripMine(rowLength, rows, levels, rowFactor, levelFactor)
 --	   *     *     *	
 --------------------
 
-	-- try, catch
-	local ok,err = pcall(function()
 
-		if not rowFactor then rowFactor = 3 end
-		if not levelFactor then levelFactor = 2 end
 
-		-- local rowLength = (rows-1) * rowFactor
-		local rowOrientation = startOrientation
-		local tunnelDirection = -1 * directionFactor
-		
-		for currentLevel=1,levels do
-			if currentLevel%2 == 0 and rows%2 == 0 then 
-				tunnelDirection = 1 * directionFactor
-			else tunnelDirection = -1 * directionFactor end
+	if taskState.stage == 1 then
+		-- try, catch
+		local ok,err = pcall(function()
+
+			if not rowFactor then rowFactor = 3 end
+			if not levelFactor then levelFactor = 2 end
 			
-			for currentRow=1,rows do
-				self:tunnelStraight(rowLength)
-				if currentRow < rows then
-					self:turnTo(rowOrientation+tunnelDirection)
-					self:tunnelStraight(rowFactor)
-					if currentRow%2 == 1 then
-						self:turnTo(rowOrientation-2)
-					else
-						self:turnTo(rowOrientation)
-					end
-				end
-			end
-			if currentLevel < levels then
-				-- move up
-				if positiveLevel then
-					self:tunnelUp(levelFactor)
-				else
-					self:tunnelDown(levelFactor)
-				end
-				if self.orientation == startOrientation or currentLevel%2 == 0 then
-						self:turnRight() 
-						self:tunnelStraight(1)
-						self:turnRight()
-						self:tunnelStraight(1)
-				else
-					if rows%2 == 0 then
-						self:tunnelStraight(1)
-						self:turnLeft()
-						self:tunnelStraight(1)
-						self:turnLeft()
-					else
-						self:turnLeft()
-						self:tunnelStraight(1)
-						self:turnLeft()
-						self:tunnelStraight(1)
-					end
-				end
+			for currentLevel = vars.currentLevel, levels do
+				vars.currentLevel = currentLevel
+				self.checkPointer:save(self)
+				if currentLevel%2 == 0 and rows%2 == 0 then 
+					vars.tunnelDirection = 1 * directionFactor
+				else vars.tunnelDirection = -1 * directionFactor end
 				
+				for currentRow = vars.currentRow, rows do
+					vars.currentRow = currentRow
+					self.checkPointer:save(self) -- perhaps at start of for-loop
+					self:tunnelStraight(rowLength)
+					if currentRow < rows then
+						self:turnTo(vars.rowOrientation + vars.tunnelDirection)
+						self:tunnelStraight(rowFactor)
+						if currentRow%2 == 1 then
+							self:turnTo(vars.rowOrientation-2)
+						else
+							self:turnTo(vars.rowOrientation)
+						end
+					end
+				end
+				vars.currentRow = 1 -- reset row to start at 1 again, not saved state
+				if currentLevel < levels then
+					-- move up
+					if positiveLevel then
+						self:tunnelUp(levelFactor)
+					else
+						self:tunnelDown(levelFactor)
+					end
+					if self.orientation == vars.startOrientation or currentLevel%2 == 0 then
+							self:turnRight() 
+							self:tunnelStraight(1)
+							self:turnRight()
+							self:tunnelStraight(1)
+					else
+						if rows%2 == 0 then
+							self:tunnelStraight(1)
+							self:turnLeft()
+							self:tunnelStraight(1)
+							self:turnLeft()
+						else
+							self:turnLeft()
+							self:tunnelStraight(1)
+							self:turnLeft()
+							self:tunnelStraight(1)
+						end
+					end
+					
+				end
+				vars.rowOrientation = self.orientation
 			end
-			rowOrientation = self.orientation
-		end
-		
-	end)
+			
+		end)
 	
-	if not ok then 
-		print(ok, err)
+		if not ok then 
+			if err == "TUNNEL FAIL" then
+				print(ok, err)
+			else
+				-- pass error
+				error(err)
+			end
+		end
+		taskState.stage = 2
+		taskState.ignorePosition = true
+		self.checkPointer:save(self)
 	end
 
 --SINGLE LEVEL PART OF MULTILEVEL
@@ -1351,111 +1437,141 @@ function Miner:stripMine(rowLength, rows, levels, rowFactor, levelFactor)
 --	 *     *     *
 --------------------
 
-	-- only needed for testing i guess
-	self:navigateToPos(startPos.x, startPos.y, startPos.z)
-	self:turnTo(startOrientation)
+	if taskState.stage == 2 then
+		-- only needed for testing i guess
+		self:navigateToPos(vars.startPos.x, vars.startPos.y, vars.startPos.z)
+		self:turnTo(vars.startOrientation)
+	end
 
 	self.taskList:remove(currentTask)
+	self.checkPointer:save(self)
 end
 
 function Miner:mineArea(start, finish) 
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name}, true)
 	-- TODO: mine area within start and finish pos
 	-- 8 corners = 8 possible starting locations, pick nearest
 	-- determine how many rows and levels to mine and in which direction
 	
-	local minX = math.min(start.x, finish.x)
-	local minY = math.min(start.y, finish.y)
-	local minZ = math.min(start.z, finish.z)
-	local maxX = math.max(start.x, finish.x)
-	local maxY = math.max(start.y, finish.y)
-	local maxZ = math.max(start.z, finish.z)
-	
-	local width = math.abs(start.x - finish.x)
-	local height = math.abs(start.y - finish.y)
-	local depth = math.abs(start.z - finish.z)
-	
-	
-	local corners = {
-		-- 1-4 bottom
-		vector.new(minX, minY, minZ),
-		vector.new(minX, minY, maxZ),
-		vector.new(maxX, minY, minZ),
-		vector.new(maxX, minY, maxZ),
-		-- 5-8 top
-		vector.new(maxX, maxY, maxZ),
-		vector.new(maxX, maxY, minZ),
-		vector.new(minX, maxY, maxZ),
-		vector.new(minX, maxY, minZ),
-		-- 1 is opposite to (id + 4) % 8
-	}
-	
-	local minCost, minId
-	for id,corner in ipairs(corners) do
-		local cost = math.abs(self.pos.x - corner.x) + math.abs(self.pos.y - corner.y) + math.abs(self.pos.z - corner.z)
-		if minCost == nil or cost < minCost then
-			minCost = cost
-			minId = id
+	local taskState = currentTask.taskState
+	if taskState then
+		start, finish = tableunpack(taskState.args,1,taskState.args.n)
+	else
+		taskState = {
+			stage = 1, -- Stage 1: Execute stripMine, Stage 2: Execute post-stripMine steps
+			ignorePosition = true,
+			vars = {
+			},
+			args = tablepack(start, finish),
+		}
+	end
+	local vars = taskState.vars
+	currentTask.taskState = taskState
+	self.checkPointer:save(self)
+
+	if taskState.stage == 1 then
+
+		local minX = math.min(start.x, finish.x)
+		local minY = math.min(start.y, finish.y)
+		local minZ = math.min(start.z, finish.z)
+		local maxX = math.max(start.x, finish.x)
+		local maxY = math.max(start.y, finish.y)
+		local maxZ = math.max(start.z, finish.z)
+		
+		local width = math.abs(start.x - finish.x)
+		local height = math.abs(start.y - finish.y)
+		local depth = math.abs(start.z - finish.z)
+		
+		
+		local corners = {
+			-- 1-4 bottom
+			vector.new(minX, minY, minZ),
+			vector.new(minX, minY, maxZ),
+			vector.new(maxX, minY, minZ),
+			vector.new(maxX, minY, maxZ),
+			-- 5-8 top
+			vector.new(maxX, maxY, maxZ),
+			vector.new(maxX, maxY, minZ),
+			vector.new(minX, maxY, maxZ),
+			vector.new(minX, maxY, minZ),
+			-- 1 is opposite to (id + 4) % 8
+		}
+		
+		local minCost, minId
+		for id,corner in ipairs(corners) do
+			local cost = math.abs(self.pos.x - corner.x) + math.abs(self.pos.y - corner.y) + math.abs(self.pos.z - corner.z)
+			if minCost == nil or cost < minCost then
+				minCost = cost
+				minId = id
+			end
+		end
+		
+		print("start", start,"end",finish)
+		
+		start = corners[minId]
+		finish = corners[((minId+3)%8)+1] -- opposite corner
+		
+		
+		local diff = finish - start
+		local width = math.abs(diff.x)
+		local height = math.abs(diff.y)
+		local depth = math.abs(diff.z)
+		
+		-- turn to the correct orientation 
+		-- 	+z = 0	south
+		-- 	-x = 1	west
+		-- 	-z = 2	north
+		-- 	+x = 3 	east
+		local orientation
+		if diff.x <= 0 and diff.z > 0 then
+			orientation = 1 
+		elseif diff.x <= 0 and diff.z <= 0 then
+			orientation = 2 
+		elseif diff.x > 0 and diff.z <= 0 then
+			orientation = 3 
+		else
+			orientation = 0 
+		end
+		
+		local rowFactor = 3
+		local levelFactor = 2
+		local rowLength, rows, levels
+		if orientation%2 == 0 then
+			rowLength = depth
+			rows = (width+rowFactor)/rowFactor
+		else
+			rowLength = width
+			rows = (depth+rowFactor)/rowFactor
+		end
+		if diff.y < 0 then
+			levels = math.floor(((-height-levelFactor)/levelFactor)+0.5)
+		else
+			levels = math.floor(((height+levelFactor)/levelFactor)+0.5)
+		end
+		
+		rows = math.floor(rows+0.5)
+		--self.map:load()
+		
+		print("start", start,"end",finish, "diff", diff, "levels", levels)
+		
+		if not self:navigateToPos(start.x, start.y, start.z) then
+			print("unable to get to area")
+			self:returnHome()
+		else
+		
+			self:turnTo(orientation)
+			
+			taskState.stage = 2
+			taskState.ignorePosition = true
+			self.checkPointer:save(self)
+
+			self:stripMine(rowLength, rows, levels)
+			
 		end
 	end
-	
-	print("start", start,"end",finish)
-	
-	start = corners[minId]
-	finish = corners[((minId+3)%8)+1] -- opposite corner
-	
-	
-	local diff = finish - start
-	local width = math.abs(diff.x)
-	local height = math.abs(diff.y)
-	local depth = math.abs(diff.z)
-	
-	-- turn to the correct orientation 
-	-- 	+z = 0	south
-	-- 	-x = 1	west
-	-- 	-z = 2	north
-	-- 	+x = 3 	east
-	local orientation
-	if diff.x <= 0 and diff.z > 0 then
-		orientation = 1 
-	elseif diff.x <= 0 and diff.z <= 0 then
-		orientation = 2 
-	elseif diff.x > 0 and diff.z <= 0 then
-		orientation = 3 
-	else
-		orientation = 0 
-	end
-	
-	local rowFactor = 3
-	local levelFactor = 2
-	local rowLength, rows, levels
-	if orientation%2 == 0 then
-		rowLength = depth
-		rows = (width+rowFactor)/rowFactor
-	else
-		rowLength = width
-		rows = (depth+rowFactor)/rowFactor
-	end
-	if diff.y < 0 then
-		levels = math.floor(((-height-levelFactor)/levelFactor)+0.5)
-	else
-		levels = math.floor(((height+levelFactor)/levelFactor)+0.5)
-	end
-	
-	rows = math.floor(rows+0.5)
-	--self.map:load()
-	
-	print("start", start,"end",finish, "diff", diff, "levels", levels)
-	
-	if not self:navigateToPos(start.x, start.y, start.z) then
-		print("unable to get to area")
-		self:returnHome()
-	else
-	
-		self:turnTo(orientation)
-		
-		self:stripMine(rowLength, rows, levels)
-		
+
+	-- Stage 2: Execute post-stripMine steps
+	if taskState.stage == 2 then
 		self:returnHome()
 		self:condenseInventory()
 		self:dumpBadItems()
@@ -1463,7 +1579,9 @@ function Miner:mineArea(start, finish)
 		--self:getFuel()
 		--self.map:save()
 	end 
+
 	self.taskList:remove(currentTask)
+	self.checkPointer:save(self)
 end
 
 
@@ -1475,6 +1593,8 @@ function Miner:tunnel(length, direction)
 	local skipSteps = 0
 	
 	-- determine direction to mine
+	local directionVector, digFunc
+
 	if not direction or direction == "straight" then 
 		directionVector = self.vectors[self.orientation]
 		digFunc = Miner.digMove
@@ -1498,7 +1618,7 @@ function Miner:tunnel(length, direction)
 				-- if two turtles get in each others way, steps could be skipped
 				-- try to navigate to next step, else quit
 				if i < length - 1 then
-					newPos = self.pos + directionVector * 2
+					local newPos = self.pos + directionVector * 2
 					if not self:navigateToPos(newPos.x, newPos.y, newPos.z) then
 						result = false
 						break
@@ -1533,21 +1653,24 @@ function Miner:tunnel(length, direction)
 	
 	self.taskList:remove(currentTask)
 	
-	if not result then error("TUNNEL FAIL") end
+	if not result then error("TUNNEL FAIL", 0) end
 	return result
 	
 end
 
 function Miner:tunnelStraight(length)
-	return self:tunnel(length,"straight")
+	local result = self:tunnel(length,"straight")
+	return result
 end
 
 function Miner:tunnelUp(height)
-	return self:tunnel(height,"up")
+	local result = self:tunnel(height,"up")
+	return result
 end
 
 function Miner:tunnelDown(height)
-	return self:tunnel(height,"down")
+	local result = self:tunnel(height,"down")
+	return result
 end
 
 function Miner:inspectMine()
@@ -1614,7 +1737,8 @@ function Miner:navigateToPos(x,y,z)
 										ct = maxTries
 										countParts = maxParts
 										-- get home as near as possible
-										result = self:digToPos(self.home.x, self.home.y, self.home.z, true)
+										result = false -- return false otherwise will continue with mining at home
+										self:digToPos(self.home.x, self.home.y, self.home.z, true)
 										
 									end
 									
@@ -1626,17 +1750,20 @@ function Miner:navigateToPos(x,y,z)
 						end
 					end
 				else
-					if not self:digToPos(self.home.x, self.home.y, self.home.z, true) then
+					-- change, dont dig home, dig to target
+					if not self:digToPos(goal.x, goal.y, goal.z, true) then
 						--path was not safe
 						print("NOT SAFE TO DIG TO POS")
 						result = false
 						countParts = maxParts
+						sleep(0.5) -- give other turtles a chance to move out the way
 					else result = true end
 				end
 			until result == true or countParts >= maxParts
 		until result == true or ct >= maxTries
 	end
 	
+	if self.pos ~= goal then result = false end
 	if result == false then 
 		print("NOT SAFE TO FOLLOW PATH AFTER MULTIPLE TRIES")
 	end
@@ -1651,7 +1778,8 @@ function Miner:followPath(path)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	local result = true
 	local safe = true -- always safe?
-	for _,step in ipairs(path) do
+
+	for i,step in ipairs(path) do
 		if step.pos ~= self.pos  then
 			local diff = step.pos - self.pos
 			local newOr
@@ -1662,7 +1790,14 @@ function Miner:followPath(path)
 			elseif diff.z > 0 then newOr = 0
 			elseif diff.y < 0 then upDown = -1
 			else upDown = 1 end
-	
+
+			-- inspecting slows down movement, minimize it
+			if i > 1 then
+				if upDown ~= 1 then self:inspectUp() end
+				if upDown ~= -1 then self:inspectDown() end
+				if not newOr or newOr ~= self.orientation then self:inspect() end
+			end
+
 			if upDown > 0 then
 				if not self:digMoveUp(safe) then 
 					result = false --return false
@@ -1692,11 +1827,15 @@ function Miner:followPath(path)
 					end
 				end
 			end
-			self:inspect()
-			self:inspectUp()
-			self:inspectDown()
 		end 
 	end
+
+	if result and #path > 0 then
+		self:inspect()
+		self:inspectUp()
+		self:inspectDown()
+	end
+
 	--if not result and path[#path].pos == step.pos then
 	--	self:error("GOAL IS BLOCKED")
 	-- leads to infinite loop
