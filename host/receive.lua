@@ -56,13 +56,13 @@ while global.running do
 		
 	elseif event == "monitor_touch" or event == "mouse_up"
 		or event == "mouse_click" or event == "monitor_resize" then
-		monitor:addEvent({event,p1,p2,p3,p4,p5})
+		monitor:addEvent({event,p1,p2,p3,msg,p5})
 	elseif event == "terminate" then 
 		error("Terminated",0)
 	end
 	if event and global.printEvents then
 		if not (event == "timer") then
-			print(event,p1,p2,p3,p4,p5)
+			print(event,p1,p2,p3,msg,p5)
 		end
 	end
 end
