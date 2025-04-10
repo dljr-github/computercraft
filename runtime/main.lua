@@ -196,7 +196,7 @@ nodeUpdate.onRequestAnswer = function(forMsg)
 end
 
 
-function checkOnline(id)
+local function checkOnline(id)
 	local turt = turtles[id]
 	local online = false
 	if turt then
@@ -210,7 +210,7 @@ function checkOnline(id)
 	return online
 end
 
-function getStation(id)
+local function getStation(id)
 	local result
 	-- check already allocated stations
 	for _,station in ipairs(config.stations.turtles) do
@@ -300,7 +300,7 @@ end
 
 -- end
 
-function checkUpdates()
+local function checkUpdates()
 	--local update = table.remove(updates)
 	
 	-- function not allowed to yield!!!
@@ -428,7 +428,7 @@ function checkUpdates()
 	
 end
 
-function refreshState()
+local function refreshState()
 	-- refresh the online state of the turtles
 	for id,turtle in pairs(turtles) do
 		turtle.state.timeDiff = os.epoch("ingame") - turtle.state.time

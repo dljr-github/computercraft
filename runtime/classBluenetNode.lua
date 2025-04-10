@@ -24,14 +24,23 @@ local default = {
 
 local timer -- does that work?
 local osEpoch = os.epoch
+local mathRandom = math.random
+local peripheralCall = peripheral.call
 
 NetworkNode = {}
+NetworkNode.__index = NetworkNode
 
 function NetworkNode:new(protocol,isHost)
 	local o = o or {}
 	setmetatable(o, self)
-	self.__index = self
 	
+	-- Function Caching
+    --for k, v in pairs(self) do
+    --    if type(v) == "function" then
+    --        o[k] = v  -- Directly assign method to object
+    --    end
+    --end
+
 	--print("----INITIALIZING----")
 	
 	o.isHost = isHost or false
@@ -188,7 +197,7 @@ function NetworkNode:generateUUID()
 		-- local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
 		-- return string.format('%x', v)
 	-- end)	
-	return math.random(1,2147483647)
+	return mathRandom(1,2147483647)
 end
 
 function NetworkNode.checkValid(msg,waitTime)
@@ -385,11 +394,11 @@ function NetworkNode:listenForAnswer(forMsg,waitTime)
 				--print(msg.id, msg.data[1], msg.protocol,waitTime)
 				break
 			else
-				print("different", forMsg.id, forMsg.data[1])
+				print("different", forMsg.protocol, forMsg.id, forMsg.data[1])
 				-- different message
 				-- do not handle other messages, it came to the error below
 				-- self:handleMessage(sender,msg,distance)
-				--print("different answer", msg.id, msg.data[1], forMsg.id, forMsg.data[1])
+				--print("different answer", msg.sender, msg.protocol, msg.id, msg.data[1], forMsg.id, forMsg.data[1])
 				msg = nil
 				--forMsg = nil
 			end
@@ -446,7 +455,7 @@ function NetworkNode:answer(forMsg,data)
 	--print("answering",msg.sender,msg.recipient, recipient ,msg.id,msg.protocol)
 	
 	if self.opened then
-		peripheral.call(self.modem, "transmit", recipient, self.channel, msg)
+		peripheralCall(self.modem, "transmit", recipient, self.channel, msg)
 		-- needed?
 		--peripheral.call(self.modem, "transmit", default.channels.repeater, self.channel, msg)
 	end
@@ -454,14 +463,13 @@ function NetworkNode:answer(forMsg,data)
 	return msg
 end
 
-local mathrandom = math.random
 
 function NetworkNode:send(recipient,data,answer,wait,waitTime,subProtocol)
 	if recipient ~= self.channel then
 		-- TODO: add subProtocol as topic
 		local msg = {
 			--id = self:generateUUID(),
-			id = mathrandom(1,2147483647),
+			id = mathRandom(1,2147483647),
 			time = osEpoch(),
 			sender = self.id,
 			recipient = recipient,
@@ -502,7 +510,7 @@ function NetworkNode:send(recipient,data,answer,wait,waitTime,subProtocol)
 		recipient = self:idAsChannel(recipient)
 		
 		if self.opened then
-			peripheral.call(self.modem, "transmit", recipient, self.channel, msg)
+			peripheralCall(self.modem, "transmit", recipient, self.channel, msg)
 			-- needed?
 			--peripheral.call(self.modem, "transmit", default.channels.repeater, self.channel, msg)
 		end
@@ -662,7 +670,7 @@ function NetworkNode:sendStream(recipient,data,streamId,wait,waitTime,subProtoco
 	end
 	
 	if self.opened then
-		peripheral.call(self.modem, "transmit", recipient, self.channel, msg)
+		peripheralCall(self.modem, "transmit", recipient, self.channel, msg)
 	end
 		
 	if wait then 
@@ -681,6 +689,7 @@ end
 	-- finish event queue and request close the next send stream
 	-- trigger when streamresponse was not received in time
 	-- needed? just dont answer and it will be closed by default
+	-- TODO: yes it is needed sometimes
 -- end
 
 

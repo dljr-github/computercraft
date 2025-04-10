@@ -8,8 +8,9 @@ local Label = require("classLabel")
 
 local default = {
 backgroundColor = colors.gray,
-unknownColor = colors.gray,
-knownColor = colors.lightGray,
+unknownColor = colors.black,
+freeColor = colors.lightGray,
+blockedColor = colors.gray,
 buttonColor = colors.lightBlue,
 turtleColor = colors.blue,
 aboveColor = colors.purple,
@@ -17,6 +18,15 @@ belowColor = colors.orange,
 homeColor = colors.magenta,
 }
 
+
+local mathRandom = math.random
+local randomChars = {
+	"*", "'", ",", " ", " ", " ", " ", " ", " ", " ", " ",
+	" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
+	" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",  }
+local randCount = #randomChars
+
+-- TODO: https://github.com/9551-Dev/pixelbox_lite
 
 local MapDisplay = Window:new()
 
@@ -52,6 +62,8 @@ function MapDisplay:initialize()
 
 	self.scrollFactor = math.floor( (self.height + self.width)/16 )
 	if self.scrollFactor <= 0 then self.scrollFactor = 1 end
+
+	self:precomputeBackground()
 	
 	-- self.btnClose = Button:new("X",self.width-2,1,3,3,colors.red)
 	self.btnLeft = Button:new("<",1,self.midHeight,3,3,default.buttonColor)
@@ -269,6 +281,33 @@ function MapDisplay:checkUpdates()
 		if redraw then self:redraw() end
 	end
 end
+
+function MapDisplay:precomputeBackground()
+    self.background = {
+        text = {},
+        textColor = {},
+        backgroundColor = {}
+    }
+	local background = self.background
+
+    self.backgroundWidth = 50 -- Fixed width of the background
+    self.backgroundHeight = 50 -- Fixed height of the background
+
+    for row = 1, self.backgroundHeight do
+        background[row] = {
+			text = {},
+			textColor = {},
+			backgroundColor = {}
+		}
+
+        for col = 1, self.backgroundWidth do
+            background[row].text[col] = randomChars[mathRandom(1, randCount)]
+            background[row].textColor[col] = mathRandom(7, 8)
+            background[row].backgroundColor[col] = colors.toBlit(default.unknownColor)
+        end
+    end
+end
+
 function MapDisplay:redraw() -- super override
 	if self.parent and self.visible then
 		--self:drawFilledBox(1, 1, self.width, self.height, self.backgroundColor)
@@ -276,30 +315,41 @@ function MapDisplay:redraw() -- super override
 		
 	
 		local blit = {
-			known = colors.toBlit(default.knownColor),
+			free = colors.toBlit(default.freeColor),
+			blocked = colors.toBlit(default.blockedColor),
 			unknown = colors.toBlit(default.unknownColor),
 		}
 		
 		for row=0, self.height-1 do
 			self:setCursorPos(1, 1 + row)
 			local text, textColor, backgroundColor = {},{},{}
-			
+			local bgRow = (self.mapZ + row * self.zoomLevel) % self.backgroundHeight + 1
+			local bg = self.background[bgRow]
+
 			for col=1, self.width do
 				local data = self.map:getData(self.mapX + (col-1)*self.zoomLevel, self.mapY, self.mapZ + row*self.zoomLevel)
 				
 				if data then
 					if data == 0 then
 						text[col] = " "
-						backgroundColor[col] = blit.known
+						textColor[col] = 0
+						backgroundColor[col] = blit.free
 					else
-						text[col] = "X"
-						backgroundColor[col] = blit.known
+						text[col] = " "
+						textColor[col] = 0
+						backgroundColor[col] = blit.blocked
 					end
 				else
-					text[col] = " "
-					backgroundColor[col] = blit.unknown
+					
+                    local bgCol = (self.mapX + (col - 1) * self.zoomLevel) % self.backgroundWidth + 1
+					text[col] = bg.text[bgCol]
+                    textColor[col] = bg.textColor[bgCol]
+					backgroundColor[col] = bg.backgroundColor[bgCol]
+					--text[col] = randomChars[mathRandom(1,randCount)]
+					--textColor[col] = mathRandom(7,8)
+					--backgroundColor[col] = blit.unknown
 				end
-				textColor[col] = 0
+				--textColor[col] = 0
 			end
 			self:blit(table.concat(text),table.concat(textColor),table.concat(backgroundColor))
 		end

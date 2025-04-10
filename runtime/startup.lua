@@ -18,6 +18,9 @@ local function copyFile(fileName, targetFileName)
 			fs.copy(fileName, targetFileName)
 			reboot = true
 		end
+	else
+		fs.copy(fileName, targetFileName)
+		reboot = true
 	end
 end
 

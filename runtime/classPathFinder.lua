@@ -5,6 +5,8 @@ local Heap = require("classHeap")
 -- local SimpleVector = require("classSimpleVector")
 
 local abs = math.abs
+local tableinsert = table.insert
+local osEpoch = os.epoch
 
 local default = {
 	distance = 10,
@@ -45,11 +47,11 @@ local function reconstructPath(current,start)
 	while true do
 		if current.previous then
 			current.pos = vector.new(current.x, current.y, current.z)
-			table.insert(path, 1, current)
+			tableinsert(path, 1, current)
 			current = current.previous
 		else
 			start.pos = vector.new(start.x, start.y, start.z)
-			table.insert(path, 1, start)
+			tableinsert(path, 1, start)
 			return path
 		end		
 	end
@@ -65,25 +67,30 @@ end
 local function getNeighbours(cur)
 	local neighbours = {}
 	
+	local cx, cy, cz, co = cur.x, cur.y, cur.z, cur.o
 	-- forward
-	local vector = vectors[cur.o]
-	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = cur.o })
+	local vector = vectors[co]
+	neighbours[1] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = co }
 	-- up
-	table.insert(neighbours, { x = cur.x, y = cur.y+1, z = cur.z, o = cur.o })
+	neighbours[2] = { x = cx, y = cy + 1, z = cz, o = co }
 	-- down
-	table.insert(neighbours, { x = cur.x, y = cur.y-1, z = cur.z, o = cur.o })
+	neighbours[3] = { x = cx, y = cy - 1, z = cz, o = co }
 	-- left
-	vector = vectors[(cur.o-1)%4]
-	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = (cur.o-1)%4 })
+	local curo = (co-1)%4
+	vector = vectors[curo]
+	neighbours[4] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = curo }
 	-- right
-	vector = vectors[(cur.o+1)%4]
-	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = (cur.o+1)%4 })
+	curo = (co+1)%4
+	vector = vectors[curo]
+	neighbours[5] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = curo }
 	-- back
-	vector = vectors[(cur.o+2)%4]
-	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = (cur.o+2)%4 })
+	curo = (co+2)%4
+	vector = vectors[curo]
+	neighbours[6] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = curo }
 
 	return neighbours
 end
+
 
 
 --KEEP COSTS LOW BECAUSE HEURISTIC VALUE IS ALSO SMALL IN DIFFERENCE
@@ -111,7 +118,7 @@ end
 
 function PathFinder:checkPossible(startPos, startOrientation, finishPos, map, distance, doReset)
 	-- reverse search
-	distance = distance or default.distance * 2
+	local distance = distance or default.distance * 2
 	local path, closed = self:aStarPart(finishPos,0,startPos,map,distance)
 	if path then 
 		--print(#path, path[#path].pos, startPos)
@@ -166,7 +173,7 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 		-- no vectors			2850
 		-- no xyzToId			2650 -- nur für lange distanzen?
 		
-	local startTime = os.epoch("local")
+	local startTime = osEpoch("local")
 	
 	
 	local checkValid = self.checkValid
@@ -226,7 +233,7 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 				-- or use time/iteration based approach
 				
 				local path = reconstructPath(current,start)
-				print(os.epoch("local")-startTime, "FOUND, MOV:", #path, "CT", ct)
+				print(osEpoch("local")-startTime, "FOUND, MOV:", #path, "CT", ct)
 				--print("open neighbours:", openCount, "closed", closedCount)
 				return path
 
@@ -293,10 +300,10 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 			-- maybe yield for longer for other tasks to catch up
 			--> seems to solve all problems -> test interval and duration
 			--sleep(0.5)
-			-- print(os.epoch("local")-startTime, ct)
+			-- print(osEpoch("local")-startTime, ct)
 		end
 	end
-	print(os.epoch("local")-startTime, "NO PATH FOUND", "CT", ct)
+	print(osEpoch("local")-startTime, "NO PATH FOUND", "CT", ct)
 	return nil, closed
 	--https://github.com/GlorifiedPig/Luafinding/blob/master/src/luafinding.lua
 end
@@ -322,7 +329,7 @@ function PathFinder:aStarId(startPos, startOrientation, finishPos, map, distance
 		-- no map access : -650
 		-- no vectors			2850
 		
-	local startTime = os.epoch("local")
+	local startTime = osEpoch("local")
 	
 	local xyzToId = map.xyzToId
 	
@@ -377,7 +384,7 @@ function PathFinder:aStarId(startPos, startOrientation, finishPos, map, distance
 				-- or use time/iteration based approach
 				
 				local path = reconstructPath(current,start)
-				--print(os.epoch("local")-startTime, "FOUND, MOV:", #path, "CT", ct)
+				--print(osEpoch("local")-startTime, "FOUND, MOV:", #path, "CT", ct)
 				--print("open neighbours:", openCount, "closed", closedCount)
 				return path
 
@@ -434,7 +441,7 @@ function PathFinder:aStarId(startPos, startOrientation, finishPos, map, distance
 			-- maybe yield for longer for other tasks to catch up
 			--> seems to solve all problems -> test interval and duration
 			--sleep(0.5)
-			-- print(os.epoch("local")-startTime, ct)
+			-- print(osEpoch("local")-startTime, ct)
 		end
 	end
 	return nil

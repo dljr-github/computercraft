@@ -129,6 +129,7 @@ function receive(protocol, waitTime)
 	
 	-- CAUTION: if bluenet is loaded globally, 
 	--	TODO:	the timers must be distinguished by protocol/coroutine
+	-- 			leads to host being unable to reboot!!!
 	
 	if waitTime then
 		local t = osClock()

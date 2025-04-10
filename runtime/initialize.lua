@@ -20,6 +20,7 @@ end
 local function initPosition()
 	local x,y,z = gps.locate()
 	if x and y and z then
+		x, y, z = math.floor(x), math.floor(y), math.floor(z)
 		global.pos = vector.new(x,y,z)
 	else
 		print("gps not working")

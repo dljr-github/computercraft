@@ -320,9 +320,9 @@ function Window:drawLine(x,y,endX,endY,color)
 	--end
 end
 
-function Window:drawBox(x,y,width,height,color)
+function Window:drawBox(x,y,width,height,color,borderWidth,backgroundColor)
 	--if self.parent then
-		self.parent:drawBox(self.x-1+x, self.y-1+y, width, height, color)
+		self.parent:drawBox(self.x-1+x, self.y-1+y, width, height, color, borderWidth, backgroundColor)
 	--end
 end
 
