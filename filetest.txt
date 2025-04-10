@@ -1,0 +1,3001 @@
+"stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk""stack traceback:\
+	/test/files.lua:13: in upvalue 'createFile'\
+	/test/files.lua:23: in local 'testFiles'\
+	/test/files.lua:28: in main chunk"
