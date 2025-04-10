@@ -19,6 +19,7 @@ os.loadAPI("/runtime/config.lua")
 
 shell.run("runtime/initialize.lua")
 
+shell.openTab("runtime/shellDisplay.lua")
 shell.openTab("runtime/display.lua")
 shell.openTab("runtime/main.lua")
 shell.openTab("runtime/receive.lua")

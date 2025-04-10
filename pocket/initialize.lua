@@ -1,8 +1,8 @@
 
 --require("classNetworkNode")
 require("classBluenetNode")
-require("classMonitor")
-require("classHostDisplay")
+local Monitor = require("classMonitor")
+local HostDisplay = require("classHostDisplay")
 --require("classMap")
 require("classChunkyMap")
 require("classTaskGroup")
@@ -61,5 +61,6 @@ global.loadTurtles()
 global.loadStations()
 loadGroups()
 
-global.monitor = Monitor:new(term.current())
-global.display = HostDisplay:new(1,1,global.monitor:getWidth(),global.monitor:getHeight())
+--global.monitor = Monitor:new(term.current())
+--global.display = HostDisplay:new(1,1,global.monitor:getWidth(),global.monitor:getHeight())
+
