@@ -5,6 +5,7 @@ require("classList")
 local defaultBackgroundColor = colors.black
 local defaultTextColor = colors.white
 local defaultTextScale = 0.5
+local defaultBoderWidth = 2
 
 -- special characters: https://thox.madefor.cc/through/topics/encodings.html#computercraft-encoding
 
@@ -107,6 +108,7 @@ function Monitor:clearFrame()
 end
 
 function Monitor:handleEvent(event)
+	print("Monitor:handleEvent", event[1], event[2], event[3], event[4])
 	if event[1] == "monitor_touch" or event[1] == "mouse_up" or event[1] == "mouse_click" then
 		local x = event[3]
 		local y = event[4]
@@ -424,7 +426,13 @@ function Monitor:drawLine(x,y,endX,endY,color)
     self:restoreBackgroundColor()
 end
 
-function Monitor:drawBox(x,y,width,height,color)
+function Monitor:drawBox(x,y,width,height,color, boderWidth, backgroundColor)
+
+	if not borderWidth then borderWidth = defaultBoderWidth end
+	if not backgroundColor then backgroundColor = defaultBackgroundColor end
+	local backgroundColor = toBlit(backgroundColor)
+
+	--TODO: borderWidth, different values
 
 	-- 4-5/13 ms for drawBox and drawFilled
 	
@@ -455,29 +463,91 @@ function Monitor:drawBox(x,y,width,height,color)
 	local maxX = x+width-1
 	local endX = min(maxX, self.width)
 	
-	
-	local color = toBlit(color)
-	local ly = y-1
-    for cy=y,min(height+ly,self.height) do
-		local line = self.frame[cy]
-        if cy-y == 0 or cy-ly == height then
-            for ln=x, endX do
-				line.text[ln] = " "
-				line.textColor[ln] = 0
-				line.backgroundColor[ln] = color
-            end
-        else
-			line.text[startX] = " "
-			line.textColor[startX] = "0"
-			line.backgroundColor[startX] = color
-            if width > 1 and maxX <= endX then
-				line.text[maxX] = " "
-				line.textColor[maxX] = "0"
-				line.backgroundColor[maxX] = color
+	if false then
+		local color = toBlit(color)
+		local ly = y-1
+		for cy=y,min(height+ly,self.height) do
+			local line = self.frame[cy]
+			if cy-y == 0 or cy-ly == height then
+				for ln=x, endX do
+					line.text[ln] = " "
+					line.textColor[ln] = 0
+					line.backgroundColor[ln] = color
+				end
+			else
+				line.text[startX] = " "
+				line.textColor[startX] = "0"
+				line.backgroundColor[startX] = color
+				if width > 1 and maxX <= endX then
+					line.text[maxX] = " "
+					line.textColor[maxX] = "0"
+					line.backgroundColor[maxX] = color
+				end
 			end
-        end
-		line.modified = true
-    end
+			line.modified = true
+		end
+	else
+		local color = toBlit(color)
+		local ly = y-1
+		for cy=y,min(height+ly,self.height) do
+			local line = self.frame[cy]
+			if cy-y == 0 or cy-ly == height then
+				for ln=x, endX do
+					if cy-y == 0 then
+						if ln==x then 
+							line.text[ln] = " "
+							line.textColor[ln] = color
+							line.backgroundColor[ln] = color
+							--line.text[ln] = "\129"
+							--line.textColor[ln] = toBlit(self:getBackgroundColor())
+							--line.backgroundColor[ln] = color
+						elseif ln == endX then
+							line.text[ln] = " "
+							line.textColor[ln] = color
+							line.backgroundColor[ln] = color
+							--line.text[ln] = "\130"
+							--line.textColor[ln] = toBlit(self:getBackgroundColor())
+							--line.backgroundColor[ln] = color
+						else
+							line.text[ln] = "\143" --"\131"
+							line.textColor[ln] = color
+							line.backgroundColor[ln] = backgroundColor
+						end
+					else
+						if ln==x then 
+							line.text[ln] = " "
+							line.textColor[ln] = color
+							line.backgroundColor[ln] = color
+							--line.text[ln] = "\144"
+							--line.textColor[ln] = toBlit(self:getBackgroundColor())
+							--line.backgroundColor[ln] = color
+						elseif ln == endX then
+							line.text[ln] = " "
+							line.textColor[ln] = color
+							line.backgroundColor[ln] = color
+							--line.text[ln] = "\159"
+							--line.textColor[ln] = color
+							--line.backgroundColor[ln] = toBlit(self:getBackgroundColor())
+						else
+							line.text[ln] = "\131"
+							line.textColor[ln] = backgroundColor
+							line.backgroundColor[ln] = color
+						end
+					end
+				end
+			else
+				line.text[startX] = " "
+				line.textColor[startX] = color
+				line.backgroundColor[startX] = color
+				if width > 1 and maxX <= endX then
+					line.text[maxX] = " "
+					line.textColor[maxX] = color
+					line.backgroundColor[maxX] = color
+				end
+			end
+			line.modified = true
+		end
+	end
 	
 	-- self:setBackgroundCol()
     -- local old = term.redirect(self)

@@ -55,59 +55,95 @@ function HostDisplay:initialize()
 	self.winMain = Window:new(1,1)
 	self:addObject(self.winMain)
 	self.winMain:fillParent()
-	
-	self.winMain.lblHeading = Label:new("Turtle Manager",1,2)
+	self.winMain:clearObjects()
 	
 	-- add main window objects
-	self.winFunctions = Window:new(1,4,20,20)
-	self.winData = Window:new(22,4,20,20)
-	self.winMain.btnReboot = Button:new("REBOOT", self:getWidth()-9,4,11,3,colors.blue)
-	self.winMain.btnTerminate = Button:new("STOP", self:getWidth()-9,1,10,3,colors.red)
-	self.winMain.btnGlobalReboot = Button:new("REBOOT ALL", self:getWidth()-9,7,11,3)
-	self.winMain.btnGlobalRebootSlow = Button:new("REBOOT SLW", self:getWidth()-9,10,11,3)
-	self.winMain.btnGlobalShutdown = Button:new("SHUTDOWN", self:getWidth()-9,13,11,3,colors.pink)
+	--self.winMain.btnGlobalRebootSlow = Button:new("REBOOT SLW", self:getWidth()-9,10,11,3)
+	--self.winMain.btnGlobalShutdown = Button:new("SHUTDOWN", self:getWidth()-9,13,11,3,colors.pink)
 	
+	--self.winMain.btnGlobalRebootSlow.click = function() return self:globalReboot(true) end
+	--self.winMain.btnGlobalShutdown.click = function() return self:globalShutdown() end
+	
+	self.winMain.lblHeading = Label:new("Turtle Manager",2,1)
+	local sx, sy = 10,2
+	self.winMain.btnReboot = Button:new("REBOOT", self:getWidth()-8,sy,8,3,colors.blue)
+	self.winMain.btnTerminate = Button:new("STOP", self:getWidth()-17,sy,8,3,colors.red)
+	
+	self.winMain.btnMap = Button:new("MAP", sx-8, sy, 7, 3)
+	self.winMain.mp1 = Label:new("\155\156\136", sx, sy, colors.blue, colors.green)
+	self.winMain.mp2 = Label:new("\137", sx+3, sy, colors.yellow, colors.blue)
+	self.winMain.mp3 = Label:new("\155\156", sx, sy+1, colors.green, colors.blue)
+	self.winMain.mp4 = Label:new("\148", sx+2, sy+1, colors.yellow, colors.blue)
+	self.winMain.mp5 = Label:new("\159", sx+3, sy+1, colors.green, colors.blue)
+	self.winMain.mp6 = Label:new("\154\158\141\151", sx, sy+2, colors.green, colors.blue)
+	self.winMain.btnGroups = Button:new("Groups", sx+6, sy, 10, 3)
+	
+	local sx, sy = 2, sy+4
+	self.winMain.btnTurtles = Button:new("Turtles", sx, sy, 10, 3)
+	self.winMain.lblRow1 = Label:new(   "      |        |       ", sx+11, sy)
+	self.winMain.lblRow2 = Label:new(   "      |        |       ", sx+12, sy)
+	self.winMain.lblTotalHd = Label:new(" total", sx+11, sy)
+	self.winMain.lblTotal =   Label:new("     0", sx+11, sy+1)
+	self.winMain.lblOnlineHd = Label:new(		 "online", sx+20, sy)
+	self.winMain.lblOnline =   Label:new(         "     0", sx+20, sy+1)
+	self.winMain.lblActiveHd = Label:new(				  " active", sx+29, sy)
+	self.winMain.lblActive =   Label:new(				  "      0", sx+29, sy+1)
+
+	self.winMain.btnGlobalReboot = Button:new("reboot", sx+11, sy+2, 7, 1)
+	self.winMain.btnHome = Button:new("home", sx+20, sy+2, 7, 1)
+	self.winMain.btnCancel = Button:new("cancel", sx+29, sy+2, 7, 1)
+	self.winMain.lblTimeVal = Label:new("00:00:00", self:getWidth()-8, sy+2)
+
+	self.winMain.btnMap.click = function() return self:displayMap() end
+	self.winMain.btnTurtles.click = function() return self:displayTurtles() end
+	self.winMain.btnGroups.click = function() return self:displayGroups() end
 	self.winMain.btnReboot.click = function() self:reboot() end
 	self.winMain.btnTerminate.click = function() return self:terminate() end
 	self.winMain.btnGlobalReboot.click = function() return self:globalReboot(false) end
-	self.winMain.btnGlobalRebootSlow.click = function() return self:globalReboot(true) end
-	self.winMain.btnGlobalShutdown.click = function() return self:globalShutdown() end
+	self.winMain.btnCancel.click = function() return self:globalCancelTask() end
+	self.winMain.btnHome.click = function() return self:globalCallHome() end
 	
-	self.winMain:addObject(self.winMain.lblHeading)
-	self.winMain:addObject(self.winFunctions)
-	self.winMain:addObject(self.winData)
+	--self.winMain:addObject(self.winMain.lblHeading)
 	self.winMain:addObject(self.winMain.btnReboot)
 	self.winMain:addObject(self.winMain.btnTerminate)
+	self.winMain:addObject(self.winMain.btnMap)
+	self.winMain:addObject(self.winMain.mp1)
+	self.winMain:addObject(self.winMain.mp2)
+	self.winMain:addObject(self.winMain.mp3)
+	self.winMain:addObject(self.winMain.mp4)
+	self.winMain:addObject(self.winMain.mp5)
+	self.winMain:addObject(self.winMain.mp6)
+	self.winMain:addObject(self.winMain.btnGroups)
+	self.winMain:addObject(self.winMain.btnTurtles)
+	self.winMain:addObject(self.winMain.lblRow1)
+	self.winMain:addObject(self.winMain.lblRow2)
+	self.winMain:addObject(self.winMain.lblTotalHd)
+	self.winMain:addObject(self.winMain.lblTotal)
+	self.winMain:addObject(self.winMain.lblOnlineHd)
+	self.winMain:addObject(self.winMain.lblOnline)
+	self.winMain:addObject(self.winMain.lblActiveHd)
+	self.winMain:addObject(self.winMain.lblActive)
 	self.winMain:addObject(self.winMain.btnGlobalReboot)
-	self.winMain:addObject(self.winMain.btnGlobalRebootSlow)
-	self.winMain:addObject(self.winMain.btnGlobalShutdown)
-	
-	-- add functions window objects
-	self.winFunctions.frmFunctions = Frame:new("Functions",1,1,20,20)
-	self.winFunctions.btnMap = Button:new("Map",3,3)
-	self.winFunctions.btnTurtles = Button:new("Turtles",3,7)
-	self.winFunctions.btnGroups = Button:new("Groups",3,11)
-	
-	self.winFunctions.btnMap.click = function() return self:displayMap() end
-	self.winFunctions.btnTurtles.click = function() return self:displayTurtles() end
-	self.winFunctions.btnGroups.click = function() return self:displayGroups() end
-	
-	self.winFunctions:addObject(self.winFunctions.frmFunctions)
-	self.winFunctions:addObject(self.winFunctions.btnMap)
-	self.winFunctions:addObject(self.winFunctions.btnTurtles)
-	self.winFunctions:addObject(self.winFunctions.btnGroups)
-	
-	-- add data window objects
-	self.winData.frmData = Frame:new("Data",1,1,20,20)
-	self.winData.lblTime = Label:new("Time:",3,3)
-	self.winData.lblTimeVal = Label:new("0",9,3)
-	self.winData.lblId = Label:new("ID:   " .. os.getComputerID(),3,5)
-	self.winData.btnPrintStatus = CheckBox:new(3,7, "print status", global.printStatus)
-	self.winData.btnPrintMainTime = CheckBox:new(3,8, "print main", global.printMainTime)
-	self.winData.btnPrintEvents = CheckBox:new(3,9, "print events", global.printEvents)
-	self.winData.btnPrintSend = CheckBox:new(3,10, "print send", global.printSend)
+	self.winMain:addObject(self.winMain.btnHome)
+	self.winMain:addObject(self.winMain.btnCancel)
+	self.winMain:addObject(self.winMain.lblTimeVal)
 
+
+	--self.winMain:addObject(self.winMain.btnGlobalRebootSlow)
+	--self.winMain:addObject(self.winMain.btnGlobalShutdown)
 	
+	self.winData = Window:new(2,11,self:getWidth()-2,6)
+	self.winMain:addObject(self.winData)
+
+	self.winData.frm = Frame:new("general", 1, 1, 55, 6)
+	self.winData:addObject(self.winData.frm)
+	self.winData.frm:setWidth(self.winData:getWidth())
+
+	self.winData.btnPrintStatus = CheckBox:new(3,2, "print status", global.printStatus)
+	self.winData.btnPrintMainTime = CheckBox:new(3,3, "print main", global.printMainTime)
+	self.winData.btnPrintEvents = CheckBox:new(3,4, "print events", global.printEvents)
+	self.winData.btnPrintSend = CheckBox:new(3,5, "print send", global.printSend)
+
 	self.winData.btnPrintStatus.click = function()
 		global.printStatus = self.winData.btnPrintStatus.active
 	end
@@ -121,10 +157,6 @@ function HostDisplay:initialize()
 		global.printMainTime = self.winData.btnPrintMainTime.active
 	end
 	
-	self.winData:addObject(self.winData.frmData)
-	self.winData:addObject(self.winData.lblTime)
-	self.winData:addObject(self.winData.lblTimeVal)
-	self.winData:addObject(self.winData.lblId)
 	self.winData:addObject(self.winData.btnPrintStatus)
 	self.winData:addObject(self.winData.btnPrintEvents)
 	self.winData:addObject(self.winData.btnPrintSend)
@@ -160,8 +192,10 @@ function HostDisplay:initialize()
 	self.winGroups:addObject(self.winGroups.btnAdd)
 	-- initial redraw
 	-- self:redraw()
-	
-end
+
+
+
+end 
 
 function HostDisplay:refresh()
 	self.mapDisplay:checkUpdates()
@@ -202,12 +236,58 @@ function HostDisplay:redraw()
 	winTop:redraw()
 end
 function HostDisplay:updateTime()
-	local lbl = self.winData.lblTimeVal
+
+	local winMain = self.winMain
+	local lbl = winMain.lblTimeVal
 	local time = os.epoch("ingame") / 1000
 	local timeTable = os.date("*t", time)
 	local txt = string.format("%02d:%02d:%02d",timeTable.hour,timeTable.min,timeTable.sec)
 	lbl:setText(txt)
 	lbl:redraw()
+
+	local activeCount = 0
+	local onlineCount = 0
+	local totalCount = 0
+	for id,turtle in pairs(self.turtles) do
+		totalCount = totalCount + 1
+		if turtle.state.online then
+			onlineCount = onlineCount + 1
+			if turtle.state.task then
+				activeCount = activeCount + 1
+			end
+		end
+	end
+
+	local activeColor = (activeCount == totalCount and colors.green)
+			or (activeCount == 0 and colors.orange)
+			or colors.white
+	local txt = tostring(activeCount)
+	local len = string.len(txt)
+	local txt = string.format("%s%s",string.rep(" ", 7-len),txt)
+	winMain.lblActiveHd:setTextColor(activeColor)
+	winMain.lblActive:setText(txt)
+	winMain.lblActive:setTextColor( activeColor )
+	
+	local onlineColor = (onlineCount == totalCount and colors.green)
+			or (onlineCount == 0 and colors.red)
+			or colors.orange
+	local txt = tostring(onlineCount)
+	local len = string.len(txt)
+	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
+	winMain.lblOnlineHd:setTextColor(onlineColor)
+	winMain.lblOnline:setText(txt)
+	winMain.lblOnline:setTextColor( onlineColor )
+	
+	local txt = tostring(totalCount)
+	local len = string.len(txt)
+	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
+	winMain.lblTotal:setText(txt)
+
+	winMain.lblActiveHd:redraw()
+	winMain.lblActive:redraw()	
+	winMain.lblOnlineHd:redraw()
+	winMain.lblOnline:redraw()
+	winMain.lblTotal:redraw()
 end
 function HostDisplay:getMapDisplay()
 	return self.mapDisplay
@@ -329,6 +409,23 @@ function HostDisplay:globalReboot(slow)
 		end
 	end
 	--self:reboot()
+end
+
+function HostDisplay:globalCancelTask()
+	-- cancel all running tasks of the turtles
+	if self.node then
+		for id,turtle in pairs(self.turtles) do
+			self.node:send(id, {"STOP"}, false, false)
+		end
+	end
+end
+function HostDisplay:globalCallHome()
+	-- cancel all running tasks of the turtles
+	if self.node then
+		for id,turtle in pairs(self.turtles) do
+			self.node:send(id, {"DO", "returnHome"}, false, false)
+		end
+	end
 end
 
 function HostDisplay:globalShutdown()

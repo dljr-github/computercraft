@@ -12,6 +12,7 @@ function Box:new(x,y,width,height,color)
     o.height = height or 0
     o.backgroundColor = color or defaultBackgroundColor
     o.borderColor = o.backgroundColor
+	o.borderWidth = 2
 	o:initialize()
     return o
 end
@@ -77,7 +78,7 @@ function Box:redraw()
 	if self.parent and self.visible then
 		self.parent:drawFilledBox(self.x,self.y,self.width,self.height,	self.backgroundColor)
 		if self.borderColor ~= self.backgroundColor then
-			self.parent:drawBox(self.x, self.y, self.width, self.height, 		self.borderColor)
+			self.parent:drawBox(self.x, self.y, self.width, self.height, self.borderColor, self.borderWidth, self.backgroundColor)
 		end
 	end
 end
