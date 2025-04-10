@@ -2,12 +2,12 @@
 -- event tests
 
 -- os.loadAPI("general/bluenet.lua")
-os.loadAPI("host/global.lua")
-shell.openTab("test/temp_1.lua")
-shell.openTab("test/temp_2.lua")
+--os.loadAPI("host/global.lua")
+--shell.openTab("test/temp_1.lua")
+--shell.openTab("test/temp_2.lua")
 
 --os.queueEvent("test",os.epoch("local"))
-os.startTimer(1)
+--os.startTimer(1)
 
 -- translation test
 
@@ -103,3 +103,89 @@ os.startTimer(1)
 	-- id = nameToId[id]
 -- end
 -- print(os.epoch("local")-start)
+
+
+local vectors = {
+	[0] = {x=0, y=0, z=1},  -- 	+z = 0	south
+	[1] = {x=-1, y=0, z=0}, -- 	-x = 1	west
+	[2] = {x=0, y=0, z=-1}, -- 	-z = 2	north
+	[3] = {x=1, y=0, z=0},  -- 	+x = 3 	east
+}
+local tableinsert = table.insert
+
+local function getNeighbours(cur)
+	local neighbours = {}
+	
+	-- forward
+	local vector = vectors[cur.o]
+	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = cur.o })
+	-- up
+	table.insert(neighbours, { x = cur.x, y = cur.y+1, z = cur.z, o = cur.o })
+	-- down
+	table.insert(neighbours, { x = cur.x, y = cur.y-1, z = cur.z, o = cur.o })
+	-- left
+	vector = vectors[(cur.o-1)%4]
+	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = (cur.o-1)%4 })
+	-- right
+	vector = vectors[(cur.o+1)%4]
+	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = (cur.o+1)%4 })
+	-- back
+	vector = vectors[(cur.o+2)%4]
+	table.insert(neighbours, { x = cur.x + vector.x, y = cur.y + vector.y, z = cur.z + vector.z, o = (cur.o+2)%4 })
+
+	return neighbours
+end
+
+local function getNeighboursNew(cur)
+	local neighbours = {}
+	
+	local cx, cy, cz, co = cur.x, cur.y, cur.z, cur.o
+	-- forward
+	local vector = vectors[co]
+	neighbours[1] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = co }
+	-- up
+	neighbours[2] = { x = cx, y = cy + 1, z = cz, o = co }
+	-- down
+	neighbours[3] = { x = cx, y = cy - 1, z = cz, o = co }
+	-- left
+	local curo = (co-1)%4
+	vector = vectors[curo]
+	neighbours[4] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = curo }
+	-- right
+	curo = (co+1)%4
+	vector = vectors[curo]
+	neighbours[5] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = curo }
+	-- back
+	curo = (co+2)%4
+	vector = vectors[curo]
+	neighbours[6] = { x = cx + vector.x, y = cy + vector.y, z = cz + vector.z, o = curo }
+
+	return neighbours
+end
+
+
+
+-- test performance
+
+local function testNeighbours()
+	local cur = { x = 2345, y = 72, z = -2664, o = 3, block = 2 }
+	local iterations = 100000 -- Number of operations to test
+	local start = os.epoch("local")
+	for i = 1, iterations do
+		local neighbours = getNeighbours(cur)
+		--print(neighbours)
+	end
+	local stop = os.epoch("local")
+	print("getNeighbours time:", stop - start)
+
+
+	local start = os.epoch("local")
+	for i = 1, iterations do
+		local neighbours = getNeighboursNew(cur)
+		--print(neighbours)
+	end
+	local stop = os.epoch("local")
+	print("getNeighboursNew time:", stop - start)
+end
+
+testNeighbours()

@@ -90,3 +90,6 @@ end
 --			 	prepend 		remove	assert	if		count,clear 
 --testList()		-- 128			320		
 testListNew()	-- 118			212		247		222		135
+
+
+-- 58.4

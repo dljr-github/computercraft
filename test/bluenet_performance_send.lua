@@ -75,7 +75,7 @@ local function rawSend()
 	local perCall = peripheral.call
 	for a = 1, 10 do
 		local start = os.epoch("local")
-		for i = 1, 1000 do
+		for i = 1, 10000 do
 			--local data = buf
 			--buf = {}
 			perCall(side,"transmit",65,computerId,data)
@@ -199,7 +199,7 @@ local function stream()
 		
 		local start = os.epoch("local")
 		node:openStream(65, 6)
-		for i = 1, 1000 do
+		for i = 1, 10000 do
 			node:stream()
 			node:listen()
 		end
@@ -296,12 +296,12 @@ local function unpackPacket(packet)
 	return string.unpack((form),packet)
 end
 
-_G.packet = createPacket()
+--_G.packet = createPacket()
 --_G.vals = {unpackPacket(packet)}
 
 --rawSend()
-send()
---stream()
+--send()
+stream()
 
 -- no payload
 -- raw: 	0,145  -- 0.140 no peripheralcall
@@ -320,3 +320,10 @@ send()
 --> ~5,5ms per max number
 --> 0,0005 ms / number 
 --> 0,0005 ms / 8 bytes
+
+
+
+-- 10000
+-- raw: 0.370
+-- send: 0.435
+-- stream: 0.495
