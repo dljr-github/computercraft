@@ -9,6 +9,14 @@ List.__index = List
 function List:new(o)
     local o = o or {}
     setmetatable(o, self)
+	
+	---- Function Caching
+    --for k, v in pairs(self) do
+    --    if type(v) == "function" then
+    --        o[k] = v  -- Directly assign method to object
+    --    end
+    --end
+	
     o.first = nil
     o.last = nil
     o.count = 0
@@ -16,8 +24,7 @@ function List:new(o)
 end
 
 function List:clear()
-    self.first = nil
-    self.last = nil
+    self.first, self.last = nil, nil
     self.count = 0
 end
 
@@ -25,14 +32,11 @@ function List:addFirst(n)
 	local first = self.first
     if first then
         first._prev = n
-        n._prev = nil -- slower but neccessary
-		n._next = first
+        n._prev, n._next = nil, first  -- slower but neccessary
         self.first = n
     else
-        self.first = n
-        self.last = n
-		n._prev = nil
-		n._next = nil
+		self.first, self.last = n, n
+		n._prev, n._next = nil, nil
     end
     self.count = self.count + 1
 	return n
@@ -42,14 +46,11 @@ function List:addLast(n)
 	local last = self.last
 	if last then 
 		last._next = n
-		n._prev = last
-		n._next = nil
+		n._prev, n._next = last, nil
 		self.last = n
 	else
-		self.first = n
-		self.last = n
-		n._prev = nil
-		n._next = nil
+		self.first, self.last = n, n
+		n._prev, n._next = nil, nil
 	end
 	self.count = self.count + 1
 	return n
@@ -63,55 +64,56 @@ function List:removeLast(n)
 	local prv = n._prev
 	if prv then 
 		prv._next = nil
-		self.last = prv
+		self.last, self.count = prv, self.count - 1
 		return prv
 	else
-		self.first = nil
-		self.last = nil
+		self.first, self.last, self.count = nil, nil, self.count - 1
 		return nil
 	end
 end
 
 function List:remove(n)
-	local nxt = n._next
-	local prv = n._prev
+	local nxt, prv = n._next, n._prev
 	if nxt then 
         if prv then -- middle node
             nxt._prev = prv
             prv._next = nxt
         else
-			if n ~= self.first then error("not first") end
+			if n ~= self.first then self:logError("not first", n) end
             nxt._prev = nil
             self.first = nxt
         end
     elseif prv then
-		if n ~= self.last then error("not last") end  
+		if n ~= self.last then self:logError("not last", n) end  
 		prv._next = nil
 		self.last = prv
 	else
 		-- only node
 		if n ~= self.first and n ~= self.last then	
-			f = fs.open("trace.txt", "r")
-			local text = ""
-			if f then 
-				text = f.readAll() 
-				f.close()
-			end
-			f = fs.open("trace.txt", "w")
-			f.write(text.." END")
-			f.write(textutils.serialize(debug.traceback()))
-			f.close()
-			print(n._next, n._prev, n, self.first)
-			error(textutils.serialize(debug.traceback()))
+			self:logError("not first or last", n)
 		end
-		self.first = nil
-		self.last = nil
+		self.first, self.last = nil, nil
     end
 	-- set to nil in add
 	-- n._next = nil
     -- n._prev = nil
     self.count = self.count - 1
 	
+end
+
+function List:logError(reason, n)
+	f = fs.open("trace.txt", "r")
+	local text = ""
+	if f then 
+		text = f.readAll() 
+		f.close()
+	end
+	f = fs.open("trace.txt", "w")
+	f.write(text.." END")
+	f.write(reason .. " | " .. textutils.serialize(debug.traceback()))
+	f.close()
+	print(n._next, n._prev, n, self.first, self.last)
+	error(reason) --textutils.serialize(debug.traceback()))
 end
 
 -- DO NOT USE 
@@ -146,6 +148,7 @@ function List:toString()
 	end
 	return text
 end
+
 
 function List:moveToFront(n)
 	-- for least recently used functionality. not used

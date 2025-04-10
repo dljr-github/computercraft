@@ -3,6 +3,10 @@ local translation = require("blockTranslation")
 local nameToId = translation.nameToId
 local idToName = translation.idToName
 
+local utilsSerialize = require("utilsSerialize")
+local simpleSerialize = utilsSerialize.serialize
+local simpleUnserialize = utilsSerialize.unserialize
+
 local default =  {
 	bedrockLevel = -60,
 	folder = "runtime/map/chunks/",
@@ -14,9 +18,11 @@ local default =  {
 	maxChunks = 27, --3x3x3
 	lifeTime = 72000*60*1,
 	clearPercentage = 0.25,
-	inMemory = false
+	inMemory = false,
+	saveInterval = 72000*20,
 }
 
+local chunkSize = default.chunkSize
 local chunkOffsetY = math.ceil(64/default.chunkSize)
 local chunkOffsetX = math.ceil(448/default.chunkSize)
 local chunkOffsetZ = math.ceil(896/default.chunkSize)
@@ -28,6 +34,7 @@ local osEpoch = os.epoch -- do not use "local" -> worse performance
 local floor = math.floor
 local sqrt = math.sqrt
 local sqSize = default.chunkSize^2
+local tableinsert = table.insert
 
 ChunkyMap = {}
 
@@ -36,6 +43,13 @@ function ChunkyMap:new(inMemory)
 	setmetatable(o, self)
 	self.__index = self
 	
+	-- Function Caching
+    for k, v in pairs(self) do
+        if type(v) == "function" then
+            o[k] = v  -- Directly assign method to object
+        end
+    end
+	
 	o.chunks = {}
 	o.chunkLogs = {}
 	o.chunkCount = 0
@@ -43,6 +57,8 @@ function ChunkyMap:new(inMemory)
 	
 	o.lastCleanup = 0
 	-- o.loadedChunks = {}
+	o.lastSave = 0
+	self.saveInterval = default.saveInterval
 	
 	o.inMemory = inMemory or default.inMemory
 	
@@ -83,14 +99,18 @@ function ChunkyMap:setLifeTime(lifeTime)
 	self.lifeTime = lifeTime
 	self.cleanInterval = floor(self.lifeTime/2)
 end
+function ChunkyMap:setSaveInterval(saveInterval)
+	self.saveInterval = saveInterval
+end
 
 
 
 function ChunkyMap.xyzToChunkId(x,y,z)
 	-- returns the chunkId for the position
-	local cx,cy,cz = floor(x / default.chunkSize), 
-			floor(y / default.chunkSize), 
-			floor(z / default.chunkSize)
+
+	local cx,cy,cz = floor(x / chunkSize), 
+			floor(y / chunkSize), 
+			floor(z / chunkSize)
 	
 	if cx < 0 then 
 		cx = -cx 
@@ -102,15 +122,17 @@ function ChunkyMap.xyzToChunkId(x,y,z)
 	end
 	cy = cy + chunkOffsetY
 	
-	local temp = 0.5 * ( cx + cy ) * ( cx + cy + 1 ) + cy
-	return 0.5 * ( temp + cz ) * ( temp + cz + 1 ) + cz 
+	local cxcy = cx + cy
+	local temp = 0.5 * cxcy * ( cxcy + 1 ) + cy
+	local tempcz = temp + cz
+	return 0.5 * tempcz * ( tempcz + 1 ) + cz 
 end
 local xyzToChunkId = ChunkyMap.xyzToChunkId
 
 
 function ChunkyMap.xyzToRelativeChunkPos(x,y,z)
 	-- returns the relative position within a chunk
-	return x % default.chunkSize, y % default.chunkSize, z % default.chunkSize
+	return x % chunkSize, y % chunkSize, z % chunkSize
 end
 local xyzToRelativeChunkPos = ChunkyMap.xyzToRelativeChunkPos
 
@@ -124,8 +146,8 @@ function ChunkyMap.xyzToRelativeChunkId(x,y,z)
 	-- local temp = 0.5 * ( rcx + rcy ) * ( rcx + rcy + 1 ) + rcy
 	-- return 0.5 * ( temp + rcz ) * ( temp + rcz + 1 ) + rcz 
 	
-	local rcx, rcy, rcz = x % default.chunkSize, y % default.chunkSize, z % default.chunkSize
-	return rcx + rcz * default.chunkSize + rcy * sqSize + 1 -- so we start at 1
+	local rcx, rcy, rcz = x % chunkSize, y % chunkSize, z % chunkSize
+	return rcx + rcz * chunkSize + rcy * sqSize + 1 -- so we start at 1
 end
 local xyzToRelativeChunkId = ChunkyMap.xyzToRelativeChunkId
 
@@ -148,8 +170,8 @@ local undoCantorPairing = ChunkyMap.undoCantorPairing
 function ChunkyMap.relativeIdToXYZ(id)
 	-- return undoCantorPairing(id)
 	local y = floor((id-1)/sqSize)
-	local z = floor((id-1-y*sqSize)/default.chunkSize)
-	local x = id -1 - z*default.chunkSize - y*sqSize
+	local z = floor((id-1-y*sqSize)/chunkSize)
+	local x = id -1 - z*chunkSize - y*sqSize
 	return x,y,z
 end
 local relativeIdToXYZ = ChunkyMap.relativeIdToXYZ
@@ -172,7 +194,7 @@ function ChunkyMap.chunkIdToXYZ(chunkId)
 	end
 	y = y - chunkOffsetY
 	
-	return x*default.chunkSize,y*default.chunkSize,z*default.chunkSize
+	return x*chunkSize,y*chunkSize,z*chunkSize
 end
 local chunkIdToXYZ = ChunkyMap.chunkIdToXYZ
 
@@ -183,12 +205,19 @@ function ChunkyMap:save()
 end
 
 function ChunkyMap:saveChunk(chunkId)
-	local path = default.folder .. chunkId .. ".txt"
-	local f = fs.open(path,"w")
-	f.write(textutils.serialize(self.chunks[chunkId]))
-	f.close()
-	os.pullEvent(os.queueEvent("yield"))
-	print("SAVED CHUNK", chunkId)
+	local chunk = self.chunks[chunkId]
+	if chunk then
+		local path = default.folder .. chunkId .. ".txt"
+		local f = fs.open(path,"w")
+		--f.write("jooooooooooooooooooooo") 
+		
+			f.write(simpleSerialize(chunk))
+		
+		--f.write(textutils.serialize(self.chunks[chunkId]), true, true)
+		f.close()
+		os.pullEvent(os.queueEvent("yield"))
+	end
+	--print("SAVED CHUNK", chunkId)
 end
 
 function ChunkyMap:load()
@@ -204,7 +233,8 @@ function ChunkyMap:loadChunk(chunkId)
 		local path = default.folder .. chunkId .. ".txt"
 		local f = fs.open(path,"r")
 		if f then
-			chunk = textutils.unserialize( f.readAll() )
+			chunk = simpleUnserialize( f.readAll() )
+			--chunk = textutils.unserialize( f.readAll() )
 			self.chunks[chunkId] = chunk
 			f.close()
 			print("READ CHUNK FROM DISK", chunkId)
@@ -224,6 +254,7 @@ function ChunkyMap:loadChunk(chunkId)
 		self.chunkCount = self.chunkCount + 1
 		chunk._accessCount = 0
 		chunk._lastAccess = osEpoch()
+		chunk._lastChange = 0
 		chunk.locked = false
 		result = true
 	end
@@ -235,6 +266,7 @@ end
 -- 		 Increment accessCount and lastAccess in getData/setData
 
 function ChunkyMap:accessChunk(chunkId,writing,realAccess)
+
 	local chunk = self.chunks[chunkId]
 	if not chunk then
 		if realAccess then -- only real accesses are allowed to load chunks
@@ -245,6 +277,7 @@ function ChunkyMap:accessChunk(chunkId,writing,realAccess)
 					chunk = self.chunks[chunkId]
 					chunk._accessCount = 0
 					chunk._lastAccess = osEpoch()
+					chunk._lastChange = 0
 					chunk.locked = false
 				--end
 			else
@@ -252,10 +285,17 @@ function ChunkyMap:accessChunk(chunkId,writing,realAccess)
 			end
 		end
 	end
-	if realAccess and chunk then 
-		--accessCount should not rise if set externally
-		chunk._accessCount = (chunk._accessCount or 0) + 1
-		chunk._lastAccess = osEpoch()
+
+	if chunk then 
+		local time = osEpoch()
+		if realAccess then
+			--accessCount should not rise if set externally
+			chunk._accessCount = (chunk._accessCount or 0) + 1
+			chunk._lastAccess = time
+		end
+		if writing then
+			chunk._lastChange = time
+		end
 	end
 	-- self.currentChunk = chunk 
 	-- self.currentChunkId = chunkId
@@ -264,12 +304,12 @@ end
 
 function ChunkyMap:logChunkData(chunkId,rcx,rcy,rcz,data)
 	if not self.chunkLogs[chunkId] then self.chunkLogs[chunkId] = {} end
-	table.insert(self.chunkLogs[chunkId],{x=rcx,y=rcy,z=rcz,data=data})
+	tableinsert(self.chunkLogs[chunkId],{x=rcx,y=rcy,z=rcz,data=data})
 end
 
 function ChunkyMap:logData(x,y,z,data)
 	-- depricated
-	--table.insert(self.log,{x=x,y=y,z=z,data=data})
+	--tableinsert(self.log,{x=x,y=y,z=z,data=data})
 	-- TODO: check if chunkwise logging is needed?
 	-- perhaps for the host to distribute updates
 	--> easier to set data if chunkId and relative position is already known
@@ -284,16 +324,23 @@ function ChunkyMap:setChunkData(chunkId,relativeId,data,real)
 	local chunk = self:accessChunk(chunkId,true,real)
 	if chunk then -- and chunk[relativeId] ~= data then -- not really needed here
 		if real then
-			table.insert(self.log,{chunkId,relativeId,data})
+			tableinsert(self.log,{chunkId,relativeId,data})
 			--self.log[#self.log]
 			-- better to do it like this?
 			-- self.log[chunkId][relativeId] = data
 		end
 		chunk[relativeId] = data
 	end
-	if self.lifeTime > 0 and osEpoch() - self.lastCleanup > self.cleanInterval then -- TODO: halfLifeTime /2
-		-- to clean time based chunks while stationary
-		self:cleanCache()
+
+	if self.lifeTime > 0 then 
+		if osEpoch() - self.lastCleanup > self.cleanInterval then -- TODO: halfLifeTime /2
+			-- to clean time based chunks while stationary
+			self:cleanCache()
+			self:saveChanged()
+		end
+	elseif not self.inMemory and osEpoch() - self.lastSave > self.saveInterval then
+		self:saveChanged()
+		-- could just as easily be called from the main loop
 	end
 end
 
@@ -319,7 +366,7 @@ function ChunkyMap:setData(x,y,z,data,real)
 	local chunk = self:accessChunk(chunkId,true,real)
 	if chunk and chunk[relativeId] ~= value then
 		if real then
-			table.insert(self.log,{chunkId,relativeId,value})
+			tableinsert(self.log,{chunkId,relativeId,value})
 		end
 		chunk[relativeId] = value
 	end
@@ -365,7 +412,7 @@ function ChunkyMap:unloadChunk(chunkId)
 	end
 	self.chunks[chunkId] = nil	
 	self.chunkCount = self.chunkCount - 1
-	table.insert(self.unloadedChunks,chunkId)
+	tableinsert(self.unloadedChunks,chunkId)
 	if self.onUnloadChunk then
 		self.onUnloadChunk(chunkId)
 	end
@@ -404,7 +451,7 @@ function ChunkyMap:cleanCache()
 			if deleteCount < 1 then deleteCount = 1 end
 			for id,chunk in pairs(self.chunks) do
 				if not chunk.locked then 
-					table.insert(countTable, { id=id, count=chunk._accessCount})
+					tableinsert(countTable, { id=id, count=chunk._accessCount})
 				end
 				chunk._accessCount = 0
 			end
@@ -420,12 +467,28 @@ function ChunkyMap:cleanCache()
 		
 	end
 	if cleared then
-		print("CHACHE CLEARED", ct)
+		print("CHACHE CLEARED", ct, "LOADED", self.chunkCount)
 	end
 	
 	return cleared
 end
 
+function ChunkyMap:saveChanged()
+	-- save all chunks that might have been changed
+
+	if not self.inMemory then
+		local start = osEpoch("local")
+		local ct = 0
+		for id,chunk in pairs(self.chunks) do
+			if chunk._lastChange > self.lastSave then
+				self:saveChunk(id)
+				ct = ct + 1
+			end
+		end
+		self.lastSave = osEpoch()
+		print("Saved", ct, "Chunks", osEpoch("local") - start, "ms")
+	end
+end
 
 -- use local tables for internal use directly
 function ChunkyMap:nameToId(blockName)
@@ -573,7 +636,7 @@ function ChunkyMap:findNextBlock(curPos, checkFunction, maxDistance)
 	
 	local chunkId = xyzToChunkId(curX,curY,curZ)
 	
-	table.insert(queue, {id = chunkId, mid = { midX, midY, midZ }, distance = 0 })
+	tableinsert(queue, {id = chunkId, mid = { midX, midY, midZ }, distance = 0 })
 	visited[chunkId] = true
 	
 	while #queue > 0 do
@@ -633,7 +696,7 @@ function ChunkyMap:findNextBlock(curPos, checkFunction, maxDistance)
 			local borderDistance = math.max(math.abs(newX-curX),math.abs(newY-curY),math.abs(newZ-curZ))-halfChunk-1
 			--print("borderDistance", borderDistance)
 			if borderDistance < maxDistance and not visited[chunkId] then
-				table.insert(queue, { id=chunkId, mid = { newX, newY, newZ }, distance = distance })
+				tableinsert(queue, { id=chunkId, mid = { newX, newY, newZ }, distance = distance })
 				visited[chunkId] = true
 			else
 				-- out of range
