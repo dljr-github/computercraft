@@ -8,6 +8,7 @@ remotely controlled mining turtles for the CC:Tweaked mod
 
 
 Installation (outdated):
+https://pastebin.com/EGzPg7F3
 pastebin get https://pastebin.com/DgRG4C5m install
 
 install
