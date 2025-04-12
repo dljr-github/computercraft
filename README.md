@@ -5,10 +5,11 @@ remotely controlled mining turtles for the CC:Tweaked mod
 - optimal mining strategies
 - remote gui control on the host
 
+![grafik](https://github.com/user-attachments/assets/7731f1ae-0d55-4345-b8da-e62db92dde1f)
   
 THIS IS WORK IN PROGRESS.  
 Let me know about any issues you have or ideas. :)  
-  
+
 
 # Installation:
 
