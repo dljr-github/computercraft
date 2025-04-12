@@ -147,7 +147,12 @@ end
 
 while true do
 	--sendState()
-	nodeStream:openStream(nodeStream.host,waitTime)
+	if not nodeStream.host then
+		--print("no streaming host")
+		nodeStream:lookupHost(1, waitTime)
+	else
+		nodeStream:openStream(nodeStream.host,waitTime)
+	end
 	nodeStream:stream()
 	nodeStream:checkWaitList()
 	sleep(0.2) --0.2

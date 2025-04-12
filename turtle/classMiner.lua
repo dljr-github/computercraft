@@ -102,6 +102,7 @@ local vector = vector
 local debuginfo = debug.getinfo
 local tablepack = table.pack
 local tableunpack = table.unpack
+local osEpoch = os.epoch
 
 local vectors = {
 	[0] = vector.new(0,0,1),  -- 	+z = 0	south
@@ -148,10 +149,11 @@ end
 function Miner:initialize()
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	
+	-- preset chunk request but try not to during initialization
 	self.map.requestChunk = function(chunkId) return self:requestChunk(chunkId) end
 	--self:requestMap()
 	
-	-- TODO: simple refuel without getFuel (position is not initialized)
+	self:refuel(true)
 	print("fuel level:", turtle.getFuelLevel())
 	self:initPosition()
 	self:initOrientation()
@@ -234,7 +236,7 @@ function Miner:initOrientation()
 		self:error("ORIENTATION NOT DETERMINABLE",true)
 		self.orientation = 0
 	else
-		print(newPos, self.pos, turns, self.orientation)
+		-- print(newPos, self.pos, turns, self.orientation)
 		local diff = newPos - self.pos
 		self.pos = newPos
 		if diff.x < 0 then self.orientation = 1
@@ -243,7 +245,11 @@ function Miner:initOrientation()
 		else self.orientation = 0
 		end
 		self:updateLookingAt()
-		self:back()
+
+		-- go back without requesting a chunk --self:back()
+		local result = turtle.back()
+		self.pos = self.pos - self.vectors[self.orientation]
+		
 		self:turnTo((self.orientation+turns)%4)
 		self.homeOrientation = self.orientation
 	end
@@ -296,13 +302,13 @@ end
 function Miner:requestChunk(chunkId)
 	-- ask host for a chunk
 	-- perhaps use own protocol for this?
-	local start = os.epoch("local")
+	local start = osEpoch("local")
 	if self.node and self.node.host then
 		local answer, forMsg = self.node:send(global.node.host,
 			{"REQUEST_CHUNK", chunkId},true,true,1,"chunk")
 		if answer then
 			if answer.data[1] == "CHUNK" then
-				print(os.epoch("local")-start,"RECEIVED CHUNK", chunkId)
+				print(osEpoch("local")-start,"RECEIVED CHUNK", chunkId)
 				return answer.data[2]
 			else
 				print("received other", answer.data[1])
@@ -310,7 +316,7 @@ function Miner:requestChunk(chunkId)
 		end
 		--print("no answer")
 	end
-	print(os.epoch("local")-start, "CHUNK REQUEST FAILED", chunkId)
+	print(osEpoch("local")-start, "CHUNK REQUEST FAILED", chunkId)
 	return nil
 end
 
@@ -583,7 +589,7 @@ function Miner:select(slot)
 	return true
 end
 
-function Miner:refuel()
+function Miner:refuel(simple)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 
 	local refueled = false
@@ -608,6 +614,7 @@ function Miner:refuel()
 			-- ran out of fuel
 			self:error("NEED FUEL, STUCK",true)
 		else
+			if not simple then -- for initializing
 			--if self:getCostHome() * 2 > turtle.getFuelLevel() then
 				local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
 				local startOrientation = self.orientation
@@ -623,6 +630,7 @@ function Miner:refuel()
 					-- actual refueling happens with the next refuel call
 				end
 			--end
+			end
 		end
 		print("fuel level:", turtle.getFuelLevel())
 	else

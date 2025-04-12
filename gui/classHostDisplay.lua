@@ -142,7 +142,8 @@ function HostDisplay:initialize()
 	self.winData.btnPrintStatus = CheckBox:new(3,2, "print status", global.printStatus)
 	self.winData.btnPrintMainTime = CheckBox:new(3,3, "print main", global.printMainTime)
 	self.winData.btnPrintEvents = CheckBox:new(3,4, "print events", global.printEvents)
-	self.winData.btnPrintSend = CheckBox:new(3,5, "print send", global.printSend)
+	self.winData.btnPrintSend = CheckBox:new(25,2, "print send", global.printSend)
+	self.winData.btnPrintSendTime = CheckBox:new(25,3, "print send time", global.printSendTime)
 
 	self.winData.btnPrintStatus.click = function()
 		global.printStatus = self.winData.btnPrintStatus.active
@@ -156,11 +157,15 @@ function HostDisplay:initialize()
 	self.winData.btnPrintMainTime.click = function()
 		global.printMainTime = self.winData.btnPrintMainTime.active
 	end
+	self.winData.btnPrintSendTime.click = function()
+		global.printSendTime = self.winData.btnPrintSendTime.active
+	end
 	
 	self.winData:addObject(self.winData.btnPrintStatus)
 	self.winData:addObject(self.winData.btnPrintEvents)
 	self.winData:addObject(self.winData.btnPrintSend)
 	self.winData:addObject(self.winData.btnPrintMainTime)
+	self.winData:addObject(self.winData.btnPrintSendTime)
 	
 	-- init hidden windows
 	self.mapDisplay = MapDisplay:new(4,4,32,16)

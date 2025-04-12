@@ -1,5 +1,5 @@
 
-local bluenet = bluenet
+local bluenet = require("bluenet")
 local ownChannel = bluenet.ownChannel
 local channelBroadcast = bluenet.default.channels.broadcast
 local channelHost = bluenet.default.channels.host
@@ -14,6 +14,9 @@ local nodeUpdate = global.nodeUpdate
 
 
 local updateRate = 0.1
+
+local pullEventRaw = os.pullEventRaw
+local type = type
 --local tmr = os.startTimer(updateRate)
 
 while global.running do
@@ -21,7 +24,7 @@ while global.running do
 	
 	-- !! none of the functions called here can use os.pullEvent !!
 	
-	local event, p1, p2, p3, msg, p5 = os.pullEventRaw()
+	local event, p1, p2, p3, msg, p5 = pullEventRaw()
 	if event == "modem_message"
 		--and ( p2 == ownChannel or p2 == channelBroadcast or p2 == channelHost )
 		and type(msg) == "table" 

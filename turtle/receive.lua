@@ -4,7 +4,7 @@ local nodeStream = global.nodeStream
 local tasks = global.tasks
 local miner = global.miner
 
-local bluenet = bluenet
+local bluenet = require("bluenet")
 local ownChannel = bluenet.ownChannel
 local channelBroadcast = bluenet.default.channels.broadcast
 local channelHost = bluenet.default.channels.host
@@ -14,7 +14,7 @@ nodeStream.onStreamMessage = function(msg,previous)
 	-- reboot is handled in NetworkNode
 	nodeStream._clearLog()
 	
-	local start = os.epoch("local")
+	--local start = os.epoch("local")
 	local ct = 0
 	if msg and msg.data and msg.data[1] == "MAP_UPDATE" then
 		if miner then 
@@ -52,9 +52,12 @@ node.onReceive = function(msg)
 	end
 end
 
+local pullEventRaw = os.pullEventRaw
+local type = type
+
 while true do
 	
-	local event, p1, p2, p3, msg, p5 = os.pullEventRaw("modem_message")
+	local event, p1, p2, p3, msg, p5 = pullEventRaw("modem_message")
 	if --( p2 == ownChannel or p2 == channelBroadcast ) 
 		type(msg) == "table"
 		and ( type(msg.recipient) == "number" and msg.recipient

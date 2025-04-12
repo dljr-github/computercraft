@@ -26,8 +26,13 @@ end
 createLabel()
 parallel.waitForAll(initNode,initStream)
 
-local status,err = pcall(function() 
-	global.miner = Miner:new()
-	global.map = global.miner.map
-end )
-global.handleError(err,status)
+if not global.node.host then
+	error(global.node.host, 0)
+else
+	local status,err = pcall(function() 
+		global.miner = Miner:new()
+		global.map = global.miner.map
+	end )
+	global.handleError(err,status)
+
+end

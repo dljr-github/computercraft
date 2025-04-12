@@ -68,6 +68,11 @@ function loadTurtles(fileName)
 		global.turtles = textutils.unserialize( f.readAll() )
 		f.close()
 		for id,turtle in pairs(global.turtles) do
+			if not turtle.state then
+				turtle.state = { online = false, time = 0}
+			else
+				turtle.state.online = false
+			end
 			turtle.mapLog = {}
 			turtle.mapBuffer = {}
 			turtle.loadedChunks = {}
@@ -109,7 +114,7 @@ function saveConfig(fileName)
 		station.id = nil
 	end
 	for _,station in pairs(config.stations.refuel) do
-		station.occupied = nil
+		station.occupied = false
 		station.id = nil
 	end
 

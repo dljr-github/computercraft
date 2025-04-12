@@ -1,10 +1,7 @@
 
 -- bluenet, a modified rednet for better performance
 
-
-local bluenet = {}
-
-local default = {
+default = {
 	typeSend = 1,
 	typeAnswer = 2,
 	typeDone = 3,
@@ -17,26 +14,21 @@ local default = {
 		max = 65400
 	}
 }
-bluenet.default = default
 --msg = { id, time, sender, recipient, protocol, type, data, answer, wait, distance}
 
-local receivedMessages = {}
-local receivedTimer = nil -- does that work?
-local osEpoch = os.epoch
+receivedMessages = {}
+receivedTimer = nil -- does that work?
+osEpoch = os.epoch
+opened = false
+modem = nil
+ownChannel = nil
+computerId = os.getComputerID()
 
-
-local opened = false
-local modem = nil
-local ownChannel = nil
-bluenet.ownChannel = nil
-local computerId = os.getComputerID()
-
-function bluenet.idAsChannel(id)
+function idAsChannel(id)
 	return (id or os.getComputerID()) % default.channels.max
 end
-local idAsChannel = bluenet.idAsChannel
 
-function bluenet.findModem()
+function findModem()
 	for _,modem in ipairs(peripheral.getNames()) do
 		if peripheral.getType(modem) == "modem" then
 			return modem
@@ -44,9 +36,8 @@ function bluenet.findModem()
 	end
 	return nil
 end
-local findModem = bluenet.findModem
 
-function bluenet.open(modem)
+function open(modem)
 	if not opened then 
 		
 		if not modem then
@@ -61,9 +52,8 @@ function bluenet.open(modem)
 	opened = true
 	return true
 end		
-local open = bluenet.open
 
-function bluenet.close(modem)
+function close(modem)
 	if modem then
 		if peripheral.getType(modem) == "modem" then
 			peripheral.call(modem, "close", ownChannel)
@@ -78,9 +68,8 @@ function bluenet.close(modem)
 		end
 	end
 end
-local close = bluenet.close
 
-local function isOpen(modem)
+function isOpen(modem)
 	if modem then
 		if peripheral.getType(modem) == "modem" then
 			return peripheral.call(modem, "isOpen", ownChannel)
@@ -95,18 +84,8 @@ local function isOpen(modem)
 	end
 	return false
 end
-bluenet.isOpen = isOpen
 
-function bluenet.isChannelOpen(modem, channel)
-	if not modem then 
-		print("NO MODEM", modem)
-		return false
-	end
-	return peripheral.call(modem, "isOpen", channel)
-end
-local isChannelOpen = bluenet.isChannelOpen
-
-function bluenet.openChannel(modem, channel)
+function openChannel(modem, channel)
 	if not isChannelOpen(modem, channel) then 
 		if not modem then
 			print("NO MODEM")
@@ -117,9 +96,8 @@ function bluenet.openChannel(modem, channel)
 	end
 	return true
 end
-local openChannel = bluenet.openChannel
 
-function bluenet.closeChannel(modem, channel)
+function closeChannel(modem, channel)
 	if not modem then 
 		print("NO MODEM", modem)
 		return false
@@ -129,9 +107,14 @@ function bluenet.closeChannel(modem, channel)
 	end
 	return true
 end
-local closeChannel = bluenet.closeChannel
 
-
+function isChannelOpen(modem, channel)
+	if not modem then 
+		print("NO MODEM", modem)
+		return false
+	end
+	return peripheral.call(modem, "isOpen", channel)
+end
 
 
 local startTimer = os.startTimer
@@ -142,33 +125,25 @@ local timers = {}
 local pullEventRaw = os.pullEventRaw
 local type = type
 
-function bluenet.receive(protocol, waitTime)
+function receive(protocol, waitTime)
 	local timer = nil
 	local eventFilter = nil
 	
 	-- CAUTION: if bluenet is loaded globally, 
 	--	TODO:	the timers must be distinguished by protocol/coroutine
 	-- 			leads to host being unable to reboot!!!
-	-- is the protocol ever nil? if so, this code wont work!
 	
 	if waitTime then
 		local t = osClock()
-		local clocks, tmrs = timerClocks[protocol], timers[protocol]
-		if not clocks then 
-			clocks = {}
-			tmrs = {}
-			timerClocks[protocol] = clocks
-			timers[protocol] = tmrs
-		end
-		if clocks[waitTime] ~= t then 
+		if timerClocks[waitTime] ~= t then 
 			--cancel the previous timer and create a new one
-			cancelTimer((tmrs[waitTime] or 0))
+			cancelTimer((timers[waitTime] or 0))
 			timer = startTimer(waitTime)
-			--print( protocol, "cancelled", tmrs[waitTime], "created", timer, "diff", timer - (timers[waitTime]or 0))
-			clocks[waitTime] = t
-			tmrs[waitTime] = timer
+			--print( protocol, "cancelled", timers[waitTime], "created", timer, "diff", timer - (timers[waitTime]or 0))
+			timerClocks[waitTime] = t
+			timers[waitTime] = timer
 		else
-			timer = tmrs[waitTime]
+			timer = timers[waitTime]
 			--print( protocol, "reusing", timer)
 		end
 		
@@ -220,11 +195,11 @@ function bluenet.receive(protocol, waitTime)
 	
 end
 
-function bluenet.resetTimer()
+function resetTimer()
 	if not receivedTimer then receivedTimer = os.startTimer(10) end
 end
 
-function bluenet.clearReceivedMessages()
+function clearReceivedMessages()
 	receivedTimer = nil
 	local time, hasMore = os.clock(), nil
 	for id, deadline in pairs(receivedMessages) do
@@ -234,10 +209,5 @@ function bluenet.clearReceivedMessages()
 	receivedTimer = hasMore and os.startTimer(10)
 end
 
-
 modem = findModem()
 ownChannel = idAsChannel()
-bluenet.ownChannel = ownChannel
-
-
-return bluenet
