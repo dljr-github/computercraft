@@ -614,6 +614,7 @@ function ChunkyMap:findNextBlock(curPos, checkFunction, maxDistance)
 	local curZ = curPos.z
 	
 	local sqrt = math.sqrt
+	local type = type
 	
 	-- chunk based breadth first search 
 	

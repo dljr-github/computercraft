@@ -7,6 +7,7 @@ miner = nil
 err = nil
 node = nil
 nodeStream = nil
+nodeRefuel = nil
 
 handleError = function(err,status)
 	if not status then

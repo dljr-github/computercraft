@@ -3,8 +3,6 @@
 
 local git = "https://raw.githubusercontent.com/helpmyRF24isntworking/computercraft/main"
 
---https://pastebin.com/pU2HBysT
--- https://pastebin.com/raw/NaFu674J for simpler turtle download
 
 local files, folders
 
@@ -93,8 +91,22 @@ if turtle then
 		-- "turtle/startup.lua",
 	}
 	folders = {
-		allFolders["turtle"],
-		allFolders["general"],
+		["turtle"] = {
+		name = "turtle",
+		files = {
+			"startup.lua",
+			"update.lua",
+			}
+		}
+		,
+		["general"] = {
+		name = "general",
+		files = {
+			"bluenet.lua",
+			"classBluenetNode.lua",
+			"classList.lua",
+			}
+		}
 	}
 else
 	-- host computer
@@ -152,5 +164,6 @@ for _,fileName in pairs(files) do
 	saveFile(fileName, data)
 end
 
+turtle.forward(3)
 
 os.reboot()

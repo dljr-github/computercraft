@@ -16,6 +16,7 @@ local default = {
 		broadcast = 65401, 
 		repeater = 65402,
 		host = 65403,
+		refuel = 65404,
 		max = 65400
 	}
 }
@@ -29,7 +30,7 @@ local peripheralCall = peripheral.call
 NetworkNode = {}
 NetworkNode.__index = NetworkNode
 
-function NetworkNode:new(protocol,isHost)
+function NetworkNode:new(protocol,isHost,skipLookup)
 	local o = o or {}
 	setmetatable(o, self)
 	
@@ -57,22 +58,26 @@ function NetworkNode:new(protocol,isHost)
 	o.channel = nil
 	o.modem = nil
 
-	o:initialize()
+	o:initialize(skipLookup)
 	--print("--------------------")
 	return o
 end
 
-function NetworkNode:initialize()
+function NetworkNode:initialize(skipLookup)
 	self.channel = self:idAsChannel()
 	self.modem = bluenet.findModem()
 	self:openBluenet()
-	self:lookupHost(2, 3)
+	if not skipLookup then
+		self:lookupHost(4, 3) -- 2, 3
+	end
 	print("myId:", self.id, "host:", self.host, "protocol:", self.protocol)
 end
 
 function NetworkNode:idAsChannel(id)
 	local id = id or self.id
-	if id ~= default.channels.broadcast and id ~= default.channels.host then
+	if id ~= default.channels.broadcast 
+		and id ~= default.channels.host 
+		and id ~= default.channels.refuel then
 		return id % default.channels.max
 	else
 		return id
@@ -163,6 +168,13 @@ function NetworkNode:lookup(protocol, name, waitTime)
 	end
 end
 
+-- helper functions so other classes can use bluenet directly
+function NetworkNode:openChannel(channel) 
+	return bluenet.openChannel(self.modem, channel)
+end
+function NetworkNode:closeChannel(channel)
+	return bluenet.closeChannel(self.modem, channel)
+end
 
 function NetworkNode:beforeReceive(msg)
 	--if msg.data[1] == "RUN" then -- from now on, RUN is handled by the receiver

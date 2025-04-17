@@ -207,6 +207,14 @@ function listStations()
 	for k,station in pairs(config.stations.refuel) do
 		print(k, ":", station.pos.x, station.pos.y, station.pos.z, "facing", orientationToString[station.orientation])
 	end
+	print("refuel queue:")
+	local queue = config.stations.refuelQueue
+	if queue then
+		local origin = queue.origin
+		print("origin:", origin.x, origin.y, origin.z, "maxDistance:", queue.maxDistance)
+	else
+		print("please set the refuel queue with setRefuelQueue(x,y,z,maxDistance)")
+	end
 end
 
 function addStation(x,y,z,orientation,typ)
@@ -268,6 +276,12 @@ function addStation(x,y,z,orientation,typ)
 	-- saveConfig()
 end
 
+function setRefuelQueue(x,y,z,maxDistance)
+	config.stations.refuelQueue = {
+		origin = vector.new(x,y,z),
+		maxDistance = maxDistance or 8
+	}
+end
 
 -- function autoGenerateStations(amount, facing)
 -- 	-- use to add new for turtles or refueling

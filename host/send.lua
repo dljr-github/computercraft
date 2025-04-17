@@ -59,7 +59,12 @@ while global.running do
 	local startTime = osEpoch("local")
 	nodeStream:stream()
 	--sendMapLog()
-	if global.printSendTime then print(osEpoch("local")-startTime,"done") end
+	if global.printSendTime then 
+		print(osEpoch("local")-startTime,"done", "events", global.eventCount, "msgs", global.messageCount, "timers", global.timerCount) 
+		global.eventCount = 0
+		global.messageCount = 0
+		global.timerCount = 0
+		end
 	local delay = (osEpoch("local")-startTime) / 1000
 	if delay < 0.2 then delay = 0.2 
 	elseif delay > 1 then delay = 1 end

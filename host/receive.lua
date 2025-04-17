@@ -12,6 +12,9 @@ local node = global.node
 local nodeStream = global.nodeStream
 local nodeUpdate = global.nodeUpdate
 
+global.timerCount = 0
+global.eventCount = 0
+global.messageCount = 0
 
 local updateRate = 0.1
 
@@ -25,6 +28,7 @@ while global.running do
 	-- !! none of the functions called here can use os.pullEvent !!
 	
 	local event, p1, p2, p3, msg, p5 = pullEventRaw()
+	global.eventCount = global.eventCount + 1
 	if event == "modem_message"
 		--and ( p2 == ownChannel or p2 == channelBroadcast or p2 == channelHost )
 		and type(msg) == "table" 
@@ -34,6 +38,7 @@ while global.running do
 			-- just to make sure its a bluenet message
 		then
 			-- event, modem, channel, replyChannel, message, distance
+			global.messageCount = global.messageCount + 1
 			msg.distance = p5
 			local protocol = msg.protocol
 			if protocol == "miner_stream" then
@@ -56,7 +61,7 @@ while global.running do
 		--if event[2] == bluenet.receivedTimer then 
 			--bluenet.clearReceivedMessages()
 		--end
-		
+		global.timerCount = global.timerCount + 1
 	elseif event == "monitor_touch" or event == "mouse_up"
 		or event == "mouse_click" or event == "monitor_resize" then
 		monitor:addEvent({event,p1,p2,p3,msg,p5})

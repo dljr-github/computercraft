@@ -11,10 +11,11 @@ local default = {
 	waitTime = 1,
 	
 	channels = {
+		max = 65400,
 		broadcast = 65401, 
 		repeater = 65402,
 		host = 65403,
-		max = 65400
+		refuel = 65404,		
 	}
 }
 bluenet.default = default
@@ -125,6 +126,7 @@ function bluenet.closeChannel(modem, channel)
 		return false
 	end
 	if isChannelOpen(modem, channel) then 
+		print("closed", channel)
 		return peripheral.call(modem, "close", channel)
 	end
 	return true
@@ -188,8 +190,10 @@ function bluenet.receive(protocol, waitTime)
 			and type(msg) == "table" 
 			--and type(msg.id) == "number" and not receivedMessages[msg.id]
 			and ( type(msg.recipient) == "number" and msg.recipient
-			and ( msg.recipient == computerId or msg.recipient == default.channels.broadcast 
-				or msg.recipient == default.channels.host ) )
+			and ( msg.recipient == computerId 
+				or msg.recipient == default.channels.broadcast 
+				or msg.recipient == default.channels.host 
+				or msg.recipient == default.channels.refuel ) )
 			and ( protocol == nil or protocol == msg.protocol )
 			-- just to make sure its a bluenet message
 			then
@@ -236,6 +240,7 @@ end
 
 
 modem = findModem()
+bluenet.modem = modem
 ownChannel = idAsChannel()
 bluenet.ownChannel = ownChannel
 

@@ -233,7 +233,7 @@ function PathFinder:aStarPart(startPos, startOrientation, finishPos, map, distan
 				-- or use time/iteration based approach
 				
 				local path = reconstructPath(current,start)
-				print(osEpoch("local")-startTime, "FOUND, MOV:", #path, "CT", ct)
+				-- print(osEpoch("local")-startTime, "FOUND, MOV:", #path, "CT", ct)
 				--print("open neighbours:", openCount, "closed", closedCount)
 				return path
 

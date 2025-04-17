@@ -4,6 +4,8 @@ local CheckPointer = require("classCheckPointer")
 require("classLogger")
 require("classList")
 require("classChunkyMap")
+local bluenet = require("bluenet")
+local config = config
 
 -- local blockTranslation = require("blockTranslation")
 -- local nameToId = blockTranslation.nameToId
@@ -28,10 +30,10 @@ local default = {
 }
 
 local fuelItems = {
-["minecraft:coal"]=true,
-["minecraft:charcoal"]=true,
-["minecraft:coal_block"]=true,
-["minecraft:lava_bucket"]=true,
+["minecraft:coal"]=80,
+["minecraft:charcoal"]=80,
+["minecraft:coal_block"]=800,
+["minecraft:lava_bucket"]=1000,
 }
 -- do not translate
 
@@ -131,6 +133,7 @@ function Miner:new()
 	o.homeOrientation = 0
 	o.orientation = 0
 	o.node = global.node
+	o.nodeRefuel = global.nodeRefuel
 	o.pos = vector.new(0,70,0)
 	o.gettingFuel = false
 	o.initializing = true
@@ -139,6 +142,7 @@ function Miner:new()
 	o.taskList = List:new()
 	o.vectors = vectors
 	o.checkPointer = CheckPointer:new()
+	o.statusCount = 0
 	
 	o:initialize() -- initialize after starting parallel tasks in startup.lua
 	--print("--------------------")
@@ -167,6 +171,7 @@ function Miner:finishInitialization()
 	
 	self:refuel()
 	if not self:requestStation() then
+		-- TODO: load station from settings
 		self:setHome(self.pos.x, self.pos.y, self.pos.z)
 	end
 	self:setStartupPos(self.pos)
@@ -247,8 +252,9 @@ function Miner:initOrientation()
 		self:updateLookingAt()
 
 		-- go back without requesting a chunk --self:back()
-		local result = turtle.back()
-		self.pos = self.pos - self.vectors[self.orientation]
+		if turtle.back() then 
+			self.pos = self.pos - self.vectors[self.orientation]
+		end
 		
 		self:turnTo((self.orientation+turns)%4)
 		self.homeOrientation = self.orientation
@@ -304,7 +310,7 @@ function Miner:requestChunk(chunkId)
 	-- perhaps use own protocol for this?
 	local start = osEpoch("local")
 	if self.node and self.node.host then
-		local answer, forMsg = self.node:send(global.node.host,
+		local answer, forMsg = self.node:send(self.node.host,
 			{"REQUEST_CHUNK", chunkId},true,true,1,"chunk")
 		if answer then
 			if answer.data[1] == "CHUNK" then
@@ -355,9 +361,12 @@ function Miner:setStation(station)
 		--	self:returnHome()
 		--end
 	else
+		-- TODO: try remember station, lmao
+		-- settings set get etc.?
 		print("NO STATION AVAILABLE")
 	end
 end
+
 
 function Miner:getCostHome()
 	local result = 0
@@ -370,14 +379,16 @@ end
 
 function Miner:returnHome()
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	local result = false
 	self.returningHome = true
 	if self.home then
 		print("RETURNING HOME", self.home.x, self.home.y, self.home.z)
-		self:navigateToPos(self.home.x, self.home.y, self.home.z)
+		result = self:navigateToPos(self.home.x, self.home.y, self.home.z)
 		self:turnTo(self.homeOrientation)
 	end
 	self.returningHome = false
 	self.taskList:remove(currentTask)
+	return result
 end
 
 function Miner:error(reason,real)
@@ -416,6 +427,11 @@ function Miner:checkStatus()
 	-- called by self:forward()
 	self:refuel()
 	self:cleanInventory()
+	self.statusCount = self.statusCount + 1
+	if self.statusCount > 40 then
+		self:checkMinedTurtle()
+		self.statusCount = 0
+	end
 	
 	self.taskList:remove(currentTask)
 end
@@ -442,9 +458,75 @@ function Miner:getEmptySlots()
 	return empty
 end
 
+
+function Miner:findInventoryItem(name)
+	-- check for item in inventory
+	local found = nil
+	for slot = 1,default.inventorySize do
+		local data = turtle.getItemDetail(slot)
+		if data and data.name == name then
+			found = slot
+			break
+		end
+	end
+	return found
+end
+
+function Miner:checkMinedTurtle()
+	-- in very rare cases, a turtle might have ran in front of another turtle during stripmining without safety checks
+	-- check inventory for turtles and place them back down 
+	local slot = self:findInventoryItem(default.turtleName)
+	if slot then
+		print("OH NO, I MINED A TURTLE :(")
+		self:select(slot)
+		-- try and place it
+		local direction
+		if turtle.placeUp() then direction = "top"
+		elseif turtle.placeDown() then direction = "bottom"
+		elseif turtle.place() then direction = "front"
+		else
+			print("could not place turtle")
+			return false
+		end
+		
+		if direction then 
+			sleep(1) 
+			-- give it half the fuel
+			for slot = 1, default.inventorySize do
+				local data = turtle.getItemDetail(slot)
+				if data and fuelItems[data.name] then
+					-- could be unreliable if turtle has more than one stack but doesnt really matter
+					self:select(slot)
+					local amount = data.count/2 
+					if direction == "top" then turtle.dropUp(amount)
+					elseif direction == "bottom" then turtle.dropDown(amount)
+					elseif direction == "front" then turtle.drop(amount) end
+					print("giving turtle", amount, "fuel")
+					break 
+				end
+			end
+			sleep(1) 
+			print("placed", direction, "now turning on")
+			local tut = peripheral.wrap(direction)
+			if tut then 
+				print("turning on turtle", tut.getID())
+				tut.turnOn()
+				sleep(5) -- give it some time to fuck off before continuing with whatever
+				return true
+			else 
+				self:error("FAILED TO RESTART TURTLE",true)
+				return false
+			end
+		end
+	end
+	return true
+end
+
+
 function Miner:cleanInventory()
-	-- check for fully inventory and take action
-	if not self.cleaningInventory and self:getEmptySlots() == 0 then
+	-- check for full inventory and take action
+	-- if turtles are still being mined and not placed back down, increase to at least 1 open slot at all times
+	if not self.cleaningInventory and self:getEmptySlots() == 0 then 
 		self:condenseInventory()
 		if self:getEmptySlots() < 2 then
 			self:dumpBadItems()
@@ -463,18 +545,19 @@ function Miner:offloadItemsAtHome()
 	local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
 	local startOrientation = self.orientation
 
-	self:returnHome()
-	self:transferItems()
-	if self:getEmptySlots() < 2 then
-		-- catch this in stripmine e.g.
-		self.cleaningInventory = false
-		self:error("INVENTORY_FULL",true)
-	else
-		-- do nothing and return to task
-		self:navigateToPos(startPos.x, startPos.y, startPos.z)
-		self:turnTo(startOrientation)
+	if self:returnHome() then
+		self:transferItems()
+		if self:getEmptySlots() < 2 then
+			-- catch this in stripmine e.g.
+			self.cleaningInventory = false
+			self:error("INVENTORY_FULL",true)
+		else
+			-- do nothing and return to task
+			self:navigateToPos(startPos.x, startPos.y, startPos.z)
+			self:turnTo(startOrientation)
+		end
 	end
-	
+
 	self.cleaningInventory = false
 	self.taskList:remove(currentTask)
 end
@@ -609,6 +692,7 @@ function Miner:refuel(simple)
 			end
 		end
 		if turtle.getFuelLevel() > default.criticalFuelLevel then
+			-- and turtle.getFuelLevel() > 2 * self:getCostHome() then
 			refueled = true
 		elseif turtle.getFuelLevel() == 0 then
 			-- ran out of fuel
@@ -640,58 +724,271 @@ function Miner:refuel(simple)
 	return refueled
 end
 
+
+
+
+
+
+
+function Miner:clearStaleLocks()
+	-- clear old locks on stations to avoid waiting for noone
+    local currentTime = osEpoch("utc")
+    for id, station in pairs(config.stations.refuel) do
+        if station.occupied and (currentTime - (station.lastClaimed or 0)) > 10000 then -- 10 seconds
+            -- print("Clearing stale lock on station:", id)
+            station.occupied = false
+        end
+    end
+end
+
+function Miner:requestRefuelStation()
+
+	self.refuelClaim = {
+		approvedByOwner = false,
+		ok = false,
+		occupiedStation = nil,
+		waiting = false,
+		lastClaimed = 0,
+		priority = 0,
+	}
+	local refuelClaim = self.refuelClaim
+
+	-- clear occupied stations
+	for id,station in pairs(config.stations.refuel) do
+		station.occupied = false
+	end
+
+	-- get all the occupied stations
+	bluenet.openChannel(bluenet.modem, bluenet.default.channels.refuel)
+	self.nodeRefuel:send(bluenet.default.channels.refuel, {"REQUEST_STATION"}, false, false) 
+	sleep(1) -- handle responses in onReceive and onRequestAnswer in miner/receive.lua
+	-- config should now be updated with occupied stations
+
+	refuelClaim.waiting = true
+	-- try to claim a station or wait for one
+	local startTime = osEpoch("utc")
+	repeat
+		local ok = self:tryClaimStation()
+		if not ok then 
+			sleep(0.5 + math.random()) -- random offset so not every turtle requests at the same time
+			self:clearStaleLocks()
+		end
+	until refuelClaim.ok or ( osEpoch("utc") - startTime )  > 500000 -- 200 seconds for big boy refuels
+
+	refuelClaim.waiting = false
+
+	if refuelClaim.ok and refuelClaim.occupiedStation then
+		-- claim successfull
+	else 
+		-- print(refuelClaim.ok, "claim station", refuelClaim.occupiedStation, "failed")
+		refuelClaim.occupiedStation = nil
+	end
+
+	return refuelClaim.occupiedStation
+end
+
+
+function Miner:tryClaimStation()
+	local refuelClaim = self.refuelClaim
+	local result = false
+	for id,station in pairs(config.stations.refuel) do
+		if not station.occupied or station.occupied == false then
+			refuelClaim.occupiedStation = id -- reserve it to deny other claim requests
+			refuelClaim.lastClaimed = osEpoch("utc")
+			-- print("claiming station", id)
+			refuelClaim.ok = true
+			self.nodeRefuel:send(bluenet.default.channels.refuel, {"CLAIM_STATION", id}, false, false)
+			sleep(1) -- wait for denying answers
+
+			if refuelClaim.ok or refuelClaim.approvedByOwner then 
+				print("claimed station", id, "owner approved:", refuelClaim.approvedByOwner)
+				refuelClaim.ok = true
+				result = true
+				break
+			else
+				refuelClaim.occupiedStation = nil
+				refuelClaim.lastClaimed = 0
+				--print("claim station failed", id)
+			end
+		end
+	end
+	return result
+end
+
+function Miner:releaseStation()
+	if self.refuelClaim and self.refuelClaim.occupiedStation then
+		--print("releasing station", self.refuelClaim, self.refuelClaim.occupiedStation)
+		self.refuelClaim.isReleasing = true
+		self.nodeRefuel:send(bluenet.default.channels.refuel, 
+				{"RELEASE_STATION", self.refuelClaim.occupiedStation}, false, false)
+		-- wait a bit (~1s) to solve claim conflicts using owner acks
+		self:back()
+		self:back()
+		self:back()
+		-- self:back()
+		-- self:back()
+		-- self:back()
+		--sleep(1)
+		
+		self.refuelClaim = {occupiedStation = nil}
+		--print(osEpoch("utc")/1000, "released station")
+	end
+	-- close channel to stop listening
+	bluenet.closeChannel(bluenet.modem, bluenet.default.channels.refuel)
+	
+end
+
+function Miner:getRefuelStation(random)
+	local id 
+	-- print("not random", not random, self.nodeRefuel)
+	if not random and self.nodeRefuel then
+		id = self:requestRefuelStation()
+	end
+	if id then 
+		return id
+	else
+		-- fallback, use random station 
+		local ct = 0
+		for _,v in pairs(config.stations.refuel) do ct = ct + 1 end
+		local index = math.random(1, ct)
+		ct = 0
+		for id, station in pairs(config.stations.refuel) do
+			ct = ct + 1
+			if ct == index then 
+				print("using random station", id)
+				return id
+			end
+		end
+	end
+end
+
+
 function Miner:getFuel()
+
+	-- default method:
+	-- 1. move near to refuel stations based on config
+	-- 2. ask turtles if stations are occupied 
+	-- 3. claim station
+	--    if occupied, wait for station
+	-- 3. move to station and refuel
+	-- 4. report station as free and leave
+
+	-- no station available:
+	-- wait in queue for station, but this would also require messaging etc...
+	-- not nice
+	-- could use home-stations as queue that is always available
+
+	-- no host available:
+	-- use config or ask other turtles if they are refueling
+
+	-- TODO: advanced method:
+	-- add support turtles that represent a temporary refuel station
+	-- they act like a passive provider chest
+	-- this way turtles dont have to return all the way home for big tasks
+	-- different types of turtles
+	-- general turtle with all the default methods like navigation etc.
+	-- types: support(refuel, collect items), miner, "forester"
+
 	-- TODO: change from config to internal variable?
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	
 	self.gettingFuel = true
 	local result = false
 	
-	for _,station in ipairs(config.stations.refuel) do
-		if station.occupied == false then
-			self:navigateToPos(station.pos.x, station.pos.y, station.pos.z)
-			if station.orientation then 
-				self:turnTo(station.orientation) 
-			end
-			
-			local hasInventory = false
-			
-			for k=1,4 do
-			--check for chest
-				self:inspect(true) -- true for wrong map entries or new stations
-				local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
-				if block and inventoryBlocks[block] then
-					hasInventory = true
+	local ok, err = pcall( function() 
+
+		-- move near the refuel stations
+
+		local isInQueue = false
+		
+		if config.stations.refuelQueue and config.stations.refuelQueue.origin then 
+			local tries = 0
+			local origin = config.stations.refuelQueue.origin
+			local maxDistance = config.stations.refuelQueue.maxDistance or 8
+			repeat 
+				tries = tries + 1
+				local randomPosition = vector.new(
+					math.random(origin.x-maxDistance, origin.x+maxDistance),
+					origin.y,
+					math.random(origin.z-maxDistance, origin.z+maxDistance)
+				)
+				print("moving to queue", randomPosition)
+				isInQueue = self:navigateToPos(randomPosition.x, randomPosition.y, randomPosition.z)
+				if not isInQueue and tries > 3 then
+					print("cant reach refuel queue")
+					isInQueue = true -- set to true anyways, should be nearby the queue
+					-- return false-- only leave pcall function !
 					break
 				end
-				self:turnRight()
-			end
-			if not hasInventory then 
-				print("no inventory found")
-				--assert(hasInventory, "no inventory found")
-			else
-				result = turtle.suck(default.fuelAmount)
-			end
-			
-			break
+			until isInQueue
 		end
+
+		local useRandomStation = not isInQueue
+		-- print("using random station", useRandomStation)
+		local id = self:getRefuelStation(useRandomStation)
+		local station = config.stations.refuel[id]
+
+		-- actually refuel
+		if not self:navigateToPos(station.pos.x, station.pos.y, station.pos.z) then
+			--print("unable to reach station")
+			return false
+		end
+
+		if station.orientation then 
+			self:turnTo(station.orientation) 
+		end
+		
+		local hasInventory = false
+		
+		for k=1,4 do
+		--check for chest
+			self:inspect(true) -- true for wrong map entries or new stations
+			local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
+			if block and inventoryBlocks[block] then
+				hasInventory = true
+				break
+			end
+			self:turnRight()
+		end
+		if not hasInventory then 
+			print("no inventory found")
+			--assert(hasInventory, "no inventory found")
+		else
+			result = turtle.suck(default.fuelAmount)
+		end
+	
+	end )
+
+	-- !! cancellation while getting fuel can result in no more refueling
+	if not ok then
+		self.gettingFuel = false
+		bluenet.closeChannel(bluenet.modem, bluenet.default.channels.refuel)
+		error(err,0) -- pass error
 	end
 	
-	if self:getEmptySlots() < 8 then
+	if not result then
+		print("unable to refuel", result)
+		result = false
+	end
+
+	-- done refueling
+	self:releaseStation()
+
+	if self:getEmptySlots() < 10 then -- 8
 		-- already at home, also offload items
 		self:offloadItemsAtHome() 
 	end
-	-- cancellation while getting fuel can result in this never being set to false
+
+	self:returnHome()
+
 	self.gettingFuel = false
-	
-	if not result then
-		print(result)
-		result = false
-	end
 	
 	self.taskList:remove(currentTask)
 	return result
 end
+
+
+
 
 function Miner:setMapValue(x,y,z,value)
 	--self.map:logData(x,y,z,value)
@@ -1201,15 +1498,8 @@ function Miner:mineVein()
 	--else repeat
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	
-	-- local ores
-	-- if not id then
-		-- ores = oreBlocks
-	-- elseif type(id) == "table" then
-		-- ores = id
-	-- else
-		-- ores = { [id]=true }
-	-- end
-	
+	-- TODO: give turtle a bucket and gobble up lava to refuel
+
 	local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
 	local startOrientation = self.orientation
 	local block

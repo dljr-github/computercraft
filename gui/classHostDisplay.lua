@@ -29,7 +29,8 @@ function HostDisplay:new(x,y,width,height)
 	self.__index = self
 	
 	o.backgroundColor = default.colors.background
-	
+	o.doSlowReboot = false
+
 	o:initialize()
 	
 	return o
@@ -79,8 +80,8 @@ function HostDisplay:initialize()
 	
 	local sx, sy = 2, sy+4
 	self.winMain.btnTurtles = Button:new("Turtles", sx, sy, 10, 3)
-	self.winMain.lblRow1 = Label:new(   "      |        |       ", sx+11, sy)
-	self.winMain.lblRow2 = Label:new(   "      |        |       ", sx+12, sy)
+	self.winMain.lblRow1 = Label:new(   "      |        |       ", sx+12, sy)
+	self.winMain.lblRow2 = Label:new(   "      |        |       ", sx+12, sy+1)
 	self.winMain.lblTotalHd = Label:new(" total", sx+11, sy)
 	self.winMain.lblTotal =   Label:new("     0", sx+11, sy+1)
 	self.winMain.lblOnlineHd = Label:new(		 "online", sx+20, sy)
@@ -92,16 +93,22 @@ function HostDisplay:initialize()
 	self.winMain.btnHome = Button:new("home", sx+20, sy+2, 7, 1)
 	self.winMain.btnCancel = Button:new("cancel", sx+29, sy+2, 7, 1)
 	self.winMain.lblTimeVal = Label:new("00:00:00", self:getWidth()-8, sy+2)
+	self.winMain.btnDumpItems = Button:new("dump", sx+38, sy+0, 7, 1)
+	self.winMain.btnRefuel = Button:new("refuel", sx+38, sy+1, 7, 1)
 
 	self.winMain.btnMap.click = function() return self:displayMap() end
 	self.winMain.btnTurtles.click = function() return self:displayTurtles() end
 	self.winMain.btnGroups.click = function() return self:displayGroups() end
 	self.winMain.btnReboot.click = function() self:reboot() end
 	self.winMain.btnTerminate.click = function() return self:terminate() end
-	self.winMain.btnGlobalReboot.click = function() return self:globalReboot(false) end
+	self.winMain.btnGlobalReboot.click = function() return self:globalReboot(self.doSlowReboot) end
 	self.winMain.btnCancel.click = function() return self:globalCancelTask() end
 	self.winMain.btnHome.click = function() return self:globalCallHome() end
-	
+	self.winMain.btnDumpItems.click = function() return self:globalDumpItems() end
+	self.winMain.btnRefuel.click = function() return self:globalGetFuel() end
+
+
+
 	--self.winMain:addObject(self.winMain.lblHeading)
 	self.winMain:addObject(self.winMain.btnReboot)
 	self.winMain:addObject(self.winMain.btnTerminate)
@@ -127,6 +134,9 @@ function HostDisplay:initialize()
 	self.winMain:addObject(self.winMain.btnCancel)
 	self.winMain:addObject(self.winMain.lblTimeVal)
 
+	self.winMain:addObject(self.winMain.btnDumpItems)
+	self.winMain:addObject(self.winMain.btnRefuel)
+
 
 	--self.winMain:addObject(self.winMain.btnGlobalRebootSlow)
 	--self.winMain:addObject(self.winMain.btnGlobalShutdown)
@@ -138,11 +148,13 @@ function HostDisplay:initialize()
 	self.winData:addObject(self.winData.frm)
 	self.winData.frm:setWidth(self.winData:getWidth())
 
+	
 	self.winData.btnPrintStatus = CheckBox:new(3,2, "print status", global.printStatus)
 	self.winData.btnPrintMainTime = CheckBox:new(3,3, "print main", global.printMainTime)
 	self.winData.btnPrintEvents = CheckBox:new(3,4, "print events", global.printEvents)
 	self.winData.btnPrintSend = CheckBox:new(25,2, "print send", global.printSend)
 	self.winData.btnPrintSendTime = CheckBox:new(25,3, "print send time", global.printSendTime)
+	self.winData.chkSlowReboot = CheckBox:new(25,4, "slow reboot", self.doSlowReboot)
 
 	self.winData.btnPrintStatus.click = function()
 		global.printStatus = self.winData.btnPrintStatus.active
@@ -159,12 +171,16 @@ function HostDisplay:initialize()
 	self.winData.btnPrintSendTime.click = function()
 		global.printSendTime = self.winData.btnPrintSendTime.active
 	end
+	self.winData.chkSlowReboot.click = function()
+		self.doSlowReboot = self.winData.chkSlowReboot.active
+	end
 	
 	self.winData:addObject(self.winData.btnPrintStatus)
 	self.winData:addObject(self.winData.btnPrintEvents)
 	self.winData:addObject(self.winData.btnPrintSend)
 	self.winData:addObject(self.winData.btnPrintMainTime)
 	self.winData:addObject(self.winData.btnPrintSendTime)
+	self.winData:addObject(self.winData.chkSlowReboot)
 	
 	-- init hidden windows
 	self.mapDisplay = MapDisplay:new(4,4,32,16)
@@ -431,6 +447,24 @@ function HostDisplay:globalCallHome()
 		end
 	end
 end
+function HostDisplay:globalDumpItems()
+	-- cancel all running tasks of the turtles
+	if self.node then
+		for id,turtle in pairs(self.turtles) do
+			self.node:send(id, {"DO", "dumpBadItems"}, false, false)
+		end
+	end
+end
+function HostDisplay:globalGetFuel()
+	-- cancel all running tasks of the turtles
+	if self.node then
+		for id,turtle in pairs(self.turtles) do
+			self.node:send(id, {"DO", "getFuel"}, false, false)
+			--self.node:send(id, {"DO", "returnHome"}, false, false)
+		end
+	end
+end
+
 
 function HostDisplay:globalShutdown()
 	if self.node then

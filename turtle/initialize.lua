@@ -22,9 +22,12 @@ end
 local function initStream()
 	global.nodeStream = NetworkNode:new("miner_stream")
 end
+local function initRefuel()
+	global.nodeRefuel = NetworkNode:new("refuel", false, true)
+end
 
 createLabel()
-parallel.waitForAll(initNode,initStream)
+parallel.waitForAll(initNode,initStream, initRefuel)
 
 if not global.node.host then
 	error(global.node.host, 0)
