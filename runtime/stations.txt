@@ -1,30 +1,47 @@
 {
+  refuelQueue = {
+    maxDistance = 8,
+    origin = {
+      y = 72,
+      x = 2221,
+      z = -2653,
+    },
+  },
   refuel = {
     {
       orientation = 1,
       occupied = false,
       pos = {
         y = 68,
-        x = 2225,
-        z = -2665,
+        x = 2223,
+        z = -2653,
       },
     },
-    {
-      orientation = 1,
+    [ 6 ] = {
+      orientation = 2,
       occupied = false,
       pos = {
         y = 68,
-        x = 2225,
-        z = -2664,
+        x = 2221,
+        z = -2651,
       },
     },
-    {
-      orientation = 1,
+    [ 7 ] = {
+      orientation = 0,
       occupied = false,
       pos = {
         y = 68,
-        x = 2225,
-        z = -2663,
+        x = 2221,
+        z = -2655,
+      },
+    },
+    [ 5 ] = {
+      orientation = 3,
+      occupied = false,
+      pos = {
+        y = 68,
+        x = 2219,
+        z = -2653,
       },
     },
   },

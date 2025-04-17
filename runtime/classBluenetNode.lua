@@ -1,6 +1,5 @@
 require("classList")
-
-local bluenet = bluenet
+local bluenet = require("bluenet")
 
 local default = {
 	typeSend = 1,
@@ -17,6 +16,7 @@ local default = {
 		broadcast = 65401, 
 		repeater = 65402,
 		host = 65403,
+		refuel = 65404,
 		max = 65400
 	}
 }
@@ -30,16 +30,16 @@ local peripheralCall = peripheral.call
 NetworkNode = {}
 NetworkNode.__index = NetworkNode
 
-function NetworkNode:new(protocol,isHost)
+function NetworkNode:new(protocol,isHost,skipLookup)
 	local o = o or {}
 	setmetatable(o, self)
 	
 	-- Function Caching
-    --for k, v in pairs(self) do
-    --    if type(v) == "function" then
-    --        o[k] = v  -- Directly assign method to object
-    --    end
-    --end
+    for k, v in pairs(self) do
+       if type(v) == "function" then
+           o[k] = v  -- Directly assign method to object
+       end
+    end
 
 	--print("----INITIALIZING----")
 	
@@ -58,22 +58,26 @@ function NetworkNode:new(protocol,isHost)
 	o.channel = nil
 	o.modem = nil
 
-	o:initialize()
+	o:initialize(skipLookup)
 	--print("--------------------")
 	return o
 end
 
-function NetworkNode:initialize()
+function NetworkNode:initialize(skipLookup)
 	self.channel = self:idAsChannel()
 	self.modem = bluenet.findModem()
 	self:openBluenet()
-	self:lookupHost()
+	if not skipLookup then
+		self:lookupHost(4, 3) -- 2, 3
+	end
 	print("myId:", self.id, "host:", self.host, "protocol:", self.protocol)
 end
 
 function NetworkNode:idAsChannel(id)
 	local id = id or self.id
-	if id ~= default.channels.broadcast and id ~= default.channels.host then
+	if id ~= default.channels.broadcast 
+		and id ~= default.channels.host 
+		and id ~= default.channels.refuel then
 		return id % default.channels.max
 	else
 		return id
@@ -110,6 +114,7 @@ function NetworkNode:hostProtocol()
 			print("protocol already hosted by", host, self.protocol)
 		end
 		bluenet.openChannel(self.modem, default.channels.host)
+		-- TODO: notify protocol members so they can set their host if its nil
 	end
 end
 
@@ -130,15 +135,17 @@ function NetworkNode:getHost()
 	return self.host
 end
 
-function NetworkNode:lookupHost()
+function NetworkNode:lookupHost(tries, waitTime)
 	if self.isHost then 
 		self.host = self.id
 	else 
+		if not tries then tries = 1 end
 		local ct = 0
 		repeat 
-			self.host = self:lookup(self.protocol,"host", 3) 
-			ct = ct + 10
-		until self.host or ct >= 10
+			self.host = self:lookup(self.protocol,"host", waitTime)
+			ct = ct + 1
+		until self.host or ct >= tries -- increase, if host is not found reliably
+		-- TODO: give up and use stream open to wait for a host, then reboot
 	end
 	return self.host
 end
@@ -156,11 +163,18 @@ function NetworkNode:lookup(protocol, name, waitTime)
 		--print(answer.data[1], answer.sender)
 		return answer.sender 
 	else
-		--print(answer and answer.data[1], answer and answer.data[2], "nil")
+		--print(answer and answer.data[1], answer and answer.data[2], answer and answer.recipient, "lookup fail")
 		return nil
 	end
 end
 
+-- helper functions so other classes can use bluenet directly
+function NetworkNode:openChannel(channel) 
+	return bluenet.openChannel(self.modem, channel)
+end
+function NetworkNode:closeChannel(channel)
+	return bluenet.closeChannel(self.modem, channel)
+end
 
 function NetworkNode:beforeReceive(msg)
 	--if msg.data[1] == "RUN" then -- from now on, RUN is handled by the receiver
@@ -394,7 +408,7 @@ function NetworkNode:listenForAnswer(forMsg,waitTime)
 				--print(msg.id, msg.data[1], msg.protocol,waitTime)
 				break
 			else
-				print("different", forMsg.protocol, forMsg.id, forMsg.data[1])
+				-- print("different", forMsg.protocol, forMsg.id, forMsg.data[1])
 				-- different message
 				-- do not handle other messages, it came to the error below
 				-- self:handleMessage(sender,msg,distance)
@@ -405,9 +419,9 @@ function NetworkNode:listenForAnswer(forMsg,waitTime)
 		else
 			--print("fallback, no answer")
 			--self.waitlist:remove(forMsg) -- this could trigger errors if it has already been removed from the list OR because its not the same table as when it was inserted
-			if self.onNoAnswer then
-				self.onNoAnswer(forMsg)
-			end
+			--if self.onNoAnswer then
+			--	self.onNoAnswer(forMsg)
+			--end
 			break
 		end
 		
@@ -416,7 +430,11 @@ function NetworkNode:listenForAnswer(forMsg,waitTime)
 	until waitTime <= 0
 	--print("done waiting", msg)
 	if not msg then 
-	print("no answer", forMsg.id, forMsg.data[1])
+		if self.onNoAnswer then
+			self.onNoAnswer(forMsg)
+		else
+			print("no answer", forMsg.id, forMsg.data[1])
+		end
 	end
 	return msg, forMsg
 end
@@ -601,7 +619,6 @@ function NetworkNode:stream()
 		if self.streams[previous.id] then 
 			-- only send if stream wasnt broken 
 			
-			local start = os.epoch("local")
 			local data = nil
 			if self.onRequestStreamData then
 				data = self.onRequestStreamData(previous)

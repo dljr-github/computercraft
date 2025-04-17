@@ -432,7 +432,8 @@ function Monitor:drawBox(x,y,width,height,color, boderWidth, backgroundColor)
 	if not backgroundColor then backgroundColor = defaultBackgroundColor end
 	local backgroundColor = toBlit(backgroundColor)
 
-	
+	--TODO: borderWidth, different values
+
 	-- 4-5/13 ms for drawBox and drawFilled
 	
 	-- color = toBlit(color)

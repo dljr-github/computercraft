@@ -1,5 +1,4 @@
 
-require("classMap")
 local Button = require("classButton")
 local CheckBox = require("classCheckBox")
 require("classList")
