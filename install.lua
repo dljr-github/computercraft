@@ -93,8 +93,22 @@ if turtle then
 		-- "turtle/startup.lua",
 	}
 	folders = {
-		allFolders["turtle"],
-		allFolders["general"],
+		["turtle"] = {
+		name = "turtle",
+		files = {
+			"startup.lua",
+			"update.lua",
+			}
+		}
+		,
+		["general"] = {
+		name = "general",
+		files = {
+			"bluenet.lua",
+			"classBluenetNode.lua",
+			"classList.lua",
+			}
+		}
 	}
 else
 	-- host computer
