@@ -572,8 +572,7 @@ function Miner:transferItems()
 	
 	for k=1,4 do
 	--check for chest
-		self:inspect(true)
-		local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
+		local block = self:inspect(true)
 		if block and inventoryBlocks[block] then
 			hasInventory = true
 			break
@@ -773,14 +772,14 @@ function Miner:requestRefuelStation()
 			sleep(0.5 + math.random()) -- random offset so not every turtle requests at the same time
 			self:clearStaleLocks()
 		end
-	until refuelClaim.ok or ( osEpoch("utc") - startTime )  > 500000 -- 200 seconds for big boy refuels
+	until refuelClaim.ok or ( osEpoch("utc") - startTime )  > 1200000 -- 1200 seconds (20 minutes) for high contention scenarios
 
 	refuelClaim.waiting = false
 
 	if refuelClaim.ok and refuelClaim.occupiedStation then
-		-- claim successfull
+		print("station claim successful:", refuelClaim.occupiedStation)
 	else 
-		-- print(refuelClaim.ok, "claim station", refuelClaim.occupiedStation, "failed")
+		print("station claim timeout - no stations available after waiting")
 		refuelClaim.occupiedStation = nil
 	end
 
@@ -795,7 +794,7 @@ function Miner:tryClaimStation()
 		if not station.occupied or station.occupied == false then
 			refuelClaim.occupiedStation = id -- reserve it to deny other claim requests
 			refuelClaim.lastClaimed = osEpoch("utc")
-			-- print("claiming station", id)
+			print("attempting to claim station", id)
 			refuelClaim.ok = true
 			self.nodeRefuel:send(bluenet.default.channels.refuel, {"CLAIM_STATION", id}, false, false)
 			sleep(1) -- wait for denying answers
@@ -808,7 +807,7 @@ function Miner:tryClaimStation()
 			else
 				refuelClaim.occupiedStation = nil
 				refuelClaim.lastClaimed = 0
-				--print("claim station failed", id)
+				print("claim station failed - denied by owner", id)
 			end
 		end
 	end
@@ -847,16 +846,26 @@ function Miner:getRefuelStation(random)
 	if id then 
 		return id
 	else
-		-- fallback, use random station 
-		local ct = 0
-		for _,v in pairs(config.stations.refuel) do ct = ct + 1 end
-		local index = math.random(1, ct)
-		ct = 0
-		for id, station in pairs(config.stations.refuel) do
-			ct = ct + 1
-			if ct == index then 
-				print("using random station", id)
-				return id
+		-- count available stations
+		local stationCount = 0
+		for _,v in pairs(config.stations.refuel) do stationCount = stationCount + 1 end
+		
+		if stationCount == 1 then
+			-- single station setup - return the only station and wait properly
+			for stationId, station in pairs(config.stations.refuel) do
+				print("using single station", stationId, "will wait for availability")
+				return stationId
+			end
+		else
+			-- multiple stations - use random fallback as before
+			local index = math.random(1, stationCount)
+			local ct = 0
+			for stationId, station in pairs(config.stations.refuel) do
+				ct = ct + 1
+				if ct == index then 
+					print("using random station", stationId)
+					return stationId
+				end
 			end
 		end
 	end
@@ -897,11 +906,12 @@ function Miner:getFuel()
 	
 	local ok, err = pcall( function() 
 
-		-- move near the refuel stations
+		-- move near the refuel stations or create automatic queue
 
 		local isInQueue = false
 		
 		if config.stations.refuelQueue and config.stations.refuelQueue.origin then 
+			-- explicit queue configuration exists
 			local tries = 0
 			local origin = config.stations.refuelQueue.origin
 			local maxDistance = config.stations.refuelQueue.maxDistance or 8
@@ -912,15 +922,52 @@ function Miner:getFuel()
 					origin.y,
 					math.random(origin.z-maxDistance, origin.z+maxDistance)
 				)
-				print("moving to queue", randomPosition)
+				print("moving to explicit queue", randomPosition)
 				isInQueue = self:navigateToPos(randomPosition.x, randomPosition.y, randomPosition.z)
 				if not isInQueue and tries > 3 then
 					print("cant reach refuel queue")
 					isInQueue = true -- set to true anyways, should be nearby the queue
-					-- return false-- only leave pcall function !
 					break
 				end
 			until isInQueue
+		else
+			-- no explicit queue - create automatic queue around refuel stations
+			local stationCount = 0
+			local avgX, avgY, avgZ = 0, 0, 0
+			for stationId, station in pairs(config.stations.refuel) do
+				stationCount = stationCount + 1
+				avgX = avgX + station.pos.x
+				avgY = avgY + station.pos.y
+				avgZ = avgZ + station.pos.z
+			end
+			
+			if stationCount > 0 then
+				-- calculate center point of all refuel stations
+				avgX = math.floor(avgX / stationCount)
+				avgY = math.floor(avgY / stationCount)
+				avgZ = math.floor(avgZ / stationCount)
+				
+				local maxDistance = 12 -- larger area for automatic queue
+				local tries = 0
+				repeat 
+					tries = tries + 1
+					local randomPosition = vector.new(
+						math.random(avgX-maxDistance, avgX+maxDistance),
+						avgY,
+						math.random(avgZ-maxDistance, avgZ+maxDistance)
+					)
+					print("moving to auto queue near stations", randomPosition)
+					isInQueue = self:navigateToPos(randomPosition.x, randomPosition.y, randomPosition.z)
+					if not isInQueue and tries > 3 then
+						print("cant reach auto queue area")
+						isInQueue = true -- proceed anyway
+						break
+					end
+				until isInQueue
+			else
+				print("no refuel stations configured")
+				isInQueue = true -- skip queue logic if no stations
+			end
 		end
 
 		local useRandomStation = not isInQueue
@@ -942,8 +989,7 @@ function Miner:getFuel()
 		
 		for k=1,4 do
 		--check for chest
-			self:inspect(true) -- true for wrong map entries or new stations
-			local block = self:getMapValue(self.lookingAt.x, self.lookingAt.y, self.lookingAt.z)
+			local block = self:inspect(true) -- true for wrong map entries or new stations
 			if block and inventoryBlocks[block] then
 				hasInventory = true
 				break

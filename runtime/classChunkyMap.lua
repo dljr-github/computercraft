@@ -208,14 +208,21 @@ function ChunkyMap:saveChunk(chunkId)
 	local chunk = self.chunks[chunkId]
 	if chunk then
 		local path = default.folder .. chunkId .. ".txt"
+		
+		-- Ensure directory exists
+		local dir = fs.getDir(path)
+		if not fs.exists(dir) then
+			fs.makeDir(dir)
+		end
+		
 		local f = fs.open(path,"w")
-		--f.write("jooooooooooooooooooooo") 
-		
+		if f then
 			f.write(simpleSerialize(chunk))
-		
-		--f.write(textutils.serialize(self.chunks[chunkId]), true, true)
-		f.close()
-		os.pullEvent(os.queueEvent("yield"))
+			f.close()
+			os.pullEvent(os.queueEvent("yield"))
+		else
+			print("ERROR: Unable to open file for writing:", path)
+		end
 	end
 	--print("SAVED CHUNK", chunkId)
 end
