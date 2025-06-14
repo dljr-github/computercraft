@@ -79,7 +79,9 @@ function List:remove(n)
             nxt._prev = prv
             prv._next = nxt
         else
-			if n ~= self.first then self:logError("not first", n) end
+			if n ~= self.first then 
+				self.first = n
+			end
             nxt._prev = nil
             self.first = nxt
         end
