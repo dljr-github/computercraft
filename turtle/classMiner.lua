@@ -63,7 +63,27 @@ local mineBlocks = {
 
 local inventoryBlocks = {
 ["minecraft:chest"]=true,
+["minecraft:trapped_chest"]=true,
+["minecraft:ender_chest"]=true,
+["minecraft:shulker_box"]=true,
+["minecraft:white_shulker_box"]=true,
+["minecraft:orange_shulker_box"]=true,
+["minecraft:magenta_shulker_box"]=true,
+["minecraft:light_blue_shulker_box"]=true,
+["minecraft:yellow_shulker_box"]=true,
+["minecraft:lime_shulker_box"]=true,
+["minecraft:pink_shulker_box"]=true,
+["minecraft:gray_shulker_box"]=true,
+["minecraft:light_gray_shulker_box"]=true,
+["minecraft:cyan_shulker_box"]=true,
+["minecraft:purple_shulker_box"]=true,
+["minecraft:blue_shulker_box"]=true,
+["minecraft:brown_shulker_box"]=true,
+["minecraft:green_shulker_box"]=true,
+["minecraft:red_shulker_box"]=true,
+["minecraft:black_shulker_box"]=true,
 ["minecraft:hopper"]=true,
+["minecraft:barrel"]=true,
 }
 --inventoryBlocks = blockTranslation.translateTable(inventoryBlocks)
 
@@ -570,11 +590,15 @@ function Miner:transferItems()
 	local hasInventory = false
 	local startOrientation = self.orientation
 	
+	print("DEBUG: Starting transferItems, hasFuel =", hasFuel)
+	
 	for k=1,4 do
 	--check for chest
 		local block = self:inspect(true)
+		print("DEBUG: Direction", k, "found block:", block)
 		if block and inventoryBlocks[block] then
 			hasInventory = true
+			print("DEBUG: Found inventory:", block)
 			break
 		end
 		self:turnRight()
@@ -584,23 +608,32 @@ function Miner:transferItems()
 		--assert(hasInventory, "no inventory found")
 	else
 		local startSlot = turtle.getSelectedSlot()
+		print("DEBUG: Starting transfer from slot", startSlot, "hasFuel =", hasFuel)
 		for i = 0,default.inventorySize-1 do
 			local slot = (i+startSlot-1)%default.inventorySize +1
 			local data = turtle.getItemDetail(slot)
 			if data and data.name then
-				if not hasFuel and fuelItems[data.name] then
-					hasFuel = true --keep the fuel
+				print("DEBUG: Slot", slot, "has", data.name, "x" .. data.count)
+				local isFuelItem = fuelItems[data.name] ~= nil
+				print("DEBUG: Is fuel item:", isFuelItem, "hasFuel already:", hasFuel)
+				if not hasFuel and isFuelItem then
+					hasFuel = true --keep the first fuel stack found
+					print("keeping fuel:", data.name, "x" .. data.count, "in slot", slot)
 				else
-					--transfer items
+					--transfer all other items (including additional fuel stacks)
+					print("DEBUG: Attempting to transfer:", data.name, "x" .. data.count)
 					self:select(slot)
 					local ok = turtle.drop(data.count)
-					if ok ~= true then
-						print(ok,"inventory in front is full")
-						break
+					if ok == true then
+						print("transferred:", data.name, "x" .. data.count)
+					else
+						print("chest full, skipping:", data.name, "x" .. data.count)
+						-- Continue trying other items in case chest has space for different items
 					end
 				end
 			end
 		end
+		print("DEBUG: Transfer complete, final hasFuel =", hasFuel)
 	end
 	self:turnTo(startOrientation)
 	self.taskList:remove(currentTask)
