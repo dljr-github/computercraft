@@ -1,7 +1,7 @@
 
 -- installation using github for the host computer
 
-local git = "https://raw.githubusercontent.com/helpmyRF24isntworking/computercraft/main"
+local git = "https://raw.githubusercontent.com/dljr-github/computercraft/main"
 
 --https://pastebin.com/pU2HBysT
 -- https://pastebin.com/raw/NaFu674J for simpler turtle download
