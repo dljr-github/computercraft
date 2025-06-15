@@ -228,26 +228,11 @@ function Miner:initPosition()
 end
 
 function Miner:initOrientation()
-	local newPos
-	local turns = 0
-	for i=1,4 do
-		if not turtle.forward() then
-			self:turnLeft()
-			turns = turns + 1
-		else
-			newPos = vector.new(gps.locate())
-			break
-		end
-	end
-	if not newPos then
-		-- retry with breaking
-		print("breaking blocks")
+	local function tryOrientationAtLevel()
+		local newPos
+		local turns = 0
+		-- First try: normal movement
 		for i=1,4 do
-			local hasBlock, data = turtle.inspect()
-			if not Miner.checkDisallowed(data.name) then -- or checkSafe(data.name)
-				turtle.dig()
-				sleep(default.waitTimeFallingBlock)
-			end
 			if not turtle.forward() then
 				self:turnLeft()
 				turns = turns + 1
@@ -256,13 +241,152 @@ function Miner:initOrientation()
 				break
 			end
 		end
+		
+		if not newPos then
+			-- Second try: breaking blocks
+			print("breaking blocks to determine orientation")
+			for i=1,4 do
+				local hasBlock, data = turtle.inspect()
+				if data and not Miner.checkDisallowed(data.name) then
+					turtle.dig()
+					sleep(default.waitTimeFallingBlock)
+				end
+				if not turtle.forward() then
+					self:turnLeft()
+					turns = turns + 1
+				else
+					newPos = vector.new(gps.locate())
+					break
+				end
+			end
+		end
+		
+		return newPos, turns
 	end
+	
+	local originalPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
+	local newPos, turns = tryOrientationAtLevel()
+	
 	if not newPos then
-		print("ORIENTATION NOT DETERMINABLE - attempting recovery")
+		print("Cannot determine orientation at current level, trying different levels")
+		local levelsTried = {self.pos.y}
+		local maxLevelAttempts = 10
+		local levelAttempts = 0
+		
+		-- Try going up first (more likely to have open space)
+		while not newPos and levelAttempts < maxLevelAttempts do
+			levelAttempts = levelAttempts + 1
+			local targetLevel = self.pos.y + levelAttempts
+			
+			-- Skip if we've already tried this level
+			local alreadyTried = false
+			for _, level in ipairs(levelsTried) do
+				if level == targetLevel then
+					alreadyTried = true
+					break
+				end
+			end
+			
+			if not alreadyTried then
+				print("Trying orientation detection at level", targetLevel)
+				table.insert(levelsTried, targetLevel)
+				
+				-- Try to move up
+				local hasBlock, data = turtle.inspectUp()
+				if data and not Miner.checkDisallowed(data.name) then
+					turtle.digUp()
+					sleep(default.waitTimeFallingBlock)
+				end
+				
+				if turtle.up() then
+					self.pos.y = self.pos.y + 1
+					newPos, turns = tryOrientationAtLevel()
+					
+					if newPos then
+						print("Successfully determined orientation at level", self.pos.y)
+						break
+					end
+				else
+					print("Cannot move up to level", targetLevel)
+				end
+			end
+			
+			-- Also try going down if going up didn't work
+			if not newPos and levelAttempts <= maxLevelAttempts / 2 then
+				targetLevel = originalPos.y - levelAttempts
+				alreadyTried = false
+				for _, level in ipairs(levelsTried) do
+					if level == targetLevel then
+						alreadyTried = true
+						break
+					end
+				end
+				
+				if not alreadyTried and targetLevel > 0 then -- Don't go below bedrock
+					print("Trying orientation detection at level", targetLevel)
+					table.insert(levelsTried, targetLevel)
+					
+					-- Return to original level first, then try going down
+					while self.pos.y > originalPos.y do
+						if turtle.down() then
+							self.pos.y = self.pos.y - 1
+						else
+							break
+						end
+					end
+					
+					-- Try to move down
+					local hasBlock, data = turtle.inspectDown()
+					if data and not Miner.checkDisallowed(data.name) then
+						turtle.digDown()
+						sleep(default.waitTimeFallingBlock)
+					end
+					
+					if turtle.down() then
+						self.pos.y = self.pos.y - 1
+						newPos, turns = tryOrientationAtLevel()
+						
+						if newPos then
+							print("Successfully determined orientation at level", self.pos.y)
+							break
+						end
+					else
+						print("Cannot move down to level", targetLevel)
+					end
+				end
+			end
+		end
+		
+		-- If we found orientation at a different level, return to original level
+		if newPos and self.pos.y ~= originalPos.y then
+			print("Returning to original level", originalPos.y, "from", self.pos.y)
+			while self.pos.y > originalPos.y do
+				if turtle.down() then
+					self.pos.y = self.pos.y - 1
+				else
+					print("Warning: Cannot return to original level")
+					break
+				end
+			end
+			while self.pos.y < originalPos.y do
+				if turtle.up() then
+					self.pos.y = self.pos.y + 1
+				else
+					print("Warning: Cannot return to original level")
+					break
+				end
+			end
+		end
+	end
+	
+	if not newPos then
+		print("ORIENTATION NOT DETERMINABLE after trying multiple levels")
+		print("Broadcasting position for manual retrieval...")
+		self:broadcastStrandedPosition()
 		self.orientation = 0
-		self:returnHome()
+		self:error("TURTLE_STRANDED - Manual retrieval required", true)
 	else
-		-- print(newPos, self.pos, turns, self.orientation)
+		-- Calculate orientation from movement
 		local diff = newPos - self.pos
 		self.pos = newPos
 		if diff.x < 0 then self.orientation = 1
@@ -272,7 +396,7 @@ function Miner:initOrientation()
 		end
 		self:updateLookingAt()
 
-		-- go back without requesting a chunk --self:back()
+		-- Go back to original position
 		if turtle.back() then 
 			self.pos = self.pos - self.vectors[self.orientation]
 		end
@@ -281,6 +405,52 @@ function Miner:initOrientation()
 		self.homeOrientation = self.orientation
 	end
 	print("orientation:", self.orientation)
+end
+
+function Miner:broadcastStrandedPosition()
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	
+	local turtleInfo = {
+		id = os.getComputerID(),
+		label = os.getComputerLabel() or ("Turtle_" .. os.getComputerID()),
+		pos = {x = self.pos.x, y = self.pos.y, z = self.pos.z},
+		fuel = turtle.getFuelLevel(),
+		reason = "ORIENTATION_NOT_DETERMINABLE",
+		timestamp = os.epoch("utc")
+	}
+	
+	print("Turtle stranded at:", self.pos.x, self.pos.y, self.pos.z)
+	print("ID:", turtleInfo.id, "Label:", turtleInfo.label)
+	print("Fuel level:", turtleInfo.fuel)
+	
+	-- Try to broadcast to host if available
+	if self.node and self.node.host then
+		local success = self.node:send(self.node.host, {"TURTLE_STRANDED", turtleInfo}, false, false, 5)
+		if success then
+			print("Position broadcasted to host successfully")
+		else
+			print("Failed to contact host - broadcasting on general channel")
+		end
+	else
+		print("No host connection available")
+	end
+	
+	-- Also broadcast on general channels for any listening systems
+	if global.node then
+		global.node:send("broadcast", {"TURTLE_STRANDED", turtleInfo}, false, false)
+		print("Emergency broadcast sent on general channel")
+	end
+	
+	-- Save stranded info to file as backup
+	local fileName = "runtime/stranded_" .. os.getComputerID() .. ".txt"
+	local f = fs.open(fileName, "w")
+	if f then
+		f.write(textutils.serialize(turtleInfo))
+		f.close()
+		print("Stranded info saved to:", fileName)
+	end
+	
+	self.taskList:remove(currentTask)
 end
 
 function Miner:save(fileName)
