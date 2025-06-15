@@ -97,9 +97,9 @@ function HostDisplay:initialize()
 	self.winMain.btnHome = Button:new("home", sx+20, sy+2, 7, 1)
 	self.winMain.btnCancel = Button:new("cancel", sx+29, sy+2, 7, 1)
 	self.winMain.lblTimeVal = Label:new("00:00:00", self:getWidth()-8, sy+2)
-	self.winMain.btnDumpItems = Button:new("dump", sx+38, sy+0, 7, 1)
-	self.winMain.btnRefuel = Button:new("refuel", sx+38, sy+1, 7, 1)
-	self.winMain.btnUpdateAll = Button:new("update all", sx+46, sy+0, 10, 1, colors.blue)
+	self.winMain.btnDumpItems = Button:new("dump", sx+46, sy+0, 7, 1)
+	self.winMain.btnRefuel = Button:new("refuel", sx+46, sy+1, 7, 1)
+	self.winMain.btnUpdateAll = Button:new("update all", sx+54, sy+0, 10, 1, colors.blue)
 
 	self.winMain.btnMap.click = function() return self:displayMap() end
 	self.winMain.btnTurtles.click = function() return self:displayTurtles() end
