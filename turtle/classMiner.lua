@@ -1133,52 +1133,65 @@ function Miner:refuel(simple, force)
 	
 	if shouldRefuel then
 		print("refueling...")
+		
+		-- Set target fuel level based on force parameter
+		local targetFuelLevel = force and default.goodFuelLevel or default.goodFuelLevel
+		
+		-- Try refueling from inventory first
 		for slot = 1, default.inventorySize do
 			data = turtle.getItemDetail(slot)
 			if data and fuelItems[data.name] then
 				self:select(slot)
 				repeat
 					local ok, err = turtle.refuel(1)
-					goodLevel = ( turtle.getFuelLevel() >= default.goodFuelLevel )
+					goodLevel = ( turtle.getFuelLevel() >= targetFuelLevel )
 				until goodLevel or not ok
 				if goodLevel then break end
 			end
 		end
-		if turtle.getFuelLevel() > default.criticalFuelLevel then
-			-- and turtle.getFuelLevel() > 2 * self:getCostHome() then
-			refueled = true
-		elseif turtle.getFuelLevel() == 0 then
+		
+		-- Check if we need station refueling
+		local needsStationRefuel = false
+		if force then
+			-- Force refuel: go to station if we haven't reached goodFuelLevel
+			needsStationRefuel = turtle.getFuelLevel() < default.goodFuelLevel
+		else
+			-- Normal refuel: only go to station if critically low
+			needsStationRefuel = turtle.getFuelLevel() <= default.criticalFuelLevel
+		end
+		
+		if turtle.getFuelLevel() == 0 then
 			-- ran out of fuel
 			self:error("NEED FUEL, STUCK",true)
-		else
-			if not simple then -- for initializing
-			--if self:getCostHome() * 2 > turtle.getFuelLevel() then
-				local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
-				local startOrientation = self.orientation
+		elseif needsStationRefuel and not simple then
+			-- Go to refuel station
+			local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
+			local startOrientation = self.orientation
 
-				-- Wait for station availability before moving
-				print("waiting for refuel station availability...")
-				local stationId = self:waitForRefuelStation()
-				
-				if stationId then
-					if not self:getFuelFromStation(stationId) then
-						self:returnHome()
-						self:error("NEED FUEL",true) -- -> terminates stripMine etc.
-					else
-						refueled = true
-						if not self.returningHome then
-							print("returning to mining position:", startPos)
-							self:navigateToPos(startPos.x, startPos.y, startPos.z)
-							self:turnTo(startOrientation)
-						end
-						-- actual refueling happens with the next refuel call
-					end
-				else
+			-- Wait for station availability before moving
+			print("waiting for refuel station availability...")
+			local stationId = self:waitForRefuelStation()
+			
+			if stationId then
+				if not self:getFuelFromStation(stationId) then
 					self:returnHome()
-					self:error("NEED FUEL - no stations available",true)
+					self:error("NEED FUEL",true) -- -> terminates stripMine etc.
+				else
+					refueled = true
+					if not self.returningHome then
+						print("returning to mining position:", startPos)
+						self:navigateToPos(startPos.x, startPos.y, startPos.z)
+						self:turnTo(startOrientation)
+					end
+					-- actual refueling happens with the next refuel call
 				end
-			--end
+			else
+				self:returnHome()
+				self:error("NEED FUEL - no stations available",true)
 			end
+		else
+			-- Sufficient fuel level reached
+			refueled = true
 		end
 		print("fuel level:", turtle.getFuelLevel())
 	else
