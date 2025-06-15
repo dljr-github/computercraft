@@ -556,4 +556,14 @@ function HostDisplay:addAlert(alertType, data)
 	end
 end
 
+function HostDisplay:updateShellResponse(turtleId, command, success, output)
+	-- Update the turtle control with shell command response
+	if self.winTurtles and self.winTurtles.turtleControls and self.winTurtles.turtleControls[turtleId] then
+		local turtleControl = self.winTurtles.turtleControls[turtleId]
+		if turtleControl.updateShellResponse then
+			turtleControl:updateShellResponse(command, success, output)
+		end
+	end
+end
+
 return HostDisplay

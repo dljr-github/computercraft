@@ -347,6 +347,23 @@ node.onReceive = function(msg)
 		if global.display and global.display.addAlert then
 			global.display:addAlert("STRANDED", turtleInfo)
 		end
+	elseif msg.data[1] == "SHELL_RESPONSE" then
+		local turtleId = msg.sender
+		local command = msg.data[2]
+		local success = msg.data[3]
+		local output = msg.data[4]
+		
+		print("Shell response from turtle", turtleId, ":")
+		print("Command:", command)
+		print("Success:", success)
+		if output and output ~= "" then
+			print("Output:", output)
+		end
+		
+		-- Update GUI if display is available
+		if global.display and global.display.updateShellResponse then
+			global.display:updateShellResponse(turtleId, command, success, output)
+		end
 	end
 end
 

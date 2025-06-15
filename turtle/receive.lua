@@ -141,6 +141,71 @@ node.onReceive = function(msg)
 			if miner then 
 				miner.stop = true
 			end
+		elseif msg.data[1] == "SHELL_COMMAND" then
+			local command = msg.data[2]
+			if command and command ~= "" then
+				print("Executing shell command:", command)
+				
+				-- Execute the command in a protected call
+				local success, result = pcall(function()
+					local oldTerminate = os.pullEventRaw
+					local output = ""
+					
+					-- Capture shell output
+					local originalWrite = term.write
+					local originalPrint = print
+					local capturedOutput = {}
+					
+					term.write = function(text)
+						table.insert(capturedOutput, tostring(text))
+						originalWrite(text)
+					end
+					
+					print = function(...)
+						local args = {...}
+						local text = table.concat(args, "\t")
+						table.insert(capturedOutput, text)
+						originalPrint(...)
+					end
+					
+					-- Execute the command
+					local ok = shell.run(command)
+					
+					-- Restore original functions
+					term.write = originalWrite
+					print = originalPrint
+					
+					-- Combine captured output
+					local output = table.concat(capturedOutput, "\n")
+					if #output > 500 then
+						output = string.sub(output, 1, 500) .. "... (truncated)"
+					end
+					
+					return ok, output
+				end)
+				
+				local commandSuccess = success and result
+				local output = ""
+				if success then
+					commandSuccess, output = result, ""
+					if type(result) == "table" then
+						commandSuccess = result[1] or false
+						output = result[2] or ""
+					end
+				else
+					output = tostring(result) -- error message
+				end
+				
+				-- Send response back to host
+				if node then
+					node:send(msg.sender, {"SHELL_RESPONSE", command, commandSuccess, output}, false, false)
+				end
+				
+				print("Command completed. Success:", commandSuccess)
+				if output and output ~= "" then
+					print("Output:", output)
+				end
+			end
 		else
 			table.insert(tasks, msg.data)
 		end
