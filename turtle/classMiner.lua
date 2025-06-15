@@ -32,21 +32,188 @@ local fuelItems = {
 -- do not translate
 
 local mineBlocks = {
+-- Basic terrain blocks
 ["minecraft:cobblestone"]=true,
 ["minecraft:stone"]=true,
+["minecraft:smooth_stone"]=true,
 ["minecraft:grass_block"]=true,
 ["minecraft:dirt"]=true,
+["minecraft:coarse_dirt"]=true,
+["minecraft:podzol"]=true,
+["minecraft:mycelium"]=true,
+["minecraft:grass_path"]=true,
+["minecraft:farmland"]=true,
 ["minecraft:gravel"]=true,
 ["minecraft:sand"]=true,
-["minecraft:flint"]=true,
+["minecraft:red_sand"]=true,
 ["minecraft:sandstone"]=true,
+["minecraft:red_sandstone"]=true,
+["minecraft:chiseled_sandstone"]=true,
+["minecraft:chiseled_red_sandstone"]=true,
+["minecraft:cut_sandstone"]=true,
+["minecraft:cut_red_sandstone"]=true,
+["minecraft:smooth_sandstone"]=true,
+["minecraft:smooth_red_sandstone"]=true,
+
+-- Stone variants
 ["minecraft:diorite"]=true,
 ["minecraft:granite"]=true,
 ["minecraft:andesite"]=true,
+["minecraft:polished_diorite"]=true,
+["minecraft:polished_granite"]=true,
+["minecraft:polished_andesite"]=true,
 ["minecraft:tuff"]=true,
+["minecraft:calcite"]=true,
+["minecraft:dripstone_block"]=true,
+["minecraft:pointed_dripstone"]=true,
+
+-- Deepslate variants
 ["minecraft:deepslate"]=true,
 ["minecraft:cobbled_deepslate"]=true,
--- own array with fluids / allowedBlocks
+["minecraft:polished_deepslate"]=true,
+["minecraft:deepslate_bricks"]=true,
+["minecraft:deepslate_tiles"]=true,
+["minecraft:cracked_deepslate_bricks"]=true,
+["minecraft:cracked_deepslate_tiles"]=true,
+["minecraft:chiseled_deepslate"]=true,
+
+-- Cave/underground blocks
+["minecraft:cave_air"]=true,
+["minecraft:void_air"]=true,
+["minecraft:air"]=true,
+["minecraft:moss_block"]=true,
+["minecraft:moss_carpet"]=true,
+["minecraft:azalea_leaves"]=true,
+["minecraft:flowering_azalea_leaves"]=true,
+["minecraft:rooted_dirt"]=true,
+["minecraft:hanging_roots"]=true,
+["minecraft:big_dripleaf"]=true,
+["minecraft:small_dripleaf"]=true,
+["minecraft:spore_blossom"]=true,
+["minecraft:glow_lichen"]=true,
+
+-- Nether blocks
+["minecraft:netherrack"]=true,
+["minecraft:nether_bricks"]=true,
+["minecraft:cracked_nether_bricks"]=true,
+["minecraft:chiseled_nether_bricks"]=true,
+["minecraft:red_nether_bricks"]=true,
+["minecraft:soul_sand"]=true,
+["minecraft:soul_soil"]=true,
+["minecraft:basalt"]=true,
+["minecraft:polished_basalt"]=true,
+["minecraft:smooth_basalt"]=true,
+["minecraft:blackstone"]=true,
+["minecraft:polished_blackstone"]=true,
+["minecraft:polished_blackstone_bricks"]=true,
+["minecraft:cracked_polished_blackstone_bricks"]=true,
+["minecraft:chiseled_polished_blackstone"]=true,
+["minecraft:gilded_blackstone"]=true,
+["minecraft:crimson_nylium"]=true,
+["minecraft:warped_nylium"]=true,
+["minecraft:crimson_roots"]=true,
+["minecraft:warped_roots"]=true,
+["minecraft:nether_sprouts"]=true,
+["minecraft:weeping_vines"]=true,
+["minecraft:twisting_vines"]=true,
+["minecraft:shroomlight"]=true,
+["minecraft:warped_wart_block"]=true,
+["minecraft:nether_wart_block"]=true,
+
+-- End blocks
+["minecraft:end_stone"]=true,
+["minecraft:end_stone_bricks"]=true,
+["minecraft:purpur_block"]=true,
+["minecraft:purpur_pillar"]=true,
+["minecraft:chorus_plant"]=true,
+["minecraft:chorus_flower"]=true,
+
+-- Plant/organic blocks
+["minecraft:dead_bush"]=true,
+["minecraft:fern"]=true,
+["minecraft:large_fern"]=true,
+["minecraft:grass"]=true,
+["minecraft:tall_grass"]=true,
+["minecraft:seagrass"]=true,
+["minecraft:tall_seagrass"]=true,
+["minecraft:kelp"]=true,
+["minecraft:kelp_plant"]=true,
+["minecraft:dried_kelp_block"]=true,
+["minecraft:hay_block"]=true,
+["minecraft:wheat_seeds"]=true,
+["minecraft:beetroot_seeds"]=true,
+["minecraft:melon_seeds"]=true,
+["minecraft:pumpkin_seeds"]=true,
+["minecraft:sweet_berries"]=true,
+["minecraft:glow_berries"]=true,
+["minecraft:cocoa"]=true,
+["minecraft:sugar_cane"]=true,
+["minecraft:bamboo"]=true,
+["minecraft:cactus"]=true,
+["minecraft:vine"]=true,
+["minecraft:lily_pad"]=true,
+["minecraft:sea_pickle"]=true,
+
+-- Mushroom blocks
+["minecraft:brown_mushroom"]=true,
+["minecraft:red_mushroom"]=true,
+["minecraft:brown_mushroom_block"]=true,
+["minecraft:red_mushroom_block"]=true,
+["minecraft:mushroom_stem"]=true,
+["minecraft:crimson_fungus"]=true,
+["minecraft:warped_fungus"]=true,
+["minecraft:crimson_stem"]=true,
+["minecraft:warped_stem"]=true,
+["minecraft:stripped_crimson_stem"]=true,
+["minecraft:stripped_warped_stem"]=true,
+
+-- Ice blocks
+["minecraft:ice"]=true,
+["minecraft:packed_ice"]=true,
+["minecraft:blue_ice"]=true,
+["minecraft:frosted_ice"]=true,
+["minecraft:snow"]=true,
+["minecraft:snow_block"]=true,
+["minecraft:powder_snow"]=true,
+
+-- Web and slime
+["minecraft:cobweb"]=true,
+["minecraft:slime_block"]=true,
+["minecraft:honey_block"]=true,
+
+-- Coral (if mining underwater)
+["minecraft:tube_coral"]=true,
+["minecraft:brain_coral"]=true,
+["minecraft:bubble_coral"]=true,
+["minecraft:fire_coral"]=true,
+["minecraft:horn_coral"]=true,
+["minecraft:dead_tube_coral"]=true,
+["minecraft:dead_brain_coral"]=true,
+["minecraft:dead_bubble_coral"]=true,
+["minecraft:dead_fire_coral"]=true,
+["minecraft:dead_horn_coral"]=true,
+["minecraft:tube_coral_block"]=true,
+["minecraft:brain_coral_block"]=true,
+["minecraft:bubble_coral_block"]=true,
+["minecraft:fire_coral_block"]=true,
+["minecraft:horn_coral_block"]=true,
+["minecraft:dead_tube_coral_block"]=true,
+["minecraft:dead_brain_coral_block"]=true,
+["minecraft:dead_bubble_coral_block"]=true,
+["minecraft:dead_fire_coral_block"]=true,
+["minecraft:dead_horn_coral_block"]=true,
+["minecraft:tube_coral_fan"]=true,
+["minecraft:brain_coral_fan"]=true,
+["minecraft:bubble_coral_fan"]=true,
+["minecraft:fire_coral_fan"]=true,
+["minecraft:horn_coral_fan"]=true,
+["minecraft:dead_tube_coral_fan"]=true,
+["minecraft:dead_brain_coral_fan"]=true,
+["minecraft:dead_bubble_coral_fan"]=true,
+["minecraft:dead_fire_coral_fan"]=true,
+["minecraft:dead_horn_coral_fan"]=true,
+
+-- Fluids
 ["minecraft:water"]=true,
 ["minecraft:lava"]=true,
 }
@@ -86,20 +253,129 @@ local disallowedBlocks = {
 }
 
 local oreBlocks = {
-["minecraft:iron_ore"]=true,
-["minecraft:deepslate_iron_ore"]=true,
+-- Vanilla ores (overworld)
 ["minecraft:coal_ore"]=true,
-["minecraft:deepslate_coal_ore"]=true,
-["minecraft:gold_ore"]=true,
-["minecraft:deepslate_gold_ore"]=true,
-["minecraft:diamond_ore"]=true,
-["minecraft:deepslate_diamond_ore"]=true,
-["minecraft:redstone_ore"]=true,
-["minecraft:deepslate_redstone_ore"]=true,
-["minecraft:lapis_ore"]=true,
-["minecraft:deepslate_lapis_ore"]=true,
+["minecraft:iron_ore"]=true,
 ["minecraft:copper_ore"]=true,
+["minecraft:gold_ore"]=true,
+["minecraft:redstone_ore"]=true,
+["minecraft:lapis_ore"]=true,
+["minecraft:diamond_ore"]=true,
+["minecraft:emerald_ore"]=true,
+
+-- Deepslate variants
+["minecraft:deepslate_coal_ore"]=true,
+["minecraft:deepslate_iron_ore"]=true,
 ["minecraft:deepslate_copper_ore"]=true,
+["minecraft:deepslate_gold_ore"]=true,
+["minecraft:deepslate_redstone_ore"]=true,
+["minecraft:deepslate_lapis_ore"]=true,
+["minecraft:deepslate_diamond_ore"]=true,
+["minecraft:deepslate_emerald_ore"]=true,
+
+-- Nether ores
+["minecraft:nether_gold_ore"]=true,
+["minecraft:nether_quartz_ore"]=true,
+["minecraft:ancient_debris"]=true,
+
+-- Raw ore blocks (storage blocks of raw materials)
+["minecraft:raw_iron_block"]=true,
+["minecraft:raw_copper_block"]=true,
+["minecraft:raw_gold_block"]=true,
+
+-- Mineral blocks (for strip mining storage areas)
+["minecraft:coal_block"]=true,
+["minecraft:iron_block"]=true,
+["minecraft:copper_block"]=true,
+["minecraft:gold_block"]=true,
+["minecraft:diamond_block"]=true,
+["minecraft:emerald_block"]=true,
+["minecraft:lapis_block"]=true,
+["minecraft:redstone_block"]=true,
+["minecraft:netherite_block"]=true,
+
+-- Copper variants (oxidation states)
+["minecraft:exposed_copper"]=true,
+["minecraft:weathered_copper"]=true,
+["minecraft:oxidized_copper"]=true,
+["minecraft:cut_copper"]=true,
+["minecraft:exposed_cut_copper"]=true,
+["minecraft:weathered_cut_copper"]=true,
+["minecraft:oxidized_cut_copper"]=true,
+["minecraft:waxed_copper_block"]=true,
+["minecraft:waxed_exposed_copper"]=true,
+["minecraft:waxed_weathered_copper"]=true,
+["minecraft:waxed_oxidized_copper"]=true,
+["minecraft:waxed_cut_copper"]=true,
+["minecraft:waxed_exposed_cut_copper"]=true,
+["minecraft:waxed_weathered_cut_copper"]=true,
+["minecraft:waxed_oxidized_cut_copper"]=true,
+
+-- Amethyst (geodes)
+["minecraft:amethyst_block"]=true,
+["minecraft:budding_amethyst"]=true,
+["minecraft:amethyst_cluster"]=true,
+["minecraft:large_amethyst_bud"]=true,
+["minecraft:medium_amethyst_bud"]=true,
+["minecraft:small_amethyst_bud"]=true,
+
+-- Other valuable blocks
+["minecraft:bone_block"]=true,
+["minecraft:quartz_block"]=true,
+["minecraft:smooth_quartz"]=true,
+["minecraft:chiseled_quartz_block"]=true,
+["minecraft:quartz_pillar"]=true,
+["minecraft:prismarine"]=true,
+["minecraft:prismarine_bricks"]=true,
+["minecraft:dark_prismarine"]=true,
+["minecraft:sea_lantern"]=true,
+
+-- Modded ore support (common mod ores)
+-- Thermal Foundation
+["thermal:tin_ore"]=true,
+["thermal:lead_ore"]=true,
+["thermal:silver_ore"]=true,
+["thermal:nickel_ore"]=true,
+["thermal:deepslate_tin_ore"]=true,
+["thermal:deepslate_lead_ore"]=true,
+["thermal:deepslate_silver_ore"]=true,
+["thermal:deepslate_nickel_ore"]=true,
+
+-- Mekanism
+["mekanism:tin_ore"]=true,
+["mekanism:osmium_ore"]=true,
+["mekanism:uranium_ore"]=true,
+["mekanism:deepslate_tin_ore"]=true,
+["mekanism:deepslate_osmium_ore"]=true,
+["mekanism:deepslate_uranium_ore"]=true,
+
+-- Applied Energistics
+["appliedenergistics2:quartz_ore"]=true,
+["appliedenergistics2:deepslate_quartz_ore"]=true,
+["appliedenergistics2:charged_quartz_ore"]=true,
+
+-- Immersive Engineering
+["immersiveengineering:ore_aluminum"]=true,
+["immersiveengineering:ore_lead"]=true,
+["immersiveengineering:ore_nickel"]=true,
+["immersiveengineering:ore_silver"]=true,
+["immersiveengineering:ore_uranium"]=true,
+["immersiveengineering:deepslate_ore_aluminum"]=true,
+["immersiveengineering:deepslate_ore_lead"]=true,
+["immersiveengineering:deepslate_ore_nickel"]=true,
+["immersiveengineering:deepslate_ore_silver"]=true,
+["immersiveengineering:deepslate_ore_uranium"]=true,
+
+-- Create
+["create:zinc_ore"]=true,
+["create:deepslate_zinc_ore"]=true,
+
+-- Industrial Foregoing / Titanium
+["titanium:ruby_ore"]=true,
+["titanium:sapphire_ore"]=true,
+
+-- Common patterns that will be caught by the _ore suffix check in checkOreBlock
+-- This covers most modded ores automatically
 }
 
 local vector = vector
