@@ -90,7 +90,8 @@ function HostDisplay:initialize()
 	self.winMain.lblOnline =   Label:new(         "     0", sx+20, sy+1)
 	self.winMain.lblActiveHd = Label:new(				  " active", sx+29, sy)
 	self.winMain.lblActive =   Label:new(				  "      0", sx+29, sy+1)
-	-- Alerts moved below general section
+	self.winMain.lblAlertsHd = Label:new(				  "alerts", sx+38, sy)
+	self.winMain.lblAlerts =   Label:new(				  "     0", sx+38, sy+1)
 
 	self.winMain.btnGlobalReboot = Button:new("reboot", sx+11, sy+2, 7, 1)
 	self.winMain.btnHome = Button:new("home", sx+20, sy+2, 7, 1)
@@ -134,7 +135,8 @@ function HostDisplay:initialize()
 	self.winMain:addObject(self.winMain.lblOnline)
 	self.winMain:addObject(self.winMain.lblActiveHd)
 	self.winMain:addObject(self.winMain.lblActive)
-	-- Alerts objects moved below general section
+	self.winMain:addObject(self.winMain.lblAlertsHd)
+	self.winMain:addObject(self.winMain.lblAlerts)
 	self.winMain:addObject(self.winMain.btnGlobalReboot)
 	self.winMain:addObject(self.winMain.btnHome)
 	self.winMain:addObject(self.winMain.btnCancel)
@@ -188,15 +190,6 @@ function HostDisplay:initialize()
 	self.winData:addObject(self.winData.btnPrintMainTime)
 	self.winData:addObject(self.winData.btnPrintSendTime)
 	self.winData:addObject(self.winData.chkSlowReboot)
-	
-	-- Alerts section below general
-	local alertY = self.winData:getY() + self.winData:getHeight() + 1
-	self.winMain.lblAlertsTitle = Label:new("Alerts:", 2, alertY)
-	self.winMain.lblAlertsHd = Label:new("count", 10, alertY)
-	self.winMain.lblAlerts = Label:new("0", 16, alertY)
-	self.winMain:addObject(self.winMain.lblAlertsTitle)
-	self.winMain:addObject(self.winMain.lblAlertsHd)
-	self.winMain:addObject(self.winMain.lblAlerts)
 	
 	-- init hidden windows
 	self.mapDisplay = MapDisplay:new(4,4,32,16)
@@ -325,6 +318,8 @@ function HostDisplay:updateTime()
 	-- Update alerts count
 	local alertColor = (strandedCount > 0 and colors.red) or colors.white
 	local txt = tostring(strandedCount)
+	local len = string.len(txt)
+	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
 	winMain.lblAlertsHd:setTextColor(alertColor)
 	winMain.lblAlerts:setText(txt)
 	winMain.lblAlerts:setTextColor(alertColor)
@@ -334,7 +329,6 @@ function HostDisplay:updateTime()
 	winMain.lblOnlineHd:redraw()
 	winMain.lblOnline:redraw()
 	winMain.lblTotal:redraw()
-	winMain.lblAlertsTitle:redraw()
 	winMain.lblAlertsHd:redraw()
 	winMain.lblAlerts:redraw()
 end
