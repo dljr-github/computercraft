@@ -13,7 +13,7 @@ function openTab(task_2, task_3)
 end
 function callMiner(task_2, task_3)
 	if miner then
-		if not task_3 then
+		if not task_3 or #task_3 == 0 then
 			local func = "return function(miner,task_2) miner:"..task_2.."() end"
 			loadstring(func)()(miner,task_2)
 			--miner[task_2](miner)
@@ -44,7 +44,12 @@ while true do
 			openTab(task[2],task[3])
 		elseif task[1] == "DO" then
 			global.err = nil
-			status,err = pcall(callMiner,task[2],task[3])
+			-- Pass all parameters from index 3 onwards
+			local params = {}
+			for i = 3, #task do
+				params[i-2] = task[i]
+			end
+			status,err = pcall(callMiner,task[2],params)
 			global.handleError(err,status)
 
 		elseif task[1] == "UPDATE" then
