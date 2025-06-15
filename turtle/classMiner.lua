@@ -1,15 +1,10 @@
 local PathFinder = require("classPathFinder")
 local CheckPointer = require("classCheckPointer")
---require("classMap")
 require("classLogger")
 require("classList")
 require("classChunkyMap")
 local bluenet = require("bluenet")
 local config = config
-
--- local blockTranslation = require("blockTranslation")
--- local nameToId = blockTranslation.nameToId
--- local idToName = blockTranslation.idToName
 
 local default = {
 	waitTimeFallingBlock = 0.25,
@@ -18,7 +13,6 @@ local default = {
 	inventorySize = 16,
 	criticalFuelLevel = 512,
 	goodFuelLevel = 4099,
-	--maxHomeDistance = 128, -- unused
 	file = "runtime/miner.txt",
 	fuelAmount = 16,
 	turtleName = "computercraft:turtle_advanced",
@@ -56,8 +50,6 @@ local mineBlocks = {
 ["minecraft:water"]=true,
 ["minecraft:lava"]=true,
 }
---mineBlocks = blockTranslation.translateTable(mineBlocks)
-
 
 local inventoryBlocks = {
 ["minecraft:chest"]=true,
@@ -83,7 +75,6 @@ local inventoryBlocks = {
 ["minecraft:hopper"]=true,
 ["minecraft:barrel"]=true,
 }
---inventoryBlocks = blockTranslation.translateTable(inventoryBlocks)
 
 local disallowedBlocks = {
 ["minecraft:chest"] = true,
@@ -93,12 +84,6 @@ local disallowedBlocks = {
 ["computercraft:wireless_modem_advanced"] = true,
 ["computercraft:monitor_advanced"] = true,
 }
---disallowedBlocks = blockTranslation.translateTable(disallowedBlocks)
--- local blocks = {
--- iron = { iron_ore = { id = "minecraft:iron_ore", doMine = true, level = 99 },
-	-- { deepslate_iron_ore = { id = "minecraft:deepslate_iron_ore", doMine = true, level = 99 } }
--- coal = { coal
--- }
 
 local oreBlocks = {
 ["minecraft:iron_ore"]=true,
@@ -116,7 +101,6 @@ local oreBlocks = {
 ["minecraft:copper_ore"]=true,
 ["minecraft:deepslate_copper_ore"]=true,
 }
---oreBlocks = blockTranslation.translateTable(oreBlocks)
 
 local vector = vector
 local debuginfo = debug.getinfo
@@ -163,7 +147,6 @@ function Miner:new()
 	o.statusCount = 0
 	
 	o:initialize() -- initialize after starting parallel tasks in startup.lua
-	--print("--------------------")
 	return o
 end
 
@@ -173,7 +156,6 @@ function Miner:initialize()
 	
 	-- preset chunk request but try not to during initialization
 	self.map.requestChunk = function(chunkId) return self:requestChunk(chunkId) end
-	--self:requestMap()
 	
 	self:refuel(true)
 	print("fuel level:", turtle.getFuelLevel())
@@ -220,7 +202,6 @@ function Miner:initPosition()
 	else
 		--gps not working
 		self:error("GPS UNAVAILABLE",true)
-		-- self.pos = vector.new(0,70,0)
 	end
 	print("position:",self.pos.x,self.pos.y,self.pos.z)
 end
@@ -545,10 +526,6 @@ function Miner:setStation(station)
 			self.homeOrientation = station.orientation
 		end
 		
-		--if self.taskList.count == 0 -- no task
-		--	or self.taskList.count == 1 then -- or initializing
-		--	self:returnHome()
-		--end
 	else
 		-- TODO: try remember station, lmao
 		-- settings set get etc.?
