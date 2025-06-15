@@ -1122,13 +1122,16 @@ function Miner:select(slot)
 	return true
 end
 
-function Miner:refuel(simple)
+function Miner:refuel(simple, force)
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 
 	local refueled = false
 	local goodLevel = false
 	
-	if not self.gettingFuel and self.fuelLimit > 0 and turtle.getFuelLevel() <= default.criticalFuelLevel then
+	local shouldRefuel = not self.gettingFuel and self.fuelLimit > 0 and 
+		(turtle.getFuelLevel() <= default.criticalFuelLevel or force)
+	
+	if shouldRefuel then
 		print("refueling...")
 		for slot = 1, default.inventorySize do
 			data = turtle.getItemDetail(slot)
