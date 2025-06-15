@@ -239,10 +239,9 @@ function TurtleControl:initialize()
 	self.lblOnline = Label:new(self.onlineText,36,5,self.onlineColor)
 	self.lblTime = Label:new("00:00.00", 46,5)
 	
-	-- Command input (row 6-7)
-	self.lblCommand = Label:new("shell>",3,7)
-	self.txtCommand = self:createCommandInput(9,7,25,1)
-	self.btnExecute = Button:new("exec",35,7,5,1, colors.purple)
+	-- Command buttons (row 6-7)
+	self.lblCommands = Label:new("commands:",3,7)
+	self.btnUpdateSoftware = Button:new("update software",12,7,15,1, colors.blue)
 	self.lblResponse = Label:new("",3,8,colors.lightGray)
 	
 	self.btnAddTask.click = function() return self:addTask() end
@@ -251,7 +250,7 @@ function TurtleControl:initialize()
 	self.btnCallHome.click = function() self:callHome() end
 	self.btnDeleteTurtle.click = function() return self:deleteTurtle() end
 	self.btnRecoverTurtle.click = function() return self:recoverTurtle() end
-	self.btnExecute.click = function() return self:executeCommand() end
+	self.btnUpdateSoftware.click = function() return self:updateSoftware() end
 	self.btnCollapse.click = function() return self:collapse() end
 	
 	self.winDetail:addObject(self.frmId)
@@ -273,9 +272,8 @@ function TurtleControl:initialize()
 	self.winDetail:addObject(self.btnDeleteTurtle)
 	self.winDetail:addObject(self.btnRecoverTurtle)
 	
-	self.winDetail:addObject(self.lblCommand)
-	self.winDetail:addObject(self.txtCommand)
-	self.winDetail:addObject(self.btnExecute)
+	self.winDetail:addObject(self.lblCommands)
+	self.winDetail:addObject(self.btnUpdateSoftware)
 	self.winDetail:addObject(self.lblResponse)
 	
 	self.btnDeleteTurtle.visible = self.data.online
@@ -380,127 +378,33 @@ function TurtleControl:recoverTurtle()
 	return true
 end
 
-function TurtleControl:createCommandInput(x, y, width, height)
-	-- Create a simple text input field
-	local input = {
-		x = x,
-		y = y,
-		width = width,
-		height = height or 1,
-		text = "",
-		cursorPos = 1,
-		focused = false,
-		backgroundColor = colors.black,
-		textColor = colors.white,
-		borderColor = colors.gray,
-		parent = self,
-		
-		setText = function(self, text)
-			self.text = text or ""
-			self.cursorPos = math.min(self.cursorPos, #self.text + 1)
-		end,
-		
-		getText = function(self)
-			return self.text
-		end,
-		
-		clear = function(self)
-			self.text = ""
-			self.cursorPos = 1
-		end,
-		
-		redraw = function(self)
-			if self.parent and self.parent.setCursorPos then
-				local displayText = self.text
-				if #displayText > self.width then
-					-- Show end of text if it's too long
-					displayText = string.sub(displayText, #displayText - self.width + 1)
-				end
-				displayText = displayText .. string.rep(" ", self.width - #displayText)
-				
-				self.parent:setCursorPos(self.x, self.y)
-				self.parent:blit(displayText, 
-					string.rep(colors.toBlit(self.textColor), self.width),
-					string.rep(colors.toBlit(self.backgroundColor), self.width))
-			end
-		end,
-		
-		onClick = function(self, x, y, button)
-			if button == 1 then -- Left click
-				self.focused = true
-				return true
-			end
-			return false
-		end,
-		
-		onChar = function(self, char)
-			if self.focused then
-				self.text = string.sub(self.text, 1, self.cursorPos - 1) .. char .. string.sub(self.text, self.cursorPos)
-				self.cursorPos = self.cursorPos + 1
-				self:redraw()
-				return true
-			end
-			return false
-		end,
-		
-		onKey = function(self, key)
-			if self.focused then
-				if key == keys.backspace and self.cursorPos > 1 then
-					self.text = string.sub(self.text, 1, self.cursorPos - 2) .. string.sub(self.text, self.cursorPos)
-					self.cursorPos = self.cursorPos - 1
-					self:redraw()
-					return true
-				elseif key == keys.delete and self.cursorPos <= #self.text then
-					self.text = string.sub(self.text, 1, self.cursorPos - 1) .. string.sub(self.text, self.cursorPos + 1)
-					self:redraw()
-					return true
-				elseif key == keys.left and self.cursorPos > 1 then
-					self.cursorPos = self.cursorPos - 1
-					return true
-				elseif key == keys.right and self.cursorPos <= #self.text then
-					self.cursorPos = self.cursorPos + 1
-					return true
-				elseif key == keys.enter then
-					self.focused = false
-					if self.parent and self.parent.executeCommand then
-						self.parent:executeCommand()
-					end
-					return true
-				end
-			end
-			return false
-		end
-	}
-	
-	return input
-end
-
-function TurtleControl:executeCommand()
-	local command = self.txtCommand:getText()
-	if command and command ~= "" and self.node and self.data.online then
-		print("Executing command on turtle", self.data.id, ":", command)
+function TurtleControl:sendShellCommand(command, description)
+	if self.node and self.data.online then
+		print("Executing", description, "on turtle", self.data.id, ":", command)
 		
 		-- Send shell command to turtle
 		local success = self.node:send(self.data.id, {"SHELL_COMMAND", command}, false, false, 5)
 		if success then
-			self.lblResponse:setText("Sent: " .. command)
+			self.lblResponse:setText("Sent: " .. description)
 			self.lblResponse:setTextColor(colors.yellow)
 		else
-			self.lblResponse:setText("Failed to send command")
+			self.lblResponse:setText("Failed to send " .. description)
 			self.lblResponse:setTextColor(colors.red)
 		end
 		
-		-- Clear the input
-		self.txtCommand:clear()
-		self.txtCommand:redraw()
 		self.lblResponse:redraw()
 	else
-		self.lblResponse:setText("Enter command or turtle offline")
+		self.lblResponse:setText("Turtle offline")
 		self.lblResponse:setTextColor(colors.orange)
 		self.lblResponse:redraw()
 	end
 	return true
 end
+
+function TurtleControl:updateSoftware()
+	return self:sendShellCommand("install", "software update")
+end
+
 
 function TurtleControl:updateShellResponse(command, success, output)
 	-- Update the response label with command result

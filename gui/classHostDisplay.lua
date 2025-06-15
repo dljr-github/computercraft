@@ -99,6 +99,7 @@ function HostDisplay:initialize()
 	self.winMain.lblTimeVal = Label:new("00:00:00", self:getWidth()-8, sy+2)
 	self.winMain.btnDumpItems = Button:new("dump", sx+38, sy+0, 7, 1)
 	self.winMain.btnRefuel = Button:new("refuel", sx+38, sy+1, 7, 1)
+	self.winMain.btnUpdateAll = Button:new("update all", sx+46, sy+0, 10, 1, colors.blue)
 
 	self.winMain.btnMap.click = function() return self:displayMap() end
 	self.winMain.btnTurtles.click = function() return self:displayTurtles() end
@@ -110,6 +111,7 @@ function HostDisplay:initialize()
 	self.winMain.btnHome.click = function() return self:globalCallHome() end
 	self.winMain.btnDumpItems.click = function() return self:globalDumpItems() end
 	self.winMain.btnRefuel.click = function() return self:globalGetFuel() end
+	self.winMain.btnUpdateAll.click = function() return self:globalUpdateSoftware() end
 
 
 
@@ -142,6 +144,7 @@ function HostDisplay:initialize()
 
 	self.winMain:addObject(self.winMain.btnDumpItems)
 	self.winMain:addObject(self.winMain.btnRefuel)
+	self.winMain:addObject(self.winMain.btnUpdateAll)
 
 
 	--self.winMain:addObject(self.winMain.btnGlobalRebootSlow)
@@ -484,6 +487,21 @@ function HostDisplay:globalGetFuel()
 		end
 	end
 end
+
+function HostDisplay:globalUpdateSoftware()
+	-- Update software on all online turtles
+	if self.node then
+		local count = 0
+		for id,turtle in pairs(self.turtles) do
+			if turtle.state.online then
+				self.node:send(id, {"SHELL_COMMAND", "install"}, false, false)
+				count = count + 1
+			end
+		end
+		print("Sent software update command to", count, "online turtles")
+	end
+end
+
 
 
 function HostDisplay:globalShutdown()
