@@ -56,12 +56,22 @@ function TurtleControl:setData(data)
 	if data then
 		self.data = data
 		
-		if self.data.online then
+		-- Check if turtle is stranded
+		if self.data.stranded and self.data.stranded.active then
+			self.onlineText = "STRANDED"
+			self.onlineColor = colors.red
+			self.backgroundColor = colors.red
+			self.borderColor = colors.red
+		elseif self.data.online then
 			self.onlineText = "online"
 			self.onlineColor = default.colors.good
+			self.backgroundColor = default.colors.background
+			self.borderColor = default.colors.background
 		else
 			self.onlineText = "offline" 
 			self.onlineColor = default.colors.bad
+			self.backgroundColor = default.colors.background
+			self.borderColor = default.colors.background
 		end
 		
 		if self.data.fuelLevel <= 0 then
@@ -222,6 +232,7 @@ function TurtleControl:initialize()
 	self.btnAddTask = Button:new("add",20,5,6,1, colors.purple)
 	self.btnCancelTask = Button:new("cancel",27,5,6,1)
 	self.btnDeleteTurtle = Button:new("delete turtle",20,5,13,1)
+	self.btnRecoverTurtle = Button:new("RECOVER",20,5,7,1, colors.yellow)
 	-- row 28 - 
 	self.lblFuel = Label:new(      "fuel      " .. self.data.fuelLevel,36,3)
 	self.lblEmptySlots = Label:new("slots     " .. self.data.emptySlots,36,4)
@@ -233,6 +244,7 @@ function TurtleControl:initialize()
 	self.btnCancelTask.click = function() self:cancelTask() end
 	self.btnCallHome.click = function() self:callHome() end
 	self.btnDeleteTurtle.click = function() return self:deleteTurtle() end
+	self.btnRecoverTurtle.click = function() return self:recoverTurtle() end
 	self.btnCollapse.click = function() return self:collapse() end
 	
 	self.winDetail:addObject(self.frmId)
@@ -252,8 +264,10 @@ function TurtleControl:initialize()
 	self.winDetail:addObject(self.btnCancelTask)
 	self.winDetail:addObject(self.btnCallHome)
 	self.winDetail:addObject(self.btnDeleteTurtle)
+	self.winDetail:addObject(self.btnRecoverTurtle)
 	
 	self.btnDeleteTurtle.visible = self.data.online
+	self.btnRecoverTurtle.visible = false -- Initially hidden, shown only for stranded turtles
 end
 
 function TurtleControl:refreshPos()
@@ -294,9 +308,21 @@ function TurtleControl:refresh()
 		self.btnCancelTask:setEnabled(self.data.online)
 		self.btnCallHome:setEnabled(self.data.online)
 		
-		self.btnAddTask.visible = self.data.online
-		self.btnCancelTask.visible = self.data.online
-		self.btnDeleteTurtle.visible = not self.data.online
+		-- Button visibility logic
+		local isStranded = self.data.stranded and self.data.stranded.active
+		self.btnAddTask.visible = self.data.online and not isStranded
+		self.btnCancelTask.visible = self.data.online and not isStranded
+		self.btnCallHome.visible = self.data.online and not isStranded
+		self.btnDeleteTurtle.visible = not self.data.online and not isStranded
+		self.btnRecoverTurtle.visible = isStranded
+		
+		-- Show stranded info in task field if turtle is stranded
+		if isStranded then
+			self.lblTask:setText("STRANDED: " .. self.data.stranded.reason)
+			self.lblTask:setTextColor(colors.red)
+		else
+			self.lblTask:setTextColor(colors.white)
+		end
 	end
 end
 
@@ -304,6 +330,40 @@ function TurtleControl:deleteTurtle()
 	-- TODO: shutdown and remove turtle from global.turtles
 	if self.hostDisplay then
 		self.hostDisplay:deleteTurtle(self.data.id)
+	end
+	return true
+end
+
+function TurtleControl:recoverTurtle()
+	if self.data.stranded and self.data.stranded.active then
+		local pos = self.data.stranded.pos
+		print("Manual recovery needed for turtle", self.data.id)
+		print("Last known position:", pos.x, pos.y, pos.z)
+		print("Reason:", self.data.stranded.reason)
+		print("Fuel level:", self.data.stranded.fuel)
+		
+		-- Clear stranded status (manual intervention assumed)
+		self.data.stranded.active = false
+		self.data.online = false -- Keep offline until turtle reconnects
+		
+		-- Show recovery instructions
+		if self.hostDisplay then
+			local message = string.format(
+				"Turtle %s (%s) needs manual recovery:\n" ..
+				"Position: %d, %d, %d\n" ..
+				"Fuel: %d\n" ..
+				"Reason: %s\n\n" ..
+				"Go to the turtle and manually restart it or teleport it home.",
+				self.data.id,
+				self.data.stranded.label or "Unknown",
+				pos.x, pos.y, pos.z,
+				self.data.stranded.fuel,
+				self.data.stranded.reason
+			)
+			-- If there's a way to show dialogs, use it
+			-- Otherwise just print
+			print(message)
+		end
 	end
 	return true
 end

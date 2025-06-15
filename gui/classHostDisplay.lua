@@ -30,6 +30,8 @@ function HostDisplay:new(x,y,width,height)
 	
 	o.backgroundColor = default.colors.background
 	o.doSlowReboot = false
+	o.alerts = {} -- Store active alerts
+	o.alertCount = 0
 
 	o:initialize()
 	
@@ -88,6 +90,8 @@ function HostDisplay:initialize()
 	self.winMain.lblOnline =   Label:new(         "     0", sx+20, sy+1)
 	self.winMain.lblActiveHd = Label:new(				  " active", sx+29, sy)
 	self.winMain.lblActive =   Label:new(				  "      0", sx+29, sy+1)
+	self.winMain.lblAlertsHd = Label:new(				  "alerts", sx+38, sy)
+	self.winMain.lblAlerts =   Label:new(				  "     0", sx+38, sy+1)
 
 	self.winMain.btnGlobalReboot = Button:new("reboot", sx+11, sy+2, 7, 1)
 	self.winMain.btnHome = Button:new("home", sx+20, sy+2, 7, 1)
@@ -129,6 +133,8 @@ function HostDisplay:initialize()
 	self.winMain:addObject(self.winMain.lblOnline)
 	self.winMain:addObject(self.winMain.lblActiveHd)
 	self.winMain:addObject(self.winMain.lblActive)
+	self.winMain:addObject(self.winMain.lblAlertsHd)
+	self.winMain:addObject(self.winMain.lblAlerts)
 	self.winMain:addObject(self.winMain.btnGlobalReboot)
 	self.winMain:addObject(self.winMain.btnHome)
 	self.winMain:addObject(self.winMain.btnCancel)
@@ -268,9 +274,12 @@ function HostDisplay:updateTime()
 	local activeCount = 0
 	local onlineCount = 0
 	local totalCount = 0
+	local strandedCount = 0
 	for id,turtle in pairs(self.turtles) do
 		totalCount = totalCount + 1
-		if turtle.state.online then
+		if turtle.state.stranded and turtle.state.stranded.active then
+			strandedCount = strandedCount + 1
+		elseif turtle.state.online then
 			onlineCount = onlineCount + 1
 			if turtle.state.task then
 				activeCount = activeCount + 1
@@ -303,11 +312,22 @@ function HostDisplay:updateTime()
 	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
 	winMain.lblTotal:setText(txt)
 
+	-- Update alerts count
+	local alertColor = (strandedCount > 0 and colors.red) or colors.white
+	local txt = tostring(strandedCount)
+	local len = string.len(txt)
+	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
+	winMain.lblAlertsHd:setTextColor(alertColor)
+	winMain.lblAlerts:setText(txt)
+	winMain.lblAlerts:setTextColor(alertColor)
+
 	winMain.lblActiveHd:redraw()
 	winMain.lblActive:redraw()	
 	winMain.lblOnlineHd:redraw()
 	winMain.lblOnline:redraw()
 	winMain.lblTotal:redraw()
+	winMain.lblAlertsHd:redraw()
+	winMain.lblAlerts:redraw()
 end
 function HostDisplay:getMapDisplay()
 	return self.mapDisplay
@@ -499,6 +519,41 @@ function HostDisplay:terminate()
 	self:beforeTerminate()
 	print("TERMINATED")
 	return true
+end
+
+function HostDisplay:addAlert(alertType, data)
+	-- Add an alert to the system
+	self.alertCount = self.alertCount + 1
+	local alert = {
+		id = self.alertCount,
+		type = alertType,
+		data = data,
+		timestamp = os.epoch("utc")
+	}
+	
+	table.insert(self.alerts, alert)
+	
+	-- Visual/audio notification
+	if alertType == "STRANDED" then
+		-- Flash the alerts counter
+		if self.winMain.lblAlerts then
+			local originalColor = self.winMain.lblAlerts.textColor
+			self.winMain.lblAlerts:setTextColor(colors.red)
+			self.winMain.lblAlerts:redraw()
+			-- Could add audio alert here if available
+		end
+		
+		print("🚨 ALERT: Turtle", data.label or data.id, "is STRANDED!")
+	end
+	
+	-- Auto-remove alerts after 1 hour to prevent buildup
+	-- (In a real implementation, you might want persistent alerts)
+	local currentTime = os.epoch("utc")
+	for i = #self.alerts, 1, -1 do
+		if currentTime - self.alerts[i].timestamp > 3600000 then -- 1 hour
+			table.remove(self.alerts, i)
+		end
+	end
 end
 
 return HostDisplay

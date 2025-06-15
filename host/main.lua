@@ -298,9 +298,57 @@ node.onRequestAnswer = function(forMsg)
 end
 
 
--- node.onReceive = function(msg)
-
--- end
+node.onReceive = function(msg)
+	if msg.data[1] == "TURTLE_STRANDED" then
+		local turtleInfo = msg.data[2]
+		local turtleId = turtleInfo.id
+		
+		print("🚨 TURTLE STRANDED:", turtleInfo.label or ("Turtle_" .. turtleId))
+		print("   Position:", turtleInfo.pos.x, turtleInfo.pos.y, turtleInfo.pos.z)
+		print("   Reason:", turtleInfo.reason)
+		print("   Fuel:", turtleInfo.fuel)
+		
+		-- Initialize turtle data if not exists
+		if not turtles[turtleId] then
+			turtles[turtleId] = {
+				state = { 
+					online = false, 
+					timeDiff = 0, 
+					time = os.epoch(),
+					pos = turtleInfo.pos,
+					fuel = turtleInfo.fuel
+				},
+				mapLog = {},
+				mapBuffer = {},
+				loadedChunks = {}
+			}
+		end
+		
+		-- Mark turtle as stranded
+		local turtle = turtles[turtleId]
+		turtle.state.stranded = {
+			active = true,
+			reason = turtleInfo.reason,
+			pos = turtleInfo.pos,
+			fuel = turtleInfo.fuel,
+			timestamp = turtleInfo.timestamp,
+			label = turtleInfo.label
+		}
+		turtle.state.online = false -- Mark as offline since it needs manual help
+		
+		-- Log to file for persistence
+		local logFile = fs.open("logs/stranded_turtles.log", "a")
+		if logFile then
+			logFile.writeLine(os.date() .. " - " .. textutils.serialize(turtleInfo))
+			logFile.close()
+		end
+		
+		-- Trigger GUI alert if display is available
+		if global.display and global.display.addAlert then
+			global.display:addAlert("STRANDED", turtleInfo)
+		end
+	end
+end
 
 local function checkUpdates()
 	-- function not allowed to yield!!!
