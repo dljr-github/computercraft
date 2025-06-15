@@ -90,8 +90,7 @@ function HostDisplay:initialize()
 	self.winMain.lblOnline =   Label:new(         "     0", sx+20, sy+1)
 	self.winMain.lblActiveHd = Label:new(				  " active", sx+29, sy)
 	self.winMain.lblActive =   Label:new(				  "      0", sx+29, sy+1)
-	self.winMain.lblAlertsHd = Label:new(				  "alerts", sx+38, sy)
-	self.winMain.lblAlerts =   Label:new(				  "     0", sx+38, sy+1)
+
 
 	self.winMain.btnGlobalReboot = Button:new("reboot", sx+11, sy+2, 7, 1)
 	self.winMain.btnHome = Button:new("home", sx+20, sy+2, 7, 1)
@@ -135,8 +134,6 @@ function HostDisplay:initialize()
 	self.winMain:addObject(self.winMain.lblOnline)
 	self.winMain:addObject(self.winMain.lblActiveHd)
 	self.winMain:addObject(self.winMain.lblActive)
-	self.winMain:addObject(self.winMain.lblAlertsHd)
-	self.winMain:addObject(self.winMain.lblAlerts)
 	self.winMain:addObject(self.winMain.btnGlobalReboot)
 	self.winMain:addObject(self.winMain.btnHome)
 	self.winMain:addObject(self.winMain.btnCancel)
@@ -190,6 +187,28 @@ function HostDisplay:initialize()
 	self.winData:addObject(self.winData.btnPrintMainTime)
 	self.winData:addObject(self.winData.btnPrintSendTime)
 	self.winData:addObject(self.winData.chkSlowReboot)
+	
+	-- Add alerts section below general section
+	self.winAlerts = Window:new(2, 18, self:getWidth()-2, 8)
+	self.winMain:addObject(self.winAlerts)
+	
+	self.winAlerts.frm = Frame:new("alerts", 1, 1, 55, 8)
+	self.winAlerts:addObject(self.winAlerts.frm)
+	self.winAlerts.frm:setWidth(self.winAlerts:getWidth())
+	
+	-- Alerts counter at top of alerts section
+	self.winAlerts.lblAlertsHd = Label:new("Active Alerts:", 3, 2)
+	self.winAlerts.lblAlerts = Label:new("0", 18, 2)
+	self.winAlerts:addObject(self.winAlerts.lblAlertsHd)
+	self.winAlerts:addObject(self.winAlerts.lblAlerts)
+	
+	-- Alert list display area
+	self.winAlerts.alertLabels = {}
+	for i = 1, 5 do -- Show up to 5 alerts
+		local lbl = Label:new("", 3, 2+i)
+		self.winAlerts.alertLabels[i] = lbl
+		self.winAlerts:addObject(lbl)
+	end
 	
 	-- init hidden windows
 	self.mapDisplay = MapDisplay:new(4,4,32,16)
@@ -315,22 +334,47 @@ function HostDisplay:updateTime()
 	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
 	winMain.lblTotal:setText(txt)
 
-	-- Update alerts count
+	-- Update alerts count and display
+	local strandedTurtles = {}
+	for id, turtle in pairs(self.turtles) do
+		if turtle.state.stranded and turtle.state.stranded.active then
+			table.insert(strandedTurtles, {id = id, turtle = turtle})
+		end
+	end
+	
 	local alertColor = (strandedCount > 0 and colors.red) or colors.white
 	local txt = tostring(strandedCount)
-	local len = string.len(txt)
-	local txt = string.format("%s%s",string.rep(" ", 6-len),txt)
-	winMain.lblAlertsHd:setTextColor(alertColor)
-	winMain.lblAlerts:setText(txt)
-	winMain.lblAlerts:setTextColor(alertColor)
+	if self.winAlerts and self.winAlerts.lblAlerts then
+		self.winAlerts.lblAlertsHd:setTextColor(alertColor)
+		self.winAlerts.lblAlerts:setText(txt)
+		self.winAlerts.lblAlerts:setTextColor(alertColor)
+		self.winAlerts.lblAlertsHd:redraw()
+		self.winAlerts.lblAlerts:redraw()
+		
+		-- Update alert details display
+		for i = 1, 5 do
+			local lbl = self.winAlerts.alertLabels[i]
+			if i <= #strandedTurtles then
+				local turtleData = strandedTurtles[i]
+				local alertText = string.format("Turtle %s: STRANDED at %s,%s,%s", 
+					turtleData.turtle.label or tostring(turtleData.id),
+					turtleData.turtle.state.pos.x or "?",
+					turtleData.turtle.state.pos.y or "?", 
+					turtleData.turtle.state.pos.z or "?")
+				lbl:setText(alertText)
+				lbl:setTextColor(colors.red)
+			else
+				lbl:setText("")
+			end
+			lbl:redraw()
+		end
+	end
 
 	winMain.lblActiveHd:redraw()
 	winMain.lblActive:redraw()	
 	winMain.lblOnlineHd:redraw()
 	winMain.lblOnline:redraw()
 	winMain.lblTotal:redraw()
-	winMain.lblAlertsHd:redraw()
-	winMain.lblAlerts:redraw()
 end
 function HostDisplay:getMapDisplay()
 	return self.mapDisplay
@@ -554,10 +598,10 @@ function HostDisplay:addAlert(alertType, data)
 	-- Visual/audio notification
 	if alertType == "STRANDED" then
 		-- Flash the alerts counter
-		if self.winMain.lblAlerts then
-			local originalColor = self.winMain.lblAlerts.textColor
-			self.winMain.lblAlerts:setTextColor(colors.red)
-			self.winMain.lblAlerts:redraw()
+		if self.winAlerts and self.winAlerts.lblAlerts then
+			local originalColor = self.winAlerts.lblAlerts.textColor
+			self.winAlerts.lblAlerts:setTextColor(colors.red)
+			self.winAlerts.lblAlerts:redraw()
 			-- Could add audio alert here if available
 		end
 		
