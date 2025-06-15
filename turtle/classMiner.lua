@@ -44,7 +44,6 @@ local mineBlocks = {
 ["minecraft:dirt"]=true,
 ["minecraft:gravel"]=true,
 ["minecraft:sand"]=true,
-["minecraft:bedrock"]=true,
 ["minecraft:flint"]=true,
 ["minecraft:sandstone"]=true,
 ["minecraft:diorite"]=true,
@@ -56,7 +55,6 @@ local mineBlocks = {
 -- own array with fluids / allowedBlocks
 ["minecraft:water"]=true,
 ["minecraft:lava"]=true,
---["minecraft:glass"]=true,
 }
 --mineBlocks = blockTranslation.translateTable(mineBlocks)
 
