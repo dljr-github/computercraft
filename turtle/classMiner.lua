@@ -1437,18 +1437,6 @@ function Miner:getRefuelStation(random)
 end
 
 
-function Miner:getFuel()
-	-- DEPRECATED: This function is deprecated in favor of the new waitForRefuelStation/getFuelFromStation approach
-	-- Legacy fallback for any old code that still calls getFuel() directly
-	print("WARNING: using deprecated getFuel() - should use waitForRefuelStation/getFuelFromStation instead")
-	
-	local stationId = self:waitForRefuelStation()
-	if stationId then
-		return self:getFuelFromStation(stationId)
-	else
-		return false
-	end
-end
 
 
 
