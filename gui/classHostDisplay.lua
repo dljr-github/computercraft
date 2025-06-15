@@ -523,11 +523,11 @@ function HostDisplay:globalDumpItems()
 	end
 end
 function HostDisplay:globalGetFuel()
-	-- Force refuel all turtles regardless of current fuel level
+	-- Use coordinated refuel system instead of deprecated getFuel
 	if self.node then
 		for id,turtle in pairs(self.turtles) do
-			-- Send forced refuel command - will use inventory items even if fuel > 512
-			self.node:send(id, {"DO", "refuel", false, true}, false, false)
+			-- Send refuel command using the new coordinated system
+			self.node:send(id, {"DO", "refuel"}, false, false)
 		end
 	end
 end
