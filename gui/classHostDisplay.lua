@@ -190,7 +190,7 @@ function HostDisplay:initialize()
 	self.winData:addObject(self.winData.chkSlowReboot)
 	
 	-- Alerts section below general
-	local alertY = self.winData:getY() + self.winData:getHeight() + 1
+	local alertY = 18  -- Position below the general section
 	self.winMain.lblAlertsTitle = Label:new("Alerts:", 2, alertY)
 	self.winMain.lblAlertsHd = Label:new("count", 10, alertY)
 	self.winMain.lblAlerts = Label:new("0", 16, alertY)
