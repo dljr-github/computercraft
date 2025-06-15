@@ -827,6 +827,9 @@ function Miner:returnHome()
 		print("RETURNING HOME", self.home.x, self.home.y, self.home.z)
 		result = self:navigateToPos(self.home.x, self.home.y, self.home.z)
 		self:turnTo(self.homeOrientation)
+		if result then
+			self:transferItems()
+		end
 	end
 	self.returningHome = false
 	self.taskList:remove(currentTask)
@@ -981,41 +984,29 @@ end
 
 function Miner:offloadItemsAtHome()
 	-- return home, empty inventory, return to task
-	print("DEBUG: Starting offloadItemsAtHome, empty slots:", self:getEmptySlots())
 	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
 	self.cleaningInventory = true
 	
 	local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
 	local startOrientation = self.orientation
-	print("DEBUG: Current position:", startPos.x, startPos.y, startPos.z)
-	print("DEBUG: Home position:", self.home and self.home.x or "nil", self.home and self.home.y or "nil", self.home and self.home.z or "nil")
-
-	print("DEBUG: Attempting to return home...")
 	if self:returnHome() then
-		print("DEBUG: Successfully returned home, calling transferItems...")
 		self:transferItems()
-		print("DEBUG: transferItems completed, checking empty slots:", self:getEmptySlots())
 		if self:getEmptySlots() < 2 then
 			-- catch this in stripmine e.g.
-			print("DEBUG: Still not enough empty slots, throwing INVENTORY_FULL error")
 			self.cleaningInventory = false
 			self:error("INVENTORY_FULL",true)
 		else
 			-- do nothing and return to task
-			print("DEBUG: Sufficient empty slots, returning to original position...")
 			self:navigateToPos(startPos.x, startPos.y, startPos.z)
 			self:turnTo(startOrientation)
-			print("DEBUG: Returned to original position")
 		end
 	else
-		print("DEBUG: FAILED to return home!")
 		self.cleaningInventory = false
 		self:error("FAILED_TO_RETURN_HOME",true)
 	end
 
 	self.cleaningInventory = false
 	self.taskList:remove(currentTask)
-	print("DEBUG: offloadItemsAtHome completed successfully")
 end
 
 function Miner:transferItems()
