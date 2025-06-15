@@ -1170,16 +1170,27 @@ function Miner:refuel(simple)
 			--if self:getCostHome() * 2 > turtle.getFuelLevel() then
 				local startPos = vector.new(self.pos.x, self.pos.y, self.pos.z)
 				local startOrientation = self.orientation
-				if not self:getFuel() then
-					self:returnHome()
-					self:error("NEED FUEL",true) -- -> terminates stripMine etc.
-				else
-					refueled = true
-					if not self.returningHome then
-						self:navigateToPos(startPos.x, startPos.y, startPos.z)
-						self:turnTo(startOrientation)
+
+				-- Wait for station availability before moving
+				print("waiting for refuel station availability...")
+				local stationId = self:waitForRefuelStation()
+				
+				if stationId then
+					if not self:getFuelFromStation(stationId) then
+						self:returnHome()
+						self:error("NEED FUEL",true) -- -> terminates stripMine etc.
+					else
+						refueled = true
+						if not self.returningHome then
+							print("returning to mining position:", startPos)
+							self:navigateToPos(startPos.x, startPos.y, startPos.z)
+							self:turnTo(startOrientation)
+						end
+						-- actual refueling happens with the next refuel call
 					end
-					-- actual refueling happens with the next refuel call
+				else
+					self:returnHome()
+					self:error("NEED FUEL - no stations available",true)
 				end
 			--end
 			end
@@ -1241,18 +1252,121 @@ function Miner:requestRefuelStation()
 			sleep(0.5 + math.random()) -- random offset so not every turtle requests at the same time
 			self:clearStaleLocks()
 		end
-	until refuelClaim.ok or ( osEpoch("utc") - startTime )  > 1200000 -- 1200 seconds (20 minutes) for high contention scenarios
+	until refuelClaim.ok -- wait indefinitely until station becomes available
 
 	refuelClaim.waiting = false
 
 	if refuelClaim.ok and refuelClaim.occupiedStation then
 		print("station claim successful:", refuelClaim.occupiedStation)
 	else 
-		print("station claim timeout - no stations available after waiting")
+		print("unexpected error - no station claimed despite success flag")
 		refuelClaim.occupiedStation = nil
 	end
 
 	return refuelClaim.occupiedStation
+end
+
+function Miner:waitForRefuelStation()
+	-- Wait for station availability WITHOUT moving from current position
+	print("checking for available refuel stations...")
+	
+	-- Check if we have network capability for station coordination
+	if not self.nodeRefuel then
+		print("no network - using fallback random station selection")
+		-- fallback to random station selection for single-turtle setups
+		local stationCount = 0
+		for _,v in pairs(config.stations.refuel) do stationCount = stationCount + 1 end
+		if stationCount > 0 then
+			local index = math.random(1, stationCount)
+			local ct = 0
+			for stationId, station in pairs(config.stations.refuel) do
+				ct = ct + 1
+				if ct == index then 
+					return stationId
+				end
+			end
+		end
+		return nil
+	end
+	
+	-- Use network-coordinated station claiming (waits indefinitely)
+	return self:requestRefuelStation()
+end
+
+function Miner:getFuelFromStation(stationId)
+	-- Go directly to confirmed available station and refuel
+	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	
+	self.gettingFuel = true
+	local result = false
+	
+	local ok, err = pcall( function() 
+		local station = config.stations.refuel[stationId]
+		if not station then
+			print("station not found:", stationId)
+			return false
+		end
+		
+		print("navigating directly to station:", stationId)
+		
+		-- Navigate directly to the station (no queue wandering)
+		if not self:navigateToPos(station.pos.x, station.pos.y, station.pos.z) then
+			print("unable to reach station:", stationId)
+			return false
+		end
+
+		if station.orientation then 
+			self:turnTo(station.orientation) 
+		end
+		
+		local hasInventory = false
+		
+		for k=1,4 do
+			--check for chest
+			local block = self:inspect(true) -- true for wrong map entries or new stations
+			if block and inventoryBlocks[block] then
+				hasInventory = true
+				break
+			end
+			self:turnRight()
+		end
+		
+		if not hasInventory then 
+			print("no inventory found at station:", stationId)
+		else
+			result = turtle.suck(default.fuelAmount)
+			print("fuel collected:", result)
+		end
+	
+	end )
+
+	-- Handle errors
+	if not ok then
+		self.gettingFuel = false
+		bluenet.closeChannel(bluenet.modem, bluenet.default.channels.refuel)
+		error(err,0) -- pass error
+	end
+	
+	if not result then
+		print("unable to refuel from station:", stationId)
+		result = false
+	end
+
+	-- Release the station
+	self:releaseStation()
+
+	-- Offload items if inventory is getting full
+	if self:getEmptySlots() < 10 then
+		self:offloadItemsAtHome() 
+	end
+
+	-- Return home after refueling
+	self:returnHome()
+
+	self.gettingFuel = false
+	
+	self.taskList:remove(currentTask)
+	return result
 end
 
 
@@ -1342,164 +1456,16 @@ end
 
 
 function Miner:getFuel()
-
-	-- default method:
-	-- 1. move near to refuel stations based on config
-	-- 2. ask turtles if stations are occupied 
-	-- 3. claim station
-	--    if occupied, wait for station
-	-- 3. move to station and refuel
-	-- 4. report station as free and leave
-
-	-- no station available:
-	-- wait in queue for station, but this would also require messaging etc...
-	-- not nice
-	-- could use home-stations as queue that is always available
-
-	-- no host available:
-	-- use config or ask other turtles if they are refueling
-
-	-- TODO: advanced method:
-	-- add support turtles that represent a temporary refuel station
-	-- they act like a passive provider chest
-	-- this way turtles dont have to return all the way home for big tasks
-	-- different types of turtles
-	-- general turtle with all the default methods like navigation etc.
-	-- types: support(refuel, collect items), miner, "forester"
-
-	-- TODO: change from config to internal variable?
-	local currentTask = self:addCheckTask({debug.getinfo(1, "n").name})
+	-- DEPRECATED: This function is deprecated in favor of the new waitForRefuelStation/getFuelFromStation approach
+	-- Legacy fallback for any old code that still calls getFuel() directly
+	print("WARNING: using deprecated getFuel() - should use waitForRefuelStation/getFuelFromStation instead")
 	
-	self.gettingFuel = true
-	local result = false
-	
-	local ok, err = pcall( function() 
-
-		-- move near the refuel stations or create automatic queue
-
-		local isInQueue = false
-		
-		if config.stations.refuelQueue and config.stations.refuelQueue.origin then 
-			-- explicit queue configuration exists
-			local tries = 0
-			local origin = config.stations.refuelQueue.origin
-			local maxDistance = config.stations.refuelQueue.maxDistance or 8
-			repeat 
-				tries = tries + 1
-				local randomPosition = vector.new(
-					math.random(origin.x-maxDistance, origin.x+maxDistance),
-					origin.y,
-					math.random(origin.z-maxDistance, origin.z+maxDistance)
-				)
-				print("moving to explicit queue", randomPosition)
-				isInQueue = self:navigateToPos(randomPosition.x, randomPosition.y, randomPosition.z)
-				if not isInQueue and tries > 3 then
-					print("cant reach refuel queue")
-					isInQueue = true -- set to true anyways, should be nearby the queue
-					break
-				end
-			until isInQueue
-		else
-			-- no explicit queue - create automatic queue around refuel stations
-			local stationCount = 0
-			local avgX, avgY, avgZ = 0, 0, 0
-			for stationId, station in pairs(config.stations.refuel) do
-				stationCount = stationCount + 1
-				avgX = avgX + station.pos.x
-				avgY = avgY + station.pos.y
-				avgZ = avgZ + station.pos.z
-			end
-			
-			if stationCount > 0 then
-				-- calculate center point of all refuel stations
-				avgX = math.floor(avgX / stationCount)
-				avgY = math.floor(avgY / stationCount)
-				avgZ = math.floor(avgZ / stationCount)
-				
-				local maxDistance = 12 -- larger area for automatic queue
-				local tries = 0
-				repeat 
-					tries = tries + 1
-					local randomPosition = vector.new(
-						math.random(avgX-maxDistance, avgX+maxDistance),
-						avgY,
-						math.random(avgZ-maxDistance, avgZ+maxDistance)
-					)
-					print("moving to auto queue near stations", randomPosition)
-					isInQueue = self:navigateToPos(randomPosition.x, randomPosition.y, randomPosition.z)
-					if not isInQueue and tries > 3 then
-						print("cant reach auto queue area")
-						isInQueue = true -- proceed anyway
-						break
-					end
-				until isInQueue
-			else
-				print("no refuel stations configured")
-				isInQueue = true -- skip queue logic if no stations
-			end
-		end
-
-		local useRandomStation = not isInQueue
-		-- print("using random station", useRandomStation)
-		local id = self:getRefuelStation(useRandomStation)
-		local station = config.stations.refuel[id]
-
-		-- actually refuel
-		if not self:navigateToPos(station.pos.x, station.pos.y, station.pos.z) then
-			--print("unable to reach station")
-			return false
-		end
-
-		if station.orientation then 
-			self:turnTo(station.orientation) 
-		end
-		
-		local hasInventory = false
-		
-		for k=1,4 do
-		--check for chest
-			local block = self:inspect(true) -- true for wrong map entries or new stations
-			if block and inventoryBlocks[block] then
-				hasInventory = true
-				break
-			end
-			self:turnRight()
-		end
-		if not hasInventory then 
-			print("no inventory found")
-			--assert(hasInventory, "no inventory found")
-		else
-			result = turtle.suck(default.fuelAmount)
-		end
-	
-	end )
-
-	-- !! cancellation while getting fuel can result in no more refueling
-	if not ok then
-		self.gettingFuel = false
-		bluenet.closeChannel(bluenet.modem, bluenet.default.channels.refuel)
-		error(err,0) -- pass error
+	local stationId = self:waitForRefuelStation()
+	if stationId then
+		return self:getFuelFromStation(stationId)
+	else
+		return false
 	end
-	
-	if not result then
-		print("unable to refuel", result)
-		result = false
-	end
-
-	-- done refueling
-	self:releaseStation()
-
-	if self:getEmptySlots() < 10 then -- 8
-		-- already at home, also offload items
-		self:offloadItemsAtHome() 
-	end
-
-	self:returnHome()
-
-	self.gettingFuel = false
-	
-	self.taskList:remove(currentTask)
-	return result
 end
 
 
