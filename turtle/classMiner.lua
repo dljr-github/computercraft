@@ -258,8 +258,9 @@ function Miner:initOrientation()
 		end
 	end
 	if not newPos then
-		self:error("ORIENTATION NOT DETERMINABLE",true)
+		print("ORIENTATION NOT DETERMINABLE - attempting recovery")
 		self.orientation = 0
+		self:returnHome()
 	else
 		-- print(newPos, self.pos, turns, self.orientation)
 		local diff = newPos - self.pos
